@@ -1,0 +1,11 @@
+namespace System.Reflection;
+
+public struct FunctionInfo {
+    public const TypeInfo ReturnType;
+    public const string Name;
+    public const FunctionParamInfo[] Params;
+    public const uint32 Offset;
+    public const uint32 Flags;
+
+    private extern constructor();
+}

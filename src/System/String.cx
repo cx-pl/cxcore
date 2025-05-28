@@ -1,0 +1,16 @@
+namespace System;
+
+public final class String {
+    private uint32 _length;
+    private ptr _data;
+
+    public static const String Empty { extern const get; }
+    public uint32 Length { extern const get; }
+    public char Item { 
+        extern const get(uint32 index); 
+    }
+
+    private extern constructor();
+    private extern constructor(uint32 length, ptr data);
+    public extern override const string ToString() const;
+}

@@ -1,0 +1,8 @@
+namespace System;
+
+public class Object {
+    public TypeInfo Type { extern const get; }
+
+    public extern constructor();
+    public extern virtual const string ToString() const;
+}

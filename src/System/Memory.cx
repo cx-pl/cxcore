@@ -1,0 +1,7 @@
+namespace System;
+
+public static class Memory {
+    public extern static ptr Alloc(uint32 size);
+    public extern static ptr Realloc(ptr block, uint32 size);
+    public extern static void Free(ptr block);
+}

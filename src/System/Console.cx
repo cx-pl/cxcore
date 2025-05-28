@@ -1,0 +1,6 @@
+namespace System;
+
+public static class Console {
+    public extern static void Write(const String str);
+    public extern static void WriteLine(const String str);
+}

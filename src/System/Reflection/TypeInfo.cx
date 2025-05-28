@@ -1,0 +1,13 @@
+namespace System.Reflection;
+
+public struct TypeInfo {
+    public const string Name;
+    public const string Namespace;
+    public const TypeInfo[] GenericParams;
+    public const FieldInfo[] Fields;
+    public const FunctionInfo[] Functions;
+    public const uint32 Size;
+    public const uint32 Flags;
+
+    private extern constructor();
+}

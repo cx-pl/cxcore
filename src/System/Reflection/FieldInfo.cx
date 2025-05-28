@@ -1,0 +1,10 @@
+namespace System.Reflection;
+
+public struct FieldInfo {
+    public const TypeInfo Type;
+    public const string Name;
+    public const uint32 Offset;
+    public const uint32 Flags;
+
+    private extern constructor();
+}
