@@ -6,6 +6,4 @@ public struct FunctionInfo {
     public const FunctionParamInfo[] Params;
     public const uint32 Offset;
     public const uint32 Flags;
-
-    private extern constructor();
 }

@@ -1,0 +1,10 @@
+namespace System.Reflection;
+
+public struct VersionInfo {
+    public const int Major;
+    public const int Minor;
+    public const int Build;
+    public const int Revision;
+
+    public extern constructor(int major = 0, int minor = 0, int build = 0, int revision = 0);
+}

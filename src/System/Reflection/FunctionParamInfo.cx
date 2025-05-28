@@ -3,7 +3,6 @@ namespace System.Reflection;
 public struct FunctionParamInfo {
     public const TypeInfo Type;
     public const string Name;
+    public const ptr DefaultValue;
     public const uint32 Flags;
-
-    private extern constructor();
 }

@@ -1,0 +1,10 @@
+namespace System.Reflection;
+
+public struct ModuleInfo {
+    public const string Name;
+    public const VersionInfo Version;
+    public const string Description;
+    public const string Author;
+    public const TypeInfo[] Types;
+    public const uint32 Flags;
+}
