@@ -1,0 +1,8 @@
+namespace System;
+
+public struct Long {
+    private long _value;
+
+    public static long MinValue { extern const get; }
+    public static long MaxValue { extern const get; }
+}

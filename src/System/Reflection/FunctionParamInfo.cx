@@ -1,8 +1,8 @@
 namespace System.Reflection;
 
 public struct FunctionParamInfo {
+    public const uint Flags;
     public const TypeInfo Type;
     public const string Name;
     public const ptr DefaultValue;
-    public const uint32 Flags;
 }

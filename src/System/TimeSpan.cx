@@ -1,0 +1,34 @@
+namespace System;
+
+public struct TimeSpan {
+    private ulong _ticks;
+
+    public int Ticks { extern const get; }
+    public int Days { extern const get; }
+    public int Hours { extern const get; }
+    public int Minutes { extern const get; }
+    public int Seconds { extern const get; }
+    public int Milliseconds { extern const get; }
+    public long TotalYears { extern const get; }
+    public long TotalMonths { extern const get; }
+    public long TotalWeeks { extern const get; }
+    public long TotalHours { extern const get; }
+    public long TotalMinutes { extern const get; }
+    public long TotalSeconds { extern const get; }
+    public long TotalMilliseconds { extern const get; }
+
+    public extern constructor(ulong ticks);
+    public extern constructor(
+        int days, 
+        int hours = 0, 
+        int minutes = 0, 
+        int seconds = 0, 
+        int milliseconds = 0
+    );
+    public extern constructor(const DateTime from, const DateTime to);
+    public extern TimeSpan AddDays(int days) const;
+    public extern TimeSpan AddHours(int hours) const;
+    public extern TimeSpan AddMinutes(int minutes) const;
+    public extern TimeSpan AddSeconds(int seconds) const;
+    public extern TimeSpan AddMilliseconds(int milliseconds) const;
+}

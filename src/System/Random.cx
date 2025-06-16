@@ -1,0 +1,22 @@
+namespace System;
+
+public struct Random {
+    private uint _seed;
+
+    public extern constructor(uint seed);
+    public static extern Random Create();
+    public extern byte NextByte();
+    public extern byte NextByte(byte min, byte max);
+    public extern char NextChar(char min, char max);
+    public extern short NextShort();
+    public extern short NextShort(short min, short max);
+    public extern int NextInt();
+    public extern int NextInt(int min, int max);
+    public extern long NextLong();
+    public extern long NextLong(long min, long max);
+    public extern float NextFloat();
+    public extern float NextFloat(float min, float max);
+    public extern double NextDouble();
+    public extern double NextDouble(double min, double max);
+    // public extern void NextBytes(uint count, byte[] buf, uint startIndex = 0);
+}

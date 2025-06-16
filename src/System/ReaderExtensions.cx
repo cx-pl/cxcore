@@ -1,0 +1,21 @@
+namespace System;
+
+// public extension ReaderExtensions : IReader {
+//     public extern bool ReadBool();
+//     public extern char ReadChar();
+//     public extern byte ReadByte();
+//     public extern sbyte ReadSByte();
+//     public extern short ReadShort();
+//     public extern ushort Read();
+//     public extern int ReadInt();
+//     public extern uint ReadUInt();
+//     public extern long ReadLong();
+//     public extern ulong ReadULong();
+//     public extern float ReadFloat();
+//     public extern double ReadDouble();
+//     // public extern decimal ReadDecimal();
+//     public extern DateTime ReadDateTime();
+//     public extern TimeSpan ReadTimeSpan();
+//     public extern string ReadString(uint maxLength);
+//     public extern string ReadLine();
+// }

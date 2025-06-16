@@ -1,0 +1,6 @@
+namespace System;
+
+public final class SystemDateTimeProvider : IDateTimeProvider {
+    public extern DateTime GetUtcNow() const;
+    public extern DateTime GetLocalNow() const;
+}

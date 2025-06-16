@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "cxdefs.h": "c",
+        "cxcore.h": "c",
+        "windows.h": "c"
+    },
+    "cSpell.words": [
+        "cxcore"
+    ]
+}

@@ -1,17 +1,16 @@
 namespace System;
 
 public final class Array<T> {
-    private uint32 _length;
+    private uint _length;
     private ptr<T> _data;
 
     public static const Array<T> Empty { extern const get; }
-    public uint32 Length { extern const get; }
+    public uint Length { extern const get; }
     public T Item { 
-        extern get(uint32 index); 
-        extern const get(uint32 index); 
-        extern set(uint32 index, T value);
+        extern get(uint index); 
+        extern const get(uint index); 
+        extern set(uint index, T value);
     }
 
-    public extern constructor(uint32 length);
-    public extern override const string ToString() const;    
+    public extern constructor(uint length);
 }

@@ -1,0 +1,9 @@
+namespace System;
+
+public struct Double {
+    private double _value;
+
+    public static double MinValue { extern const get; }
+    public static double MaxValue { extern const get; }
+    public int Sign { extern const get; }
+}

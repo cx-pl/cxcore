@@ -1,0 +1,6 @@
+namespace System;
+
+public static class Environment {
+    public static const string SystemName { extern const get; }
+    public static const string NewLine { extern const get; }
+}

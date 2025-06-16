@@ -1,11 +1,14 @@
 namespace System.Reflection;
 
 public struct TypeInfo {
+    public const ulong Hash;
+    public const uint Flags;
+    public const uint Size;
     public const string Name;
     public const string Namespace;
     public const TypeInfo[] GenericParams;
+    public const TypeInfo? BaseType;
+    public const TypeInfo[] Interfaces;
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
-    public const uint32 Size;
-    public const uint32 Flags;
 }

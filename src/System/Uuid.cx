@@ -1,0 +1,12 @@
+namespace System;
+
+public struct Uuid {
+    private uint _a;
+    private uint _b;
+    private uint _c;
+    private uint _d;
+
+    public static Uuid Zero { extern const get; }
+
+    public extern constructor(uint a, uint b, uint c, uint d);
+}

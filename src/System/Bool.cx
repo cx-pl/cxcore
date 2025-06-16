@@ -1,0 +1,10 @@
+namespace System;
+
+public struct Bool {
+    private bool _value;
+
+    public static bool False { extern const get; }
+    public static bool True { extern const get; }
+    public static const string FalseString { extern const get; }
+    public static string TrueString { extern const get; }
+}

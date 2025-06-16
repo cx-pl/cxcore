@@ -1,0 +1,8 @@
+namespace System;
+
+public struct SByte {
+    private sbyte _value;
+
+    public static sbyte MinValue { extern const get; }
+    public static sbyte MaxValue { extern const get; }
+}

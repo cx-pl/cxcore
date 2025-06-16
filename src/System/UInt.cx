@@ -1,0 +1,8 @@
+namespace System;
+
+public struct UInt {
+    private uint _value;
+
+    public static uint MinValue { extern const get; }
+    public static uint MaxValue { extern const get; }
+}

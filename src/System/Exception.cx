@@ -1,0 +1,12 @@
+namespace System;
+
+public class Exception {
+    public string Message { extern const get; }
+    public Exception? InnerException { extern const get; }
+    public string StackTrace { extern const get; }
+
+    public extern constructor();
+    public extern constructor(const string message);
+    public extern constructor(const string message, const Exception innerException);
+    public static extern void Throw(const Exception exception);
+}

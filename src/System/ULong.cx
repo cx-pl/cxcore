@@ -1,0 +1,8 @@
+namespace System;
+
+public struct ULong {
+    private ulong _value;
+
+    public static ulong MinValue { extern const get; }
+    public static ulong MaxValue { extern const get; }
+}

@@ -1,8 +1,10 @@
 namespace System;
 
 public class Object {
+    private ptr _gc;
+    
     public TypeInfo Type { extern const get; }
 
     public extern constructor();
-    public extern virtual const string ToString() const;
+    public extern virtual ulong GetHash() const;
 }

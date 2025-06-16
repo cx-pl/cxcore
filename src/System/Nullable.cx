@@ -1,0 +1,10 @@
+namespace System;
+
+public struct Nullable<T> {
+    private ptr<T> _obj;
+
+    public static const Nullable<T> Null { extern const get; }
+    public bool HasValue { extern const get; }
+    public T Value { extern const get; extern set; }
+    public extern constructor(T obj);
+}

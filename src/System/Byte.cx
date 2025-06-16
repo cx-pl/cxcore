@@ -1,0 +1,8 @@
+namespace System;
+
+public struct Byte {
+    private byte _value;
+
+    public static byte MinValue { extern const get; }
+    public static byte MaxValue { extern const get; }
+}

@@ -1,0 +1,23 @@
+namespace System;
+
+// public extension WriterExtensions : IWriter {
+//     public extern uint Write(bool value);
+//     public extern uint Write(char value);
+//     public extern uint Write(byte value);
+//     public extern uint Write(sbyte value);
+//     public extern uint Write(short value);
+//     public extern uint Write(ushort value);
+//     public extern uint Write(int value);
+//     public extern uint Write(uint value);
+//     public extern uint Write(long value);
+//     public extern uint Write(ulong value);
+//     public extern uint Write(float value);
+//     public extern uint Write(double value);
+//     public extern uint Write(decimal value);
+//     public extern uint Write(DateTime value, const string? format);
+//     public extern uint Write(TimeSpan value, const string? format);
+//     public extern uint Write(const string format, params const object[] args);
+//     public extern uint Write(const object? obj);
+//     public extern uint WriteLine();
+//     public extern uint WriteLine(const string format, params const object[] args);
+// }

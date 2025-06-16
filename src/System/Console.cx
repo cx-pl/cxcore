@@ -1,6 +1,32 @@
 namespace System;
 
 public static class Console {
-    public extern static void Write(const String str);
-    public extern static void WriteLine(const String str);
+    // internal class ConsoleReader : IReader {
+    //     private ptr _stream;
+    // 
+    //     internal constructor(ptr stream) {
+    //         _stream = stream;
+    //     }
+    // 
+    //     public extern uint Read(uint length, ptr buf) const;
+    // }
+    // 
+    // internal class ConsoleWriter : IWriter {
+    //     private ptr _stream;
+    // 
+    //     internal constructor(ptr stream) {
+    //         _stream = stream;
+    //     }
+    // 
+    //     public extern uint Write(uint length, const ptr buf) const;
+    // }
+    // 
+    // public static IReader StdIn { extern const get; }
+    // public static IWriter StdOut { extern const get; }
+    // public static IWriter StdErr { extern const get; }
+
+    public extern static string Read(uint length);
+    public extern static string ReadLine();
+    public extern static uint Write(const string str);
+    public extern static uint WriteLine(const string str);
 }

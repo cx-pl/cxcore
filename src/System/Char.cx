@@ -1,0 +1,14 @@
+namespace System;
+
+public struct Char {
+    private char _value;
+
+    public static extern bool IsBetween(char c, char min, char max);
+    public static extern bool IsDigit(char c);
+    public static extern bool IsLetter(char c);
+    public static extern bool IsWhiteSpace(char c);
+    public static extern bool IsLower(char c);
+    public static extern bool IsUpper(char c);
+    public extern char ToLower() const;
+    public extern char ToUpper() const;
+}

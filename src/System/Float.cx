@@ -1,0 +1,9 @@
+namespace System;
+
+public struct Float {
+    private float _value;
+
+    public static float MinValue { extern const get; }
+    public static float MaxValue { extern const get; }
+    public int Sign { extern const get; }
+}

@@ -1,0 +1,8 @@
+namespace System;
+
+public struct UShort {
+    private ushort _value;
+
+    public static ushort MinValue { extern const get; }
+    public static ushort MaxValue { extern const get; }
+}
