@@ -1,8 +1,8 @@
-#include "platform.h"
+#include "../../platform.h"
 #ifdef CX_PLATFORM_WIN32
 
 #include <windows.h>
-#include "src/cxcore.h"
+#include "../../../src/cxcore.h"
 
 CX_STRING_DEF(SystemName, "Windows");
 CX_STRING_DEF(NewLine, "\r\n");

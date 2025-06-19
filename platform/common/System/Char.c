@@ -1,4 +1,4 @@
-#include "src/cxcore.h"
+#include "../../../src/cxcore.h"
 
 cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(    
     cx_char c,

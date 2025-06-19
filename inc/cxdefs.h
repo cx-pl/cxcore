@@ -138,6 +138,10 @@
     }
 
 //
+// Arrays
+//
+
+//
 // vtable
 //
 
@@ -151,7 +155,7 @@
 #define CX_VTABLE_ENTRY(entry) \
     &entry,
 
-#define CX_END_VTABLE_DEF() \
+#define CX_END_VTABLE_DEF \
     }
 
 #define CX_GET_VTABLE(obj) (((cx_ptr*)(obj))[0])
@@ -160,28 +164,44 @@
 // TypeInfo
 //
 
-#define CX_TYPEINFO_DECL(fullName) \
-    extern struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_2(fullName, __typeinfo)
+#define CX_TYPEINFO_NAME(fullName) \
+    CX_ID_2(fullName, __typeinfo)
 
-#define CX_TYPEINFO_DEF(fullName, nameString, namespaceString, baseType, hash, flags) \
-    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _genericParamsArray); \
-    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _fieldsAray); \
-    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _functionsArray); \
-    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _interfacesArray); \
-    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_2(fullName, __typeinfo) = { \
+#define CX_TYPEINFO_DECL(fullName) \
+    extern struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName)
+
+#define CX_STRUCT_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \
+    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
         .Hash = hash,\
         .Flags = flags, \
         .Size = sizeof(struct fullName), \
         .Name = &nameString, \
         .Namespace = &namespaceString, \
-        .GenericParams = CX_ID_4(_, fullName, __typeinfo, _genericParamsArray), \
+        /* TODO: .GenericParams = CX_ID_4(_, fullName, __typeinfo, _genericParamsArray),*/ \
+        .BaseType = CX_NULL, \
+        /* TODO: .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray),*/ \
+        /* TODO: .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsArray),*/ \
+        /* TODO: .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray)*/ \
+    }
+
+#define CX_CLASS_TYPEINFO_DEF(fullName, nameString, namespaceString, baseType, hash, flags) \
+    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
+        .Hash = hash,\
+        .Flags = flags, \
+        .Size = sizeof(struct fullName), \
+        .Name = &nameString, \
+        .Namespace = &namespaceString, \
+        /* TODO: .GenericParams = CX_ID_4(_, fullName, __typeinfo, _genericParamsArray),*/ \
         .BaseType = { \
             ._obj = baseType\
         },\
-        .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray), \
-        .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsAray), \
-        .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray) \
+        /* TODO: .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray),*/ \
+        /* TODO: .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsArray),*/ \
+        /* TODO: .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray)*/ \
     }
+
+#define CX_TYPEINFO_GENERIC_PARAMS_EMPTY \
+    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _genericParamsArray) = CX_ARRAY_EMPTY
 
 #define CX_GET_TYPEINFO(obj) (((struct CX_ID_4(cxcore, System, Reflection, TypeInfo)*)CX_GET_VTABLE(obj))[0])
 

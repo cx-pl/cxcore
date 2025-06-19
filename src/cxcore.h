@@ -198,207 +198,273 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, Void)) {
 // Function declarations
 //
 
-extern CX_EXPORT cx_ulong CX_ID_4(cxcore, System, Object, GetHash)(
-    struct CX_ID_3(cxcore, System, Object)* __this
+extern CX_EXPORT void CX_ID_4(cxcore, System, Object, __constructor)(
+    struct CX_ID_3(cxcore, System, Object)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(    
+extern CX_EXPORT void CX_ID_4(cxcore, System, Nullable, __constructor)(
+    struct CX_ID_3(cxcore, System, Nullable)* __this,
+    cx_ptr obj
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, Reflection, VersionInfo, __constructor)(
+    struct CX_ID_4(cxcore, System, Reflection, VersionInfo)* __this,
+    cx_int major,
+    cx_int minor,
+    cx_int patch,
+    cx_int revision
+);
+extern CX_EXPORT void CX_ID_4(cxcore, System, Array, __constructor)(
+    struct CX_ID_3(cxcore, System, Array)* __this,
+    cx_uint length
+);
+extern void CX_ID_4(cxcore, System, Attribute, __constructor)(
+    struct CX_ID_3(cxcore, System, Attribute)* __this    
+);
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(
     cx_char c,
     cx_char min,
     cx_char max
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsDigit)(    
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsDigit)(
     cx_char c
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsLetter)(    
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsLetter)(
     cx_char c
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsWhiteSpace)(    
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsWhiteSpace)(
     cx_char c
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsLower)(    
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsLower)(
     cx_char c
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsUpper)(    
+extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsUpper)(
     cx_char c
 );
 extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Char, ToLower)(
-    struct CX_ID_3(cxcore, System, Char)* __this
+    struct CX_ID_3(cxcore, System, Char)* __this    
 );
 extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Char, ToUpper)(
-    struct CX_ID_3(cxcore, System, Char)* __this
+    struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(    
+extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(
     cx_uint length
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, ReadLine)();
-extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, Write)(    
+extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, Write)(
     struct CX_ID_3(cxcore, System, String)* str
 );
-extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(    
+extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(
     struct CX_ID_3(cxcore, System, String)* str
+);
+extern CX_EXPORT void CX_ID_4(cxcore, System, DateTime, __constructor)(
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
+    cx_ulong ticks,
+    cx_short offset
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
+    cx_int year,
+    cx_int month,
+    cx_int day,
+    cx_int hour,
+    cx_int minute,
+    cx_int second,
+    cx_int millisecond,
+    cx_short offset
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddYears)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int years
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMonths)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int months
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddDays)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int days
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddHours)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int hours
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMinutes)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int minutes
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddSeconds)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int seconds
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMilliseconds)(
-    struct CX_ID_3(cxcore, System, DateTime)* __this
-,    
+    struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int milliseconds
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, Throw)(    
+extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, __constructor)(
+    struct CX_ID_3(cxcore, System, Exception)* __this    
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _2)(
+    struct CX_ID_3(cxcore, System, Exception)* __this,
+    struct CX_ID_3(cxcore, System, String)* message
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, Exception)* __this,
+    struct CX_ID_3(cxcore, System, String)* message,
+    struct CX_ID_3(cxcore, System, Exception)* innerException
+);
+extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, Throw)(
     struct CX_ID_3(cxcore, System, Exception)* exception
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, IDateTimeProvider, GetUtcNow)(
-    struct CX_ID_3(cxcore, System, IDateTimeProvider)* __this
+    struct CX_ID_3(cxcore, System, IDateTimeProvider)* __this    
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, IDateTimeProvider, GetLocalNow)(
-    struct CX_ID_3(cxcore, System, IDateTimeProvider)* __this
+    struct CX_ID_3(cxcore, System, IDateTimeProvider)* __this    
 );
 extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, IReader, Read)(
-    struct CX_ID_3(cxcore, System, IReader)* __this
-,    
+    struct CX_ID_3(cxcore, System, IReader)* __this,
     cx_uint length,
     cx_ptr buf
 );
 extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, IWriter, Write)(
-    struct CX_ID_3(cxcore, System, IWriter)* __this
-,    
+    struct CX_ID_3(cxcore, System, IWriter)* __this,
     cx_uint length,
     cx_ptr buf
 );
-extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(    
+extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
     cx_uint size
 );
-extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(    
+extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(
     cx_ptr block,
     cx_uint size
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Free)(    
+extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Free)(
     cx_ptr block
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Copy)(    
+extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Copy)(
     cx_ptr dest,
     cx_ptr src,
     cx_uint size
 );
+extern CX_EXPORT void CX_ID_4(cxcore, System, Random, __constructor)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
+    cx_uint seed
+);
 extern CX_EXPORT struct CX_ID_3(cxcore, System, Random) CX_ID_4(cxcore, System, Random, Create)();
 extern CX_EXPORT cx_byte CX_ID_4(cxcore, System, Random, NextByte)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_byte CX_ID_4(cxcore, System, Random, NextByte)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_byte CX_ID_5(cxcore, System, Random, NextByte, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_byte min,
     cx_byte max
 );
 extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Random, NextChar)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_char min,
     cx_char max
 );
 extern CX_EXPORT cx_short CX_ID_4(cxcore, System, Random, NextShort)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_short CX_ID_4(cxcore, System, Random, NextShort)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_short CX_ID_5(cxcore, System, Random, NextShort, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_short min,
     cx_short max
 );
 extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Random, NextInt)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Random, NextInt)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Random, NextInt, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_int min,
     cx_int max
 );
 extern CX_EXPORT cx_long CX_ID_4(cxcore, System, Random, NextLong)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_4(cxcore, System, Random, NextLong)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Random, NextLong, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_long min,
     cx_long max
 );
 extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Random, NextFloat)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Random, NextFloat)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Random, NextFloat, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_float min,
     cx_float max
 );
 extern CX_EXPORT cx_double CX_ID_4(cxcore, System, Random, NextDouble)(
-    struct CX_ID_3(cxcore, System, Random)* __this
+    struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_double CX_ID_4(cxcore, System, Random, NextDouble)(
-    struct CX_ID_3(cxcore, System, Random)* __this
-,    
+extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Random, NextDouble, _2)(
+    struct CX_ID_3(cxcore, System, Random)* __this,
     cx_double min,
     cx_double max
 );
+extern void CX_ID_4(cxcore, System, String, __constructor)(
+    struct CX_ID_3(cxcore, System, String)* __this    
+);
+extern void CX_ID_5(cxcore, System, String, __constructor, _2)(
+    struct CX_ID_3(cxcore, System, String)* __this,
+    cx_uint length,
+    cx_ptr data
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, String, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, String)* __this,
+    cx_uint length,
+    cx_char ch
+);
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(
-    struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this
+    struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this    
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)(
-    struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this
+    struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this    
+);
+extern CX_EXPORT void CX_ID_4(cxcore, System, TimeSpan, __constructor)(
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
+    cx_ulong ticks
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
+    cx_int days,
+    cx_int hours,
+    cx_int minutes,
+    cx_int seconds,
+    cx_int milliseconds
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
+    struct CX_ID_3(cxcore, System, DateTime) from,
+    struct CX_ID_3(cxcore, System, DateTime) to
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(
-    struct CX_ID_3(cxcore, System, TimeSpan)* __this
-,    
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_int days
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddHours)(
-    struct CX_ID_3(cxcore, System, TimeSpan)* __this
-,    
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_int hours
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMinutes)(
-    struct CX_ID_3(cxcore, System, TimeSpan)* __this
-,    
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_int minutes
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddSeconds)(
-    struct CX_ID_3(cxcore, System, TimeSpan)* __this
-,    
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_int seconds
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMilliseconds)(
-    struct CX_ID_3(cxcore, System, TimeSpan)* __this
-,    
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_int milliseconds
+);
+extern CX_EXPORT void CX_ID_4(cxcore, System, Uuid, __constructor)(
+    struct CX_ID_3(cxcore, System, Uuid)* __this,
+    cx_uint a,
+    cx_uint b,
+    cx_uint c,
+    cx_uint d
 );
 
 
