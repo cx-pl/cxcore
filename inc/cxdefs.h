@@ -161,9 +161,7 @@
 #define CX_GET_VTABLE(obj) (((cx_ptr*)(obj))[0])
 
 #define CX_INIT_VTABLE(obj, fullName) \
-    if (CX_GET_VTABLE(obj)) { \
-        CX_GET_VTABLE(obj) = CX_ID_2(fullName, __vtable); \
-    }
+    CX_GET_VTABLE(obj) = &CX_ID_2(fullName, __vtable)
 
 //
 // TypeInfo

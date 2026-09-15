@@ -6,6 +6,8 @@
 
 struct CX_ID_3(cxcore, System, Array);
 
+CX_EXPORT cx_ptr cx_object_new(cx_uint size);
+
 CX_EXPORT struct CX_ID_3(cxcore, System, Array)* cx_array_new(
     cx_uint length,
     cx_uint elementSize);

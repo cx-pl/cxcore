@@ -5,5 +5,5 @@ target_sources(cxcore
         cxtypes.h)
 
 target_include_directories(cxcore
-    PRIVATE
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})
