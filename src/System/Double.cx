@@ -3,7 +3,7 @@ namespace System;
 public struct Double {
     private double _value;
 
-    public static double MinValue { extern const get; }
-    public static double MaxValue { extern const get; }
+    public static extern const double MinValue;
+    public static extern const double MaxValue;
     public int Sign { extern const get; }
 }

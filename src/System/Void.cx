@@ -1,5 +1,5 @@
 namespace System;
 
 public struct Void {
-    public static Void Unit { extern const get; }
+    public static extern Void Unit;
 }

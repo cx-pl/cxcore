@@ -7,12 +7,12 @@
 CX_STRING_DEF(SystemName, "Windows");
 CX_STRING_DEF(NewLine, "\r\n");
 
-struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, __get, SystemName)(
+const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, SystemName, __const_get)(
 ) {
     return &SystemName;
 }
 
-struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, __get, NewLine)(
+const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, NewLine, __const_get)(
 ) {
     return &NewLine;
 }

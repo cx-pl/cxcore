@@ -11,4 +11,5 @@ public struct Char {
     public static extern bool IsUpper(char c);
     public extern char ToLower() const;
     public extern char ToUpper() const;
+    public extern int NumBytes() const;
 }

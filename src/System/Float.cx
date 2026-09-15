@@ -3,7 +3,7 @@ namespace System;
 public struct Float {
     private float _value;
 
-    public static float MinValue { extern const get; }
-    public static float MaxValue { extern const get; }
+    public static extern const float MinValue;
+    public static extern const float MaxValue;
     public int Sign { extern const get; }
 }

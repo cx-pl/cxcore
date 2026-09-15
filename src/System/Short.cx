@@ -3,6 +3,6 @@ namespace System;
 public struct Short {
     private short _value;
 
-    public static short MinValue { extern const get; }
-    public static short MaxValue { extern const get; }
+    public static extern const short MinValue;
+    public static extern const short MaxValue;
 }

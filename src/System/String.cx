@@ -7,12 +7,12 @@ public final class String {
     public static const String Empty { extern const get; }
     public uint Length { extern const get; }
     public char Item { 
-        extern const get(uint index); 
-        extern set(uint index, char value);
+        extern const get(uint index);
     }
 
     // public static extern string Format(const string format, params const object[] args);
     private extern constructor();
     private extern constructor(uint length, ptr data);
     public extern constructor(uint length, char ch);
+    // TODO: public extern IEnumerator<char> GetEnumerator() const;
 }

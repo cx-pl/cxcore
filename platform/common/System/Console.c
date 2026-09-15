@@ -71,23 +71,22 @@ struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, ReadLin
 }
 
 cx_uint CX_ID_4(cxcore, System, Console, Write)(    
-    struct CX_ID_3(cxcore, System, String)* str
+    const struct CX_ID_3(cxcore, System, String)* str
 ) {
     cx_uint n;
-    char* buf = str->_data;
+    const char* buf = str->_data;
 
-    // TODO: Support UTF-8 variable-length characters
-    for (n = 0; n < str->_length; n++) {
-        putchar(buf[n]);
+    for (n = 0; n < str->_length; n++, buf += CX_ID_4(cxcore, System, Char, NumBytes)((const struct CX_ID_3(cxcore, System, Char)*)buf)) {
+        putchar(*(int*)buf);
     }
 
     return n;
 }
 
 cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(    
-    struct CX_ID_3(cxcore, System, String)* str
+    const struct CX_ID_3(cxcore, System, String)* str
 ) {
     return
         CX_ID_4(cxcore, System, Console, Write)(str) +
-        CX_ID_4(cxcore, System, Console, Write)(CX_ID_5(cxcore, System, Environment, __get, NewLine)());
+        CX_ID_4(cxcore, System, Console, Write)(CX_ID_5(cxcore, System, Environment, NewLine, __const_get)());
 }

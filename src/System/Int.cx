@@ -3,6 +3,6 @@ namespace System;
 public struct Int {
     private int _value;
 
-    public static int MinValue { extern const get; }
-    public static int MaxValue { extern const get; }
+    public static extern const int MinValue;
+    public static extern const int MaxValue;
 }

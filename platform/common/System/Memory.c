@@ -2,7 +2,7 @@
 #include <string.h>
 #include "../../../src/cxcore.h"
 
-// Note: This is the simplest implementation. We should have GC implemented here.
+// Note: This is the naive implementation. There should be some form of GC implemented here.
 
 cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
     cx_uint size

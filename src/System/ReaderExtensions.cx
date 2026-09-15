@@ -13,7 +13,7 @@ namespace System;
 //     public extern ulong ReadULong();
 //     public extern float ReadFloat();
 //     public extern double ReadDouble();
-//     // public extern decimal ReadDecimal();
+//     public extern decimal ReadDecimal();
 //     public extern DateTime ReadDateTime();
 //     public extern TimeSpan ReadTimeSpan();
 //     public extern string ReadString(uint maxLength);

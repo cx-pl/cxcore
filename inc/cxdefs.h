@@ -160,6 +160,11 @@
 
 #define CX_GET_VTABLE(obj) (((cx_ptr*)(obj))[0])
 
+#define CX_INIT_VTABLE(obj, fullName) \
+    if (CX_GET_VTABLE(obj)) { \
+        CX_GET_VTABLE(obj) = CX_ID_2(fullName, __vtable); \
+    }
+
 //
 // TypeInfo
 //
@@ -193,8 +198,32 @@
         .Namespace = &namespaceString, \
         /* TODO: .GenericParams = CX_ID_4(_, fullName, __typeinfo, _genericParamsArray),*/ \
         .BaseType = { \
-            ._obj = baseType\
-        },\
+            ._obj = &baseType\
+        }, \
+        /* TODO: .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray),*/ \
+        /* TODO: .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsArray),*/ \
+        /* TODO: .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray)*/ \
+    }
+
+#define CX_STATIC_CLASS_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \
+    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
+        .Hash = hash,\
+        .Flags = flags, \
+        .Size = 0, \
+        .Name = &nameString, \
+        .Namespace = &namespaceString, \
+        .BaseType = CX_NULL, \
+    }
+
+#define CX_INTERFACE_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \
+    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
+        .Hash = hash,\
+        .Flags = flags, \
+        .Size = 0, \
+        .Name = &nameString, \
+        .Namespace = &namespaceString, \
+        /* TODO: .GenericParams = CX_ID_4(_, fullName, __typeinfo, _genericParamsArray),*/ \
+        .BaseType = CX_NULL, \
         /* TODO: .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray),*/ \
         /* TODO: .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsArray),*/ \
         /* TODO: .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray)*/ \
@@ -221,34 +250,34 @@
 // Reflection flags
 //
 
-#define CX_REFLECTION_FLAG_CONST_CALL               0x01
-#define CX_REFLECTION_FLAG_CONST_TYPE               0x02
-#define CX_REFLECTION_FLAG_STATIC                   0x04
-#define CX_REFLECTION_FLAG_VIRTUAL                  0x08
-#define CX_REFLECTION_FLAG_ABSTRACT                 0x10
-#define CX_REFLECTION_FLAG_FINAL                    0x20
-#define CX_REFLECTION_FLAG_EXTERN                   0x40
-#define CX_REFLECTION_FLAG_GENERIC                  0x80
+#define CX_REFLECTION_FLAG_CONST_CALL               (0x01)
+#define CX_REFLECTION_FLAG_CONST_TYPE               (0x02)
+#define CX_REFLECTION_FLAG_STATIC                   (0x04)
+#define CX_REFLECTION_FLAG_VIRTUAL                  (0x08)
+#define CX_REFLECTION_FLAG_ABSTRACT                 (0x10)
+#define CX_REFLECTION_FLAG_FINAL                    (0x20)
+#define CX_REFLECTION_FLAG_EXTERN                   (0x40)
+#define CX_REFLECTION_FLAG_GENERIC                  (0x80)
 
-#define CX_REFLECTION_FLAG_VISIBILITY_HIDDEN        0x00 << 8
-#define CX_REFLECTION_FLAG_VISIBILITY_PUBLIC        0x01 << 8
-#define CX_REFLECTION_FLAG_VISIBILITY_PROTECTED     0x02 << 8
-#define CX_REFLECTION_FLAG_VISIBILITY_PRIVATE       0x04 << 8
-#define CX_REFLECTION_FLAG_VISIBILITY_INTERNAL      0x08 << 8
-#define CX_REFLECTION_FLAG_GENERIC_PARAM_BASE       0x10 << 8
-#define CX_REFLECTION_FLAG_GENERIC_PARAM_SPEC       0x20 << 8
+#define CX_REFLECTION_FLAG_VISIBILITY_HIDDEN        (0x00 << 8)
+#define CX_REFLECTION_FLAG_VISIBILITY_PUBLIC        (0x01 << 8)
+#define CX_REFLECTION_FLAG_VISIBILITY_PROTECTED     (0x02 << 8)
+#define CX_REFLECTION_FLAG_VISIBILITY_PRIVATE       (0x04 << 8)
+#define CX_REFLECTION_FLAG_VISIBILITY_INTERNAL      (0x08 << 8)
+#define CX_REFLECTION_FLAG_GENERIC_PARAM_BASE       (0x10 << 8)
+#define CX_REFLECTION_FLAG_GENERIC_PARAM_SPEC       (0x20 << 8)
 
-#define CX_REFLECTION_FLAG_TYPE_CLASS               0x01 << 16
-#define CX_REFLECTION_FLAG_TYPE_STRUCT              0x02 << 16
-#define CX_REFLECTION_FLAG_TYPE_INTERFACE           0x04 << 16
-#define CX_REFLECTION_FLAG_TYPE_ENUM                0x08 << 16
-#define CX_REFLECTION_FLAG_TYPE_CUSTOM              0x40 << 16
-#define CX_REFLECTION_FLAG_TYPE_GENERIC             0x80 << 16
+#define CX_REFLECTION_FLAG_TYPE_CLASS               (0x01 << 16)
+#define CX_REFLECTION_FLAG_TYPE_STRUCT              (0x02 << 16)
+#define CX_REFLECTION_FLAG_TYPE_INTERFACE           (0x04 << 16)
+#define CX_REFLECTION_FLAG_TYPE_ENUM                (0x08 << 16)
+#define CX_REFLECTION_FLAG_TYPE_CUSTOM              (0x40 << 16)
+#define CX_REFLECTION_FLAG_TYPE_GENERIC             (0x80 << 16)
 
-#define CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR     0x01 << 24
-#define CX_REFLECTION_FLAG_FUNCTION_DESTRUCTOR      0x02 << 24
-#define CX_REFLECTION_FLAG_FUNCTION_OPERATOR        0x04 << 24
-#define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET    0x10 << 24
-#define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_SET    0x20 << 24
+#define CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR     (0x01 << 24)
+#define CX_REFLECTION_FLAG_FUNCTION_DESTRUCTOR      (0x02 << 24)
+#define CX_REFLECTION_FLAG_FUNCTION_OPERATOR        (0x04 << 24)
+#define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET    (0x10 << 24)
+#define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_SET    (0x20 << 24)
 
 #endif // __CX_DEFS_H__
