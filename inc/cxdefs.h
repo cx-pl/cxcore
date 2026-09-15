@@ -131,7 +131,7 @@
 #define CX_STRING_DEF(name, text) \
     struct CX_ID_3(cxcore, System, String) name = { \
         .__base = { \
-            .__vtable = &CX_ID_4(cxcore, System, String, __vtable) \
+            .__vtable = CX_ID_4(cxcore, System, String, __vtable) \
         }, \
         ._length = sizeof(text) - 1, \
         ._data = text \
@@ -146,14 +146,18 @@
 //
 
 #define CX_VTABLE_DECL(fullName) \
-    extern cx_ptr CX_ID_2(fullName, __vtable)
+    extern union cx_vtable_entry CX_ID_2(fullName, __vtable)[]
 
 #define CX_BEGIN_VTABLE_DEF(fullName) \
-    cx_ptr CX_ID_2(fullName, __vtable) = { \
-        &CX_ID_2(fullName, __typeinfo),
+    union cx_vtable_entry CX_ID_2(fullName, __vtable)[] = { \
+        { .data = &CX_ID_2(fullName, __typeinfo) },
+
+#define CX_BEGIN_INTERFACE_VTABLE_DEF(name, interfaceFullName) \
+    union cx_vtable_entry name[] = { \
+        { .data = &CX_ID_2(interfaceFullName, __typeinfo) },
 
 #define CX_VTABLE_ENTRY(entry) \
-    &entry,
+    { .function = (cx_vtable_function)(entry) },
 
 #define CX_END_VTABLE_DEF \
     }
@@ -161,7 +165,7 @@
 #define CX_GET_VTABLE(obj) (((cx_ptr*)(obj))[0])
 
 #define CX_INIT_VTABLE(obj, fullName) \
-    CX_GET_VTABLE(obj) = &CX_ID_2(fullName, __vtable)
+    CX_GET_VTABLE(obj) = CX_ID_2(fullName, __vtable)
 
 //
 // TypeInfo
@@ -230,7 +234,7 @@
 #define CX_TYPEINFO_GENERIC_PARAMS_EMPTY \
     struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _genericParamsArray) = CX_ARRAY_EMPTY
 
-#define CX_GET_TYPEINFO(obj) (((struct CX_ID_4(cxcore, System, Reflection, TypeInfo)*)CX_GET_VTABLE(obj))[0])
+#define CX_GET_TYPEINFO(obj) (*((struct CX_ID_4(cxcore, System, Reflection, TypeInfo)*)((union cx_vtable_entry*)CX_GET_VTABLE(obj))[0].data))
 
 //
 // Types

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "../../../src/cxcore.h"
 
-extern cx_ptr CX_ID_4(cxcore, System, Array, __vtable);
+extern union cx_vtable_entry CX_ID_4(cxcore, System, Array, __vtable)[];
 
 CX_EXPORT struct CX_ID_3(cxcore, System, Array)* cx_array_new(
     cx_uint length,
@@ -12,7 +12,7 @@ CX_EXPORT struct CX_ID_3(cxcore, System, Array)* cx_array_new(
         abort();
     }
 
-    array->__base.__vtable = &CX_ID_4(cxcore, System, Array, __vtable);
+    array->__base.__vtable = CX_ID_4(cxcore, System, Array, __vtable);
     array->_length = length;
     if (length != 0) {
         array->_data = calloc(length, elementSize);
