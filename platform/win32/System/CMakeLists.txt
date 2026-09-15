@@ -1,3 +1,4 @@
 target_sources(cxcore 
     PRIVATE
-        Environment.c)
+        Environment.c
+		SystemDateTimeProvider.c)
