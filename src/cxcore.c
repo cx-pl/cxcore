@@ -47,6 +47,55 @@ CX_STRING_DEF(CX_ID_2(__namespace, System), "System");
 CX_STRING_DEF(CX_ID_3(__namespace, System, Reflection), "System.Reflection");
 
 //
+// Static fields
+//
+
+const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, FalseString);
+const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, TrueString);
+cx_byte CX_ID_4(cxcore, System, Byte, MinValue);
+cx_byte CX_ID_4(cxcore, System, Byte, MaxValue);
+cx_double CX_ID_4(cxcore, System, Double, MinValue);
+cx_double CX_ID_4(cxcore, System, Double, MaxValue);
+cx_float CX_ID_4(cxcore, System, Float, MinValue);
+cx_float CX_ID_4(cxcore, System, Float, MaxValue);
+cx_int CX_ID_4(cxcore, System, Int, MinValue);
+cx_int CX_ID_4(cxcore, System, Int, MaxValue);
+cx_long CX_ID_4(cxcore, System, Long, MinValue);
+cx_long CX_ID_4(cxcore, System, Long, MaxValue);
+cx_double CX_ID_4(cxcore, System, Math, E);
+cx_double CX_ID_4(cxcore, System, Math, Pi);
+cx_double CX_ID_4(cxcore, System, Math, Tau);
+cx_double CX_ID_4(cxcore, System, Math, Sqrt2);
+cx_double CX_ID_4(cxcore, System, Math, Sqrt3);
+cx_sbyte CX_ID_4(cxcore, System, SByte, MinValue);
+cx_sbyte CX_ID_4(cxcore, System, SByte, MaxValue);
+cx_short CX_ID_4(cxcore, System, Short, MinValue);
+cx_short CX_ID_4(cxcore, System, Short, MaxValue);
+cx_uint CX_ID_4(cxcore, System, UInt, MinValue);
+cx_uint CX_ID_4(cxcore, System, UInt, MaxValue);
+cx_ulong CX_ID_4(cxcore, System, ULong, MinValue);
+cx_ulong CX_ID_4(cxcore, System, ULong, MaxValue);
+cx_ushort CX_ID_4(cxcore, System, UShort, MinValue);
+cx_ushort CX_ID_4(cxcore, System, UShort, MaxValue);
+struct CX_ID_3(cxcore, System, Uuid) CX_ID_4(cxcore, System, Uuid, Zero);
+struct CX_ID_3(cxcore, System, Void) CX_ID_4(cxcore, System, Void, Unit);
+
+//
+// Interface dispatch thunks
+//
+
+extern union cx_vtable_entry CX_ID_7(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable)[];
+
+static struct CX_ID_3(cxcore, System, DateTime) CX_ID_8(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable, slot_1)(cx_ptr __root) {
+    return CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)((const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)*)__root);
+}
+
+static struct CX_ID_3(cxcore, System, DateTime) CX_ID_8(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable, slot_2)(cx_ptr __root) {
+    return CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)((const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)*)__root);
+}
+
+
+//
 // TypeInfos
 //
 
@@ -107,14 +156,18 @@ CX_END_VTABLE_DEF;
 CX_STRUCT_TYPEINFO_DEF(CX_ID_3(cxcore, System, Float), CX_ID_3(__name, System, Float), CX_ID_2(__namespace, System), 0xE3544ABBD54A5C50, CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_STRUCT);
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, IDateTimeProvider))
+{ .function = (cx_vtable_function)0 },
+{ .function = (cx_vtable_function)0 },
 CX_END_VTABLE_DEF;
 CX_INTERFACE_TYPEINFO_DEF(CX_ID_3(cxcore, System, IDateTimeProvider), CX_ID_3(__name, System, IDateTimeProvider), CX_ID_2(__namespace, System), 0x629F60CC6CF45084, CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_INTERFACE);
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, IReader))
+{ .function = (cx_vtable_function)0 },
 CX_END_VTABLE_DEF;
 CX_INTERFACE_TYPEINFO_DEF(CX_ID_3(cxcore, System, IReader), CX_ID_3(__name, System, IReader), CX_ID_2(__namespace, System), 0x2759E6C2F9286CDB, CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_INTERFACE);
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, IWriter))
+{ .function = (cx_vtable_function)0 },
 CX_END_VTABLE_DEF;
 CX_INTERFACE_TYPEINFO_DEF(CX_ID_3(cxcore, System, IWriter), CX_ID_3(__name, System, IWriter), CX_ID_2(__namespace, System), 0x48DAE5D4E97F1C21, CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_INTERFACE);
 
@@ -165,6 +218,10 @@ CX_CLASS_TYPEINFO_DEF(CX_ID_3(cxcore, System, String), CX_ID_3(__name, System, S
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, SystemDateTimeProvider))
 CX_END_VTABLE_DEF;
 CX_CLASS_TYPEINFO_DEF(CX_ID_3(cxcore, System, SystemDateTimeProvider), CX_ID_3(__name, System, SystemDateTimeProvider), CX_ID_2(__namespace, System), CX_ID_4(cxcore, System, Object, __typeinfo), 0xCCBF40D50C28DF82, CX_REFLECTION_FLAG_FINAL | CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_CLASS);
+CX_BEGIN_INTERFACE_VTABLE_DEF(CX_ID_7(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable), CX_ID_3(cxcore, System, IDateTimeProvider))
+CX_VTABLE_ENTRY(CX_ID_8(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable, slot_1))
+CX_VTABLE_ENTRY(CX_ID_8(cxcore, System, SystemDateTimeProvider, __iface, System, IDateTimeProvider, __vtable, slot_2))
+CX_END_VTABLE_DEF;
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, TimeSpan))
 CX_END_VTABLE_DEF;
@@ -189,3 +246,8 @@ CX_STRUCT_TYPEINFO_DEF(CX_ID_3(cxcore, System, Uuid), CX_ID_3(__name, System, Uu
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Void))
 CX_END_VTABLE_DEF;
 CX_STRUCT_TYPEINFO_DEF(CX_ID_3(cxcore, System, Void), CX_ID_3(__name, System, Void), CX_ID_2(__namespace, System), 0x4A3D776A6B34A455, CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_STRUCT);
+
+//
+// Functions
+//
+
