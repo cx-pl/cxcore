@@ -3,13 +3,72 @@ namespace System;
 public struct Char {
     private char _value;
 
-    public static extern bool IsBetween(char c, char min, char max);
-    public static extern bool IsDigit(char c);
-    public static extern bool IsLetter(char c);
-    public static extern bool IsWhiteSpace(char c);
-    public static extern bool IsLower(char c);
-    public static extern bool IsUpper(char c);
-    public extern char ToLower() const;
-    public extern char ToUpper() const;
-    public extern int NumBytes() const;
+    public bool IsDigit {
+        const get {
+            return IsBetween(_value, '0', '9');
+        }
+    }
+
+    public bool IsLower {
+        const get {
+            return IsBetween(_value, 'a', 'z');
+        }
+    }
+
+    public bool IsUpper{
+        const get {
+            return IsBetween(_value, 'A', 'Z');
+        }
+    }
+
+    public bool IsLetter {
+        const get {
+            return IsLower || IsUpper;
+        }
+    }
+
+    public bool IsWhiteSpace {
+        const get {
+            return 
+                _value == ' ' ||
+                _value == '\t' ||
+                _value == '\r' ||
+                _value == '\n';
+        }
+    }
+
+    public static bool IsBetween(char c, char min, char max) {
+        return c >= min && c <= max;
+    }
+
+    public char ToLower() const {
+        return this.IsUpper
+            ? _value + 'a' - 'A'
+            : _value;
+    }
+
+    public char ToUpper() const {
+        return this.IsLower
+            ? _value + 'A' - 'a'
+            : _value;
+    }
+
+    /*public int NumBytes() const {
+        // 0xxxxxxx -> 1 byte
+        // 110xxxxx 10xxxxxx -> 2 bytes
+        // 1110xxxx 10xxxxxx 10xxxxxx -> 3 bytes
+        // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx -> 4 bytes
+
+        if (_value & 0x80 == 0x00) {
+            return 1;
+        } else if ((_value & 0xC0E0) == 0x80C0) {
+            return 2;
+        } else if ((_value & 0xC0C0F0) == 0x8080E0) {
+            return 3;
+        } else if ((_value & 0xC0C0C0F8) == 0x808080F0) {
+            return 4;
+        } else {
+            return -1; // Invalid UTF-8 character
+        }
+    }*/
 }

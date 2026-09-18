@@ -4,7 +4,7 @@ public struct DateTime {
     private ulong _ticks;
     private short _offset;
 
-    public ulong Ticks { extern const get; }
+    public ulong Milliseconds { extern const get; }
     public short Offset { extern const get; }
     public int Year { extern const get; }
     public int Month { extern const get; }

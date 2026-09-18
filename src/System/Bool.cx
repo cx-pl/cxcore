@@ -3,6 +3,6 @@ namespace System;
 public struct Bool {
     private bool _value;
 
-    public static extern const string FalseString;
-    public static extern const string TrueString;
+    public static const string FalseString = "false";
+    public static const string TrueString = "true";
 }

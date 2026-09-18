@@ -45,13 +45,15 @@ CX_STRING_DEF(CX_ID_3(__name, System, Uuid), "Uuid");
 CX_STRING_DEF(CX_ID_3(__name, System, Void), "Void");
 CX_STRING_DEF(CX_ID_2(__namespace, System), "System");
 CX_STRING_DEF(CX_ID_3(__namespace, System, Reflection), "System.Reflection");
+CX_STRING_DEF(CX_ID_2(cxcore, __string_076DE6E730DF0B4C), "false");
+CX_STRING_DEF(CX_ID_2(cxcore, __string_18D10C7D2B4B04AA), "true");
 
 //
 // Static fields
 //
 
-const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, FalseString);
-const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, TrueString);
+const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, FalseString) = &CX_ID_2(cxcore, __string_076DE6E730DF0B4C);
+const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, TrueString) = &CX_ID_2(cxcore, __string_18D10C7D2B4B04AA);
 cx_byte CX_ID_4(cxcore, System, Byte, MinValue);
 cx_byte CX_ID_4(cxcore, System, Byte, MaxValue);
 cx_double CX_ID_4(cxcore, System, Double, MinValue);
@@ -250,4 +252,109 @@ CX_STRUCT_TYPEINFO_DEF(CX_ID_3(cxcore, System, Void), CX_ID_3(__name, System, Vo
 //
 // Functions
 //
+
+cx_bool CX_ID_5(cxcore, System, Char, IsDigit, __const_get)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return CX_ID_4(cxcore, System, Char, IsBetween)(__this->_value, '0', '9');
+}
+
+cx_bool CX_ID_5(cxcore, System, Char, IsLower, __const_get)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return CX_ID_4(cxcore, System, Char, IsBetween)(__this->_value, 'a', 'z');
+}
+
+cx_bool CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return CX_ID_4(cxcore, System, Char, IsBetween)(__this->_value, 'A', 'Z');
+}
+
+cx_bool CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return (CX_ID_5(cxcore, System, Char, IsLower, __const_get)(__this) || CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(__this));
+}
+
+cx_bool CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return ((((__this->_value == ' ') || (__this->_value == '\t')) || (__this->_value == '\r')) || (__this->_value == '\n'));
+}
+
+cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(cx_char c, cx_char min, cx_char max) {
+    return ((c >= min) && (c <= max));
+}
+
+cx_char CX_ID_4(cxcore, System, Char, ToLower)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return (CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(&(__this)) ? ((__this->_value + 'a') - 'A') : __this->_value);
+}
+
+cx_char CX_ID_4(cxcore, System, Char, ToUpper)(const struct CX_ID_3(cxcore, System, Char)* __this) {
+    return (CX_ID_5(cxcore, System, Char, IsLower, __const_get)(&(__this)) ? ((__this->_value + 'A') - 'a') : __this->_value);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, Hours, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    return (CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(__this) % 24l);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, Minutes, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    return (CX_ID_5(cxcore, System, TimeSpan, TotalMinutes, __const_get)(__this) % 60l);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, Seconds, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    return (CX_ID_5(cxcore, System, TimeSpan, TotalSeconds, __const_get)(__this) % 60l);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, Milliseconds, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    return __this->_milliseconds;
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, TotalDays, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    cx_long divider = (((24l * 60l) * 60l) * 1000l);
+    return (__this->_milliseconds / divider);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    cx_long divider = ((60l * 60l) * 1000l);
+    return (__this->_milliseconds / divider);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, TotalMinutes, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    cx_long divider = (60l * 1000l);
+    return (__this->_milliseconds / divider);
+}
+
+cx_long CX_ID_5(cxcore, System, TimeSpan, TotalSeconds, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
+    cx_long divider = 1000l;
+    return (__this->_milliseconds / divider);
+}
+
+void CX_ID_4(cxcore, System, TimeSpan, __constructor)(struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long milliseconds) {
+    __this->_milliseconds = milliseconds;
+}
+
+void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long days, cx_long hours, cx_long minutes, cx_long seconds, cx_long milliseconds) {
+    __this->_milliseconds = ((((((((days * 24l) * 60l) * 60l) * 1000l) + (((hours * 60l) * 60l) * 1000l)) + ((minutes * 60l) * 1000l)) + (seconds * 1000l)) + milliseconds);
+}
+
+struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long days) {
+    cx_long multiplier = (((24l * 60l) * 60l) * 1000l);
+    struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (days * multiplier))), __cx_new_0);
+}
+
+struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddHours)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long hours) {
+    cx_long multiplier = ((60l * 60l) * 1000l);
+    struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (hours * multiplier))), __cx_new_0);
+}
+
+struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMinutes)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long minutes) {
+    cx_long multiplier = (60l * 1000l);
+    struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (minutes * multiplier))), __cx_new_0);
+}
+
+struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddSeconds)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long seconds) {
+    cx_long multiplier = 1000l;
+    struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (seconds * multiplier))), __cx_new_0);
+}
+
+struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMilliseconds)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long milliseconds) {
+    struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + milliseconds)), __cx_new_0);
+}
 

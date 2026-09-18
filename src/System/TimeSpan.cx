@@ -1,34 +1,104 @@
 namespace System;
 
 public struct TimeSpan {
-    private ulong _ticks;
+    private long _milliseconds;
 
-    public int Ticks { extern const get; }
-    public int Days { extern const get; }
-    public int Hours { extern const get; }
-    public int Minutes { extern const get; }
-    public int Seconds { extern const get; }
-    public int Milliseconds { extern const get; }
-    public long TotalYears { extern const get; }
-    public long TotalMonths { extern const get; }
-    public long TotalWeeks { extern const get; }
-    public long TotalHours { extern const get; }
-    public long TotalMinutes { extern const get; }
-    public long TotalSeconds { extern const get; }
-    public long TotalMilliseconds { extern const get; }
+    public long Hours {
+        const get {
+            return TotalHours % 24l;
+        }
+    }
 
-    public extern constructor(ulong ticks);
-    public extern constructor(
-        int days, 
-        int hours = 0, 
-        int minutes = 0, 
-        int seconds = 0, 
-        int milliseconds = 0
-    );
-    public extern constructor(const DateTime from, const DateTime to);
-    public extern TimeSpan AddDays(int days) const;
-    public extern TimeSpan AddHours(int hours) const;
-    public extern TimeSpan AddMinutes(int minutes) const;
-    public extern TimeSpan AddSeconds(int seconds) const;
-    public extern TimeSpan AddMilliseconds(int milliseconds) const;
+    public long Minutes {
+        const get {
+            return TotalMinutes % 60l;
+        }
+    }
+
+    public long Seconds {
+        const get {
+            return TotalSeconds % 60l;
+        }
+    }
+
+    public long Milliseconds {
+        const get { 
+            return _milliseconds; 
+        }  
+    }
+
+    public long TotalDays { 
+        const get {
+            const long divider = 24l * 60l * 60l * 1000l;
+            return _milliseconds / divider;
+        } 
+    }
+
+    public long TotalHours { 
+        const get {
+            const long divider = 60l * 60l * 1000l;
+            return _milliseconds / divider;
+        } 
+    }
+
+    public long TotalMinutes { 
+        const get {
+            const long divider = 60l * 1000l;
+            return _milliseconds / divider;
+        } 
+    }
+
+    public long TotalSeconds { 
+        const get {
+            const long divider = 1000l;
+            return _milliseconds / divider;
+        } 
+    }
+
+    public constructor(long milliseconds) {
+        _milliseconds = milliseconds;
+    }
+
+    public constructor(
+        long days, 
+        long hours, 
+        long minutes, 
+        long seconds, 
+        long milliseconds
+    ) {
+        _milliseconds =
+            days * 24l * 60l * 60l * 1000l +
+            hours * 60l * 60l * 1000l +
+            minutes * 60l * 1000l +
+            seconds * 1000l +
+            milliseconds;
+    }
+
+    // public constructor(const DateTime from, const DateTime to) {
+    //     _milliseconds = (long)to.Milliseconds - (long)from.Milliseconds;
+    // }
+
+    public TimeSpan AddDays(long days) const {
+        const long multiplier = 24l * 60l * 60l * 1000l;
+        return new TimeSpan(_milliseconds + days * multiplier);
+    }
+
+    public TimeSpan AddHours(long hours) const {
+        const long multiplier = 60l * 60l * 1000l;
+        return new TimeSpan(_milliseconds + hours * multiplier);
+    }
+
+    public TimeSpan AddMinutes(long minutes) const {
+        const long multiplier = 60l * 1000l;
+        return new TimeSpan(_milliseconds + minutes * multiplier);
+    }
+
+    public TimeSpan AddSeconds(long seconds) const {
+        const long multiplier = 1000l;
+        return new TimeSpan(_milliseconds + seconds * multiplier);
+    }
+
+    public TimeSpan AddMilliseconds(long milliseconds) const {
+        return new TimeSpan(_milliseconds + milliseconds);
+    }
 }
