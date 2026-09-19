@@ -285,6 +285,192 @@ cx_char CX_ID_4(cxcore, System, Char, ToUpper)(const struct CX_ID_3(cxcore, Syst
     return (CX_ID_5(cxcore, System, Char, IsLower, __const_get)(&(__this)) ? ((__this->_value + 'A') - 'a') : __this->_value);
 }
 
+cx_long CX_ID_5(cxcore, System, DateTime, Milliseconds, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return __this->_milliseconds;
+}
+
+cx_short CX_ID_5(cxcore, System, DateTime, Offset, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return __this->_offset;
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Year, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    cx_long gregorianCycleDays = 146097l;
+    cx_long cycles = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) / gregorianCycleDays);
+    cx_long remDays = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) % gregorianCycleDays);
+    cx_long currentYear = ((cycles * 400l) + 1l);
+    while (CX_TRUE)
+    {
+        cx_long daysInYear = (CX_ID_4(cxcore, System, DateTime, IsLeapYear)(currentYear) ? 366l : 365l);
+        if ((remDays >= daysInYear))
+        {
+            remDays -= daysInYear;
+            (currentYear++);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return currentYear;
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Month, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    cx_long gregorianCycleDays = 146097l;
+    cx_long cycles = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) / gregorianCycleDays);
+    cx_long remDays = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) % gregorianCycleDays);
+    cx_long currentYear = ((cycles * 400l) + 1l);
+    while (CX_TRUE)
+    {
+        cx_long daysInYear = (CX_ID_4(cxcore, System, DateTime, IsLeapYear)(currentYear) ? 366l : 365l);
+        if ((remDays >= daysInYear))
+        {
+            remDays -= daysInYear;
+            (currentYear++);
+        }
+        else
+        {
+            break;
+        }
+    }
+    cx_long currentMonth = 1l;
+    while ((remDays >= CX_ID_4(cxcore, System, DateTime, DaysInMonth)(currentMonth, currentYear)))
+    {
+        remDays -= CX_ID_4(cxcore, System, DateTime, DaysInMonth)(currentMonth, currentYear);
+        (currentMonth++);
+    }
+    return currentMonth;
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Day, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    cx_long gregorianCycleDays = 146097l;
+    cx_long cycles = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) / gregorianCycleDays);
+    cx_long remDays = (CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) % gregorianCycleDays);
+    cx_long currentYear = ((cycles * 400l) + 1l);
+    while (CX_TRUE)
+    {
+        cx_long daysInYear = (CX_ID_4(cxcore, System, DateTime, IsLeapYear)(currentYear) ? 366l : 365l);
+        if ((remDays >= daysInYear))
+        {
+            remDays -= daysInYear;
+            (currentYear++);
+        }
+        else
+        {
+            break;
+        }
+    }
+    cx_long currentMonth = 1l;
+    while ((remDays >= CX_ID_4(cxcore, System, DateTime, DaysInMonth)(currentMonth, currentYear)))
+    {
+        remDays -= CX_ID_4(cxcore, System, DateTime, DaysInMonth)(currentMonth, currentYear);
+        (currentMonth++);
+    }
+    return (remDays + 1l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, DayOfWeek, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return ((CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(__this) + 1l) % 7l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Hour, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (CX_ID_5(cxcore, System, DateTime, TotalHours, __const_get)(__this) % 24l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Minute, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (CX_ID_5(cxcore, System, DateTime, TotalMinutes, __const_get)(__this) % 60l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Second, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (CX_ID_5(cxcore, System, DateTime, TotalSeconds, __const_get)(__this) % 60l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, Millisecond, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (__this->_milliseconds % 1000l);
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (__this->_milliseconds / (((24l * 60l) * 60l) * 1000l));
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, TotalHours, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (__this->_milliseconds / ((60l * 60l) * 1000l));
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, TotalMinutes, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (__this->_milliseconds / (60l * 1000l));
+}
+
+cx_long CX_ID_5(cxcore, System, DateTime, TotalSeconds, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {
+    return (__this->_milliseconds / 1000l);
+}
+
+cx_long CX_ID_4(cxcore, System, DateTime, DaysInMonth)(cx_long month, cx_long year) {
+    switch (month)
+    {
+        case 1l:
+        {
+            return 31l;
+        }
+        case 2l:
+        {
+            return (CX_ID_4(cxcore, System, DateTime, IsLeapYear)(year) ? 29l : 28l);
+        }
+        case 3l:
+        {
+            return 31l;
+        }
+        case 4l:
+        {
+            return 30l;
+        }
+        case 5l:
+        {
+            return 31l;
+        }
+        case 6l:
+        {
+            return 30l;
+        }
+        case 7l:
+        {
+            return 31l;
+        }
+        case 8l:
+        {
+            return 31l;
+        }
+        case 9l:
+        {
+            return 30l;
+        }
+        case 10l:
+        {
+            return 31l;
+        }
+        case 11l:
+        {
+            return 30l;
+        }
+        case 12l:
+        {
+            return 31l;
+        }
+        default:
+        {
+            return 0l;
+        }
+    }
+}
+
+cx_bool CX_ID_4(cxcore, System, DateTime, IsLeapYear)(cx_long year) {
+    return ((((year % 4l) == 0l) && ((year % 100l) != 0l)) || ((year % 400l) == 0l));
+}
+
+void CX_ID_4(cxcore, System, DateTime, __constructor)(struct CX_ID_3(cxcore, System, DateTime)* __this, cx_long milliseconds, cx_short offset) {
+    __this->_milliseconds = milliseconds;
+    __this->_offset = offset;
+}
+
 cx_long CX_ID_5(cxcore, System, TimeSpan, Hours, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
     return (CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(__this) % 24l);
 }
@@ -302,23 +488,19 @@ cx_long CX_ID_5(cxcore, System, TimeSpan, Milliseconds, __const_get)(const struc
 }
 
 cx_long CX_ID_5(cxcore, System, TimeSpan, TotalDays, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
-    cx_long divider = (((24l * 60l) * 60l) * 1000l);
-    return (__this->_milliseconds / divider);
+    return (__this->_milliseconds / (((24l * 60l) * 60l) * 1000l));
 }
 
 cx_long CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
-    cx_long divider = ((60l * 60l) * 1000l);
-    return (__this->_milliseconds / divider);
+    return (__this->_milliseconds / ((60l * 60l) * 1000l));
 }
 
 cx_long CX_ID_5(cxcore, System, TimeSpan, TotalMinutes, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
-    cx_long divider = (60l * 1000l);
-    return (__this->_milliseconds / divider);
+    return (__this->_milliseconds / (60l * 1000l));
 }
 
 cx_long CX_ID_5(cxcore, System, TimeSpan, TotalSeconds, __const_get)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this) {
-    cx_long divider = 1000l;
-    return (__this->_milliseconds / divider);
+    return (__this->_milliseconds / 1000l);
 }
 
 void CX_ID_4(cxcore, System, TimeSpan, __constructor)(struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long milliseconds) {
@@ -330,27 +512,23 @@ void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(struct CX_ID_3(cxcore,
 }
 
 struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long days) {
-    cx_long multiplier = (((24l * 60l) * 60l) * 1000l);
     struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
-    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (days * multiplier))), __cx_new_0);
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (days * (((24l * 60l) * 60l) * 1000l)))), __cx_new_0);
 }
 
 struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddHours)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long hours) {
-    cx_long multiplier = ((60l * 60l) * 1000l);
     struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
-    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (hours * multiplier))), __cx_new_0);
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (hours * ((60l * 60l) * 1000l)))), __cx_new_0);
 }
 
 struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMinutes)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long minutes) {
-    cx_long multiplier = (60l * 1000l);
     struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
-    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (minutes * multiplier))), __cx_new_0);
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (minutes * (60l * 1000l)))), __cx_new_0);
 }
 
 struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddSeconds)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long seconds) {
-    cx_long multiplier = 1000l;
     struct CX_ID_3(cxcore, System, TimeSpan) __cx_new_0;
-    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (seconds * multiplier))), __cx_new_0);
+    return (CX_ID_4(cxcore, System, TimeSpan, __constructor)(&__cx_new_0, (__this->_milliseconds + (seconds * 1000l))), __cx_new_0);
 }
 
 struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMilliseconds)(const struct CX_ID_3(cxcore, System, TimeSpan)* __this, cx_long milliseconds) {

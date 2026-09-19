@@ -1,31 +1,201 @@
 namespace System;
 
 public struct DateTime {
-    private ulong _ticks;
+    private long _milliseconds;
     private short _offset;
 
-    public ulong Milliseconds { extern const get; }
-    public short Offset { extern const get; }
-    public int Year { extern const get; }
-    public int Month { extern const get; }
-    public int Day { extern const get; }
-    public int DayOfWeek { extern const get; }
-    public int Hour { extern const get; }
-    public int Minute { extern const get; }
-    public int Second { extern const get; }
-    public int Millisecond { extern const get; }
+    public long Milliseconds {
+        const get { 
+            return _milliseconds; 
+        }  
+    }
 
-    public extern constructor(ulong ticks, short offset = 0);
+    public short Offset {
+        const get { 
+            return _offset; 
+        }  
+    }
+
+    public long Year {
+        const get {
+            const long gregorianCycleDays = 146097l;
+            long cycles = TotalDays / gregorianCycleDays;
+            long remDays = TotalDays % gregorianCycleDays;
+            long currentYear = cycles * 400l + 1l;
+
+            while (true) {
+                long daysInYear = IsLeapYear(currentYear) ? 366l : 365l;
+                if (remDays >= daysInYear) {
+                    remDays -= daysInYear;
+                    currentYear++;
+                } else {
+                    break;
+                }
+            }
+
+            return currentYear;
+        } 
+    }
+
+    public long Month {
+        const get {
+            const long gregorianCycleDays = 146097l;
+            long cycles = TotalDays / gregorianCycleDays;
+            long remDays = TotalDays % gregorianCycleDays;
+            long currentYear = cycles * 400l + 1l;
+
+            while (true) {
+                long daysInYear = IsLeapYear(currentYear) ? 366l : 365l;
+                if (remDays >= daysInYear) {
+                    remDays -= daysInYear;
+                    currentYear++;
+                } else {
+                    break;
+                }
+            }
+
+            long currentMonth = 1l;
+            while (remDays >= DaysInMonth(currentMonth, currentYear)) {
+                remDays -= DaysInMonth(currentMonth, currentYear);
+                currentMonth++;
+            }
+
+            return currentMonth;
+        }
+    }
+
+    public long Day {
+        const get {
+            const long gregorianCycleDays = 146097l;
+            long cycles = TotalDays / gregorianCycleDays;
+            long remDays = TotalDays % gregorianCycleDays;
+            long currentYear = cycles * 400l + 1l;
+
+            while (true) {
+                long daysInYear = IsLeapYear(currentYear) ? 366l : 365l;
+                if (remDays >= daysInYear) {
+                    remDays -= daysInYear;
+                    currentYear++;
+                } else {
+                    break;
+                }
+            }
+
+            long currentMonth = 1l;
+            while (remDays >= DaysInMonth(currentMonth, currentYear)) {
+                remDays -= DaysInMonth(currentMonth, currentYear);
+                currentMonth++;
+            }
+
+            return remDays + 1l;
+        }
+    }
+
+    public long DayOfWeek {
+        const get {
+            return (TotalDays + 1l) % 7l;
+        } 
+    }
+
+    public long Hour {
+        const get {
+            return TotalHours % 24l;
+        } 
+    }
+
+    public long Minute {
+        const get {
+            return TotalMinutes % 60l;
+        } 
+    }
+
+    public long Second {
+        const get {
+            return TotalSeconds % 60l;
+        } 
+    }
+
+    public long Millisecond {
+        const get {
+            return _milliseconds % 1000l;
+        } 
+    }
+
+    public long TotalDays { 
+        const get {
+            return _milliseconds / (24l * 60l * 60l * 1000l);
+        } 
+    }
+
+    public long TotalHours { 
+        const get {
+            return _milliseconds / (60l * 60l * 1000l);
+        } 
+    }
+
+    public long TotalMinutes { 
+        const get {
+            return _milliseconds / (60l * 1000l);
+        } 
+    }
+
+    public long TotalSeconds { 
+        const get {
+            return _milliseconds / 1000l;
+        } 
+    }
+
+    public static long DaysInMonth(long month, long year) {
+        switch (month) {
+            case 1l: // January
+                return 31l;
+            case 2l: // February
+                return IsLeapYear(year) ? 29l : 28l;
+            case 3l: // March
+                return 31l;
+            case 4l: // April
+                return 30l;
+            case 5l: // May
+                return 31l;
+            case 6l: // June
+                return 30l;
+            case 7l: // July
+                return 31l;
+            case 8l: // August
+                return 31l;
+            case 9l: // September
+                return 30l;
+            case 10l: // October
+                return 31l;
+            case 11l: // November
+                return 30l;
+            case 12l: // December
+                return 31l;
+            default: // Argument out of range
+                return 0l;
+        }
+    }
+
+    public static bool IsLeapYear(long year) {
+        return (year % 4l == 0l && year % 100l != 0l) || (year % 400l == 0l);
+    }
+
+    public constructor(long milliseconds, short offset = 0) {
+        _milliseconds = milliseconds;
+        _offset = offset;
+    }
+
     public extern constructor(
         int year, 
-        int month = 0, 
-        int day = 0, 
-        int hour = 0, 
-        int minute = 0, 
-        int second = 0, 
-        int millisecond = 0,
-        short offset = 0
+        int month, 
+        int day, 
+        int hour, 
+        int minute, 
+        int second, 
+        int millisecond,
+        short offset
     );
+
     public extern DateTime AddYears(int years) const;
     public extern DateTime AddMonths(int months) const;
     public extern DateTime AddDays(int days) const;

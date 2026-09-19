@@ -29,29 +29,25 @@ public struct TimeSpan {
 
     public long TotalDays { 
         const get {
-            const long divider = 24l * 60l * 60l * 1000l;
-            return _milliseconds / divider;
+            return _milliseconds / (24l * 60l * 60l * 1000l);
         } 
     }
 
     public long TotalHours { 
         const get {
-            const long divider = 60l * 60l * 1000l;
-            return _milliseconds / divider;
+            return _milliseconds / (60l * 60l * 1000l);
         } 
     }
 
     public long TotalMinutes { 
         const get {
-            const long divider = 60l * 1000l;
-            return _milliseconds / divider;
+            return _milliseconds / (60l * 1000l);
         } 
     }
 
     public long TotalSeconds { 
         const get {
-            const long divider = 1000l;
-            return _milliseconds / divider;
+            return _milliseconds / 1000l;
         } 
     }
 
@@ -79,23 +75,19 @@ public struct TimeSpan {
     // }
 
     public TimeSpan AddDays(long days) const {
-        const long multiplier = 24l * 60l * 60l * 1000l;
-        return new TimeSpan(_milliseconds + days * multiplier);
+        return new TimeSpan(_milliseconds + days * (24l * 60l * 60l * 1000l));
     }
 
     public TimeSpan AddHours(long hours) const {
-        const long multiplier = 60l * 60l * 1000l;
-        return new TimeSpan(_milliseconds + hours * multiplier);
+        return new TimeSpan(_milliseconds + hours * (60l * 60l * 1000l));
     }
 
     public TimeSpan AddMinutes(long minutes) const {
-        const long multiplier = 60l * 1000l;
-        return new TimeSpan(_milliseconds + minutes * multiplier);
+        return new TimeSpan(_milliseconds + minutes * (60l * 1000l));
     }
 
     public TimeSpan AddSeconds(long seconds) const {
-        const long multiplier = 1000l;
-        return new TimeSpan(_milliseconds + seconds * multiplier);
+        return new TimeSpan(_milliseconds + seconds * 1000l);
     }
 
     public TimeSpan AddMilliseconds(long milliseconds) const {
