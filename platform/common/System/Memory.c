@@ -1,22 +1,19 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../../../src/cxcore.h"
 
 // Note: This is the naive implementation. There should be some form of GC implemented here.
 
-CX_EXPORT cx_ptr cx_object_new(cx_uint size)
-{
-    cx_ptr object = calloc(1, size);
-    if (object == NULL) {
-        abort();
-    }
-    return object;
-}
-
 cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
     cx_uint size
 ) {
-    return malloc(size);
+    cx_ptr object = calloc(1, size);
+    if (object == NULL) {
+        fputs("Out of memory\n", stderr);
+        abort();
+    }
+    return object;
 }
 
 cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(

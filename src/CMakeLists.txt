@@ -1,7 +1,9 @@
 target_sources(cxcore 
     PRIVATE
         cxcore.h
-        cxcore.c)
+        cxcore.c
+        cxexceptions.c
+        cxnullable.c)
 
 target_include_directories(cxcore
     PUBLIC

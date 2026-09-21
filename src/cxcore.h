@@ -110,6 +110,8 @@ extern cx_double CX_ID_4(cxcore, System, Double, MaxValue);
 CX_STATIC_TYPE_DEF(CX_ID_3(cxcore, System, Environment));
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Exception)) {
     struct CX_ID_3(cxcore, System, Object) __base;
+    struct CX_ID_3(cxcore, System, String)* _message;
+    struct CX_ID_3(cxcore, System, Nullable) _innerException;
 };
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Float)) {
     cx_float _value;
@@ -304,6 +306,9 @@ extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(
 extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
+extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(
+    const struct CX_ID_3(cxcore, System, Char)* __this    
+);
 extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(
     cx_char c,
     cx_char min,
@@ -392,31 +397,31 @@ extern CX_EXPORT void CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddYears)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int years
+    cx_long years
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMonths)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int months
+    cx_long months
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddDays)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int days
+    cx_long days
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddHours)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int hours
+    cx_long hours
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMinutes)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int minutes
+    cx_long minutes
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddSeconds)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int seconds
+    cx_long seconds
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMilliseconds)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
-    cx_int milliseconds
+    cx_long milliseconds
 );
 extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Double, Sign, __const_get)(
     const struct CX_ID_3(cxcore, System, Double)* __this    
@@ -433,13 +438,10 @@ extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System,
     const struct CX_ID_3(cxcore, System, Exception)* __this    
 );
 extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, __constructor)(
-    struct CX_ID_3(cxcore, System, Exception)* __this    
-);
-extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _2)(
     struct CX_ID_3(cxcore, System, Exception)* __this,
     const struct CX_ID_3(cxcore, System, String)* message
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _3)(
+extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _2)(
     struct CX_ID_3(cxcore, System, Exception)* __this,
     const struct CX_ID_3(cxcore, System, String)* message,
     const struct CX_ID_3(cxcore, System, Exception)* innerException
@@ -714,6 +716,11 @@ extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(
     cx_long minutes,
     cx_long seconds,
     cx_long milliseconds
+);
+extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, TimeSpan)* __this,
+    const struct CX_ID_3(cxcore, System, DateTime) from,
+    const struct CX_ID_3(cxcore, System, DateTime) to
 );
 extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,

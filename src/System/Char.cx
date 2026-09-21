@@ -37,6 +37,10 @@ public struct Char {
         }
     }
 
+    public int NumBytes {
+        extern const get;
+    }
+
     public static bool IsBetween(char c, char min, char max) {
         return c >= min && c <= max;
     }
@@ -52,23 +56,4 @@ public struct Char {
             ? _value + 'A' - 'a'
             : _value;
     }
-
-    /*public int NumBytes() const {
-        // 0xxxxxxx -> 1 byte
-        // 110xxxxx 10xxxxxx -> 2 bytes
-        // 1110xxxx 10xxxxxx 10xxxxxx -> 3 bytes
-        // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx -> 4 bytes
-
-        if (_value & 0x80 == 0x00) {
-            return 1;
-        } else if ((_value & 0xC0E0) == 0x80C0) {
-            return 2;
-        } else if ((_value & 0xC0C0F0) == 0x8080E0) {
-            return 3;
-        } else if ((_value & 0xC0C0C0F8) == 0x808080F0) {
-            return 4;
-        } else {
-            return -1; // Invalid UTF-8 character
-        }
-    }*/
 }

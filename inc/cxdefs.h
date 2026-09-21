@@ -282,4 +282,11 @@
 #define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET    (0x10 << 24)
 #define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_SET    (0x20 << 24)
 
+//
+// Exceptions
+//
+
+#define CX_THROW(ex) cx_exception_throw((cx_ptr)(ex), __FILE__, __LINE__)
+#define CX_RETHROW() cx_exception_rethrow()
+
 #endif // __CX_DEFS_H__

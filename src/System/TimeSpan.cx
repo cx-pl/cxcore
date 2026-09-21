@@ -70,9 +70,9 @@ public struct TimeSpan {
             milliseconds;
     }
 
-    // public constructor(const DateTime from, const DateTime to) {
-    //     _milliseconds = (long)to.Milliseconds - (long)from.Milliseconds;
-    // }
+    public constructor(const DateTime from, const DateTime to) {
+        _milliseconds = to.Milliseconds - from.Milliseconds;
+    }
 
     public TimeSpan AddDays(long days) const {
         return new TimeSpan(_milliseconds + days * (24l * 60l * 60l * 1000l));

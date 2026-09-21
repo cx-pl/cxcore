@@ -76,7 +76,7 @@ cx_uint CX_ID_4(cxcore, System, Console, Write)(
     cx_uint n;
     const char* buf = str->_data;
 
-    for (n = 0; n < str->_length; n++, buf += CX_ID_4(cxcore, System, Char, NumBytes)((const struct CX_ID_3(cxcore, System, Char)*)buf)) {
+    for (n = 0; n < str->_length; n++, buf += CX_ID_5(cxcore, System, Char, NumBytes, __const_get)((const struct CX_ID_3(cxcore, System, Char)*)buf)) {
         putchar(*(int*)buf);
     }
 

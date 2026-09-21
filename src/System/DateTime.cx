@@ -196,11 +196,33 @@ public struct DateTime {
         short offset
     );
 
-    public extern DateTime AddYears(int years) const;
-    public extern DateTime AddMonths(int months) const;
-    public extern DateTime AddDays(int days) const;
-    public extern DateTime AddHours(int hours) const;
-    public extern DateTime AddMinutes(int minutes) const;
-    public extern DateTime AddSeconds(int seconds) const;
-    public extern DateTime AddMilliseconds(int milliseconds) const;
+    public DateTime AddYears(long years) const {
+        return AddMonths(years * 12l);
+    }
+
+    public DateTime AddMonths(long months) const {
+        long days = months * 30l; // TODO: add support for different number of days per month
+
+        return new DateTime(_milliseconds + days * (24l * 60l * 60l * 1000l), _offset);
+    }
+
+    public DateTime AddDays(long days) const {
+        return new DateTime(_milliseconds + days * (24l * 60l * 60l * 1000l), _offset);
+    }
+
+    public DateTime AddHours(long hours) const {
+        return new DateTime(_milliseconds + hours * (60l * 60l * 1000l), _offset);
+    }
+
+    public DateTime AddMinutes(long minutes) const {
+        return new DateTime(_milliseconds + minutes * (60l * 1000l), _offset);
+    }    
+
+    public DateTime AddSeconds(long seconds) const {
+        return new DateTime(_milliseconds + seconds * 1000l, _offset);
+    }
+
+    public DateTime AddMilliseconds(long milliseconds) const {
+        return new DateTime(_milliseconds + milliseconds, _offset);
+    }
 }

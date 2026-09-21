@@ -1,6 +1,8 @@
 #ifndef __CX_TYPES_H__
 #define __CX_TYPES_H__
 
+#include <setjmp.h>
+
 typedef char cx_bool;
 typedef int cx_char;
 typedef unsigned char cx_byte;
@@ -43,5 +45,16 @@ static inline struct cx_iface_ref cx_iface_upcast(
 	};
 	return result;
 }
+
+struct cx_exception {
+	void* exceptionObject;
+	const char* thrownFileName;
+	int thrownLine;
+};
+
+struct cx_exception_frame {
+	jmp_buf environment;
+	struct cx_exception_frame* previous;
+};
 
 #endif // __CX_TYPES_H__

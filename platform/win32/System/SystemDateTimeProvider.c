@@ -29,7 +29,7 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeP
     ULONGLONG utcMsYear1 = utcMsFrom1601 + _MILISECONDS_FROM_YEAR_1_TO_1601;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = 0, ._ticks = utcMsYear1 };
+    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = 0, ._milliseconds = utcMsYear1 };
     return result;
 }
 
@@ -74,7 +74,7 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeP
     LONG offset = (totalBiasInMinutes * -1) / 60;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = offset, ._ticks = localMsYear1 };
+    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = offset, ._milliseconds = localMsYear1 };
     return result;
 }
 
