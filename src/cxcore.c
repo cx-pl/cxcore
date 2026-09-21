@@ -1464,11 +1464,11 @@ cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(cx_char c, cx_char min, cx_char
 }
 
 cx_char CX_ID_4(cxcore, System, Char, ToLower)(const struct CX_ID_3(cxcore, System, Char)* __this) {
-    return (CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(&(__this)) ? ((__this->_value + 'a') - 'A') : __this->_value);
+    return (CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(__this) ? ((__this->_value + 'a') - 'A') : __this->_value);
 }
 
 cx_char CX_ID_4(cxcore, System, Char, ToUpper)(const struct CX_ID_3(cxcore, System, Char)* __this) {
-    return (CX_ID_5(cxcore, System, Char, IsLower, __const_get)(&(__this)) ? ((__this->_value + 'A') - 'a') : __this->_value);
+    return (CX_ID_5(cxcore, System, Char, IsLower, __const_get)(__this) ? ((__this->_value + 'A') - 'a') : __this->_value);
 }
 
 cx_long CX_ID_5(cxcore, System, DateTime, Milliseconds, __const_get)(const struct CX_ID_3(cxcore, System, DateTime)* __this) {

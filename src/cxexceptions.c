@@ -26,7 +26,7 @@ static void cx_exception_dispatch(void)
             ? "<unknown>"
             : cx_current_exception.thrownFileName,
         cx_current_exception.thrownLine);
-    abort();
+    exit(EXIT_FAILURE);
 }
 
 void cx_exception_push(struct cx_exception_frame* frame)
