@@ -1,6 +1,7 @@
 #ifndef __CX_TYPES_H__
 #define __CX_TYPES_H__
 
+#include <stddef.h>
 #include <setjmp.h>
 
 typedef char cx_bool;
@@ -36,6 +37,29 @@ struct cx_iface_ref {
 struct cx_interface_impl {
 	cx_ptr typeInfo;
 	cx_ptr vtable;
+};
+
+struct cx_reflection_field {
+	cx_uint flags;
+	cx_uint offset;
+	cx_ptr typeInfo;
+	const char* name;
+};
+
+struct cx_reflection_parameter {
+	cx_uint flags;
+	cx_ptr typeInfo;
+	const char* name;
+	cx_ptr defaultValue;
+};
+
+struct cx_reflection_function {
+	cx_uint flags;
+	cx_uint slot;
+	cx_ptr returnTypeInfo;
+	const char* name;
+	const struct cx_reflection_parameter* parameters;
+	cx_uint parameterCount;
 };
 
 static inline struct cx_iface_ref cx_iface_upcast(

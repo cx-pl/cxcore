@@ -132,3 +132,42 @@ struct cx_iface_ref cx_checked_cast_interface_to_interface(
     }
     abort();
 }
+
+const struct cx_interface_impl* cx_reflection_interfaces(
+    const cx_type_info* typeInfo,
+    cx_uint* count)
+{
+    if (count != CX_NULL)
+    {
+        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeInterfaceCount;
+    }
+    return typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_interface_impl*)typeInfo->RuntimeInterfaces;
+}
+
+const struct cx_reflection_field* cx_reflection_fields(
+    const cx_type_info* typeInfo,
+    cx_uint* count)
+{
+    if (count != CX_NULL)
+    {
+        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeFieldCount;
+    }
+    return typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_reflection_field*)typeInfo->RuntimeFields;
+}
+
+const struct cx_reflection_function* cx_reflection_functions(
+    const cx_type_info* typeInfo,
+    cx_uint* count)
+{
+    if (count != CX_NULL)
+    {
+        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeFunctionCount;
+    }
+    return typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_reflection_function*)typeInfo->RuntimeFunctions;
+}

@@ -49,4 +49,14 @@ CX_EXPORT struct cx_iface_ref cx_checked_cast_interface_to_interface(
     struct cx_iface_ref source,
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
 
+CX_EXPORT const struct cx_interface_impl* cx_reflection_interfaces(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* typeInfo,
+    cx_uint* count);
+CX_EXPORT const struct cx_reflection_field* cx_reflection_fields(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* typeInfo,
+    cx_uint* count);
+CX_EXPORT const struct cx_reflection_function* cx_reflection_functions(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* typeInfo,
+    cx_uint* count);
+
 #endif // __CX_H__

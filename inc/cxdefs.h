@@ -296,6 +296,9 @@
 #define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET    (0x10 << 24)
 #define CX_REFLECTION_FLAG_FUNCTION_PROPERTY_SET    (0x20 << 24)
 
+#define CX_REFLECTION_NO_OFFSET ((cx_uint)-1)
+#define CX_REFLECTION_NO_SLOT ((cx_uint)-1)
+
 //
 // Exceptions
 //

@@ -15,16 +15,41 @@ static union cx_vtable_entry interface_vtable[] = { { .data = &derived_type } };
 static const struct cx_interface_impl interfaces[] = {
     { &interface_type, interface_vtable },
 };
+static const struct cx_reflection_field fields[] = {
+    { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, 0, &base_type, "value" },
+};
+static const struct cx_reflection_parameter parameters[] = {
+    { 0, &base_type, "scale", CX_NULL },
+};
+static const struct cx_reflection_function functions[] = {
+    {
+        CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_VIRTUAL,
+        1,
+        &base_type,
+        "Read",
+        parameters,
+        1,
+    },
+};
 static type_info derived_type = {
     .BaseType = { ._obj = &base_type },
     .RuntimeInterfaces = (cx_ptr)interfaces,
     .RuntimeInterfaceCount = 1,
+    .RuntimeFields = (cx_ptr)fields,
+    .RuntimeFieldCount = 1,
+    .RuntimeFunctions = (cx_ptr)functions,
+    .RuntimeFunctionCount = 1,
+    .GenericArity = 1,
 };
 
 int main(void)
 {
     struct test_derived object = { { derived_vtable } };
     struct cx_iface_ref interface_reference;
+    const struct cx_interface_impl* reflected_interfaces;
+    const struct cx_reflection_field* reflected_fields;
+    const struct cx_reflection_function* reflected_functions;
+    cx_uint count;
     assert(cx_is_object(&object, &derived_type));
     assert(cx_is_object(&object, &base_type));
     assert(cx_is_object(&object, &interface_type));
@@ -39,5 +64,16 @@ int main(void)
     assert(cx_checked_cast_interface(interface_reference, &derived_type) == &object);
     assert(cx_checked_cast_interface_to_interface(interface_reference, &interface_type).vtable == interface_vtable);
     assert(cx_checked_cast_object_to_interface(CX_NULL, &interface_type).instance == CX_NULL);
+
+    reflected_interfaces = cx_reflection_interfaces(&derived_type, &count);
+    assert(count == 1 && reflected_interfaces[0].typeInfo == &interface_type);
+    reflected_fields = cx_reflection_fields(&derived_type, &count);
+    assert(count == 1 && reflected_fields[0].typeInfo == &base_type);
+    assert(reflected_fields[0].name[0] == 'v');
+    reflected_functions = cx_reflection_functions(&derived_type, &count);
+    assert(count == 1 && reflected_functions[0].slot == 1);
+    assert(reflected_functions[0].parameterCount == 1);
+    assert(reflected_functions[0].parameters[0].typeInfo == &base_type);
+    assert(derived_type.GenericArity == 1);
     return 0;
 }
