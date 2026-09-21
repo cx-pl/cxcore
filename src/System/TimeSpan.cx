@@ -5,19 +5,19 @@ public struct TimeSpan {
 
     public long Hours {
         const get {
-            return TotalHours % 24l;
+            return TotalHours % 24;
         }
     }
 
     public long Minutes {
         const get {
-            return TotalMinutes % 60l;
+            return TotalMinutes % 60;
         }
     }
 
     public long Seconds {
         const get {
-            return TotalSeconds % 60l;
+            return TotalSeconds % 60;
         }
     }
 
@@ -29,25 +29,25 @@ public struct TimeSpan {
 
     public long TotalDays { 
         const get {
-            return _milliseconds / (24l * 60l * 60l * 1000l);
+            return _milliseconds / (24 * 60 * 60 * 1000);
         } 
     }
 
     public long TotalHours { 
         const get {
-            return _milliseconds / (60l * 60l * 1000l);
+            return _milliseconds / (60 * 60 * 1000);
         } 
     }
 
     public long TotalMinutes { 
         const get {
-            return _milliseconds / (60l * 1000l);
+            return _milliseconds / (60 * 1000);
         } 
     }
 
     public long TotalSeconds { 
         const get {
-            return _milliseconds / 1000l;
+            return _milliseconds / 1000;
         } 
     }
 
@@ -63,10 +63,10 @@ public struct TimeSpan {
         long milliseconds
     ) {
         _milliseconds =
-            days * 24l * 60l * 60l * 1000l +
-            hours * 60l * 60l * 1000l +
-            minutes * 60l * 1000l +
-            seconds * 1000l +
+            days * (24 * 60 * 60 * 1000) +
+            hours * (60 * 60 * 1000) +
+            minutes * (60 * 1000) +
+            seconds * 1000 +
             milliseconds;
     }
 
@@ -75,19 +75,19 @@ public struct TimeSpan {
     }
 
     public TimeSpan AddDays(long days) const {
-        return new TimeSpan(_milliseconds + days * (24l * 60l * 60l * 1000l));
+        return new TimeSpan(_milliseconds + days * (24 * 60 * 60 * 1000));
     }
 
     public TimeSpan AddHours(long hours) const {
-        return new TimeSpan(_milliseconds + hours * (60l * 60l * 1000l));
+        return new TimeSpan(_milliseconds + hours * (60 * 60 * 1000));
     }
 
     public TimeSpan AddMinutes(long minutes) const {
-        return new TimeSpan(_milliseconds + minutes * (60l * 1000l));
+        return new TimeSpan(_milliseconds + minutes * (60 * 1000));
     }
 
     public TimeSpan AddSeconds(long seconds) const {
-        return new TimeSpan(_milliseconds + seconds * 1000l);
+        return new TimeSpan(_milliseconds + seconds * 1000);
     }
 
     public TimeSpan AddMilliseconds(long milliseconds) const {

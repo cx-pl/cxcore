@@ -33,6 +33,11 @@ struct cx_iface_ref {
 	cx_ptr instance;
 };
 
+struct cx_interface_impl {
+	cx_ptr typeInfo;
+	cx_ptr vtable;
+};
+
 static inline struct cx_iface_ref cx_iface_upcast(
 	struct cx_iface_ref source,
 	cx_uint vtableSlot)

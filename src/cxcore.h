@@ -67,6 +67,8 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, TypeInfo)) {
     const struct CX_ID_3(cxcore, System, Array)* GenericParams;
     const struct CX_ID_3(cxcore, System, Nullable) BaseType;
     const struct CX_ID_3(cxcore, System, Array)* Interfaces;
+    const cx_ptr RuntimeInterfaces;
+    const cx_uint RuntimeInterfaceCount;
     const struct CX_ID_3(cxcore, System, Array)* Fields;
     const struct CX_ID_3(cxcore, System, Array)* Functions;
 };

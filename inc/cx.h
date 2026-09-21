@@ -27,4 +27,26 @@ CX_EXPORT void cx_exception_clear(void);
 CX_EXPORT cx_bool cx_exception_matches(
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* typeInfo);
 
+CX_EXPORT cx_bool cx_type_is(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* actualType,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT cx_bool cx_is_object(
+    cx_ptr instance,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT cx_bool cx_is_interface(
+    struct cx_iface_ref source,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT cx_ptr cx_checked_cast_object(
+    cx_ptr instance,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT cx_ptr cx_checked_cast_interface(
+    struct cx_iface_ref source,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT struct cx_iface_ref cx_checked_cast_object_to_interface(
+    cx_ptr instance,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+CX_EXPORT struct cx_iface_ref cx_checked_cast_interface_to_interface(
+    struct cx_iface_ref source,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* targetType);
+
 #endif // __CX_H__

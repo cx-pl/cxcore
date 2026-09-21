@@ -3,7 +3,8 @@ target_sources(cxcore
         cxcore.h
         cxcore.c
         cxexceptions.c
-        cxnullable.c)
+        cxnullable.c
+        cxtype.c)
 
 target_include_directories(cxcore
     PUBLIC

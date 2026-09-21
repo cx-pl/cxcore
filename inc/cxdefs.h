@@ -152,9 +152,9 @@
     union cx_vtable_entry CX_ID_2(fullName, __vtable)[] = { \
         { .data = &CX_ID_2(fullName, __typeinfo) },
 
-#define CX_BEGIN_INTERFACE_VTABLE_DEF(name, interfaceFullName) \
+#define CX_BEGIN_INTERFACE_VTABLE_DEF(name, dynamicTypeFullName) \
     union cx_vtable_entry name[] = { \
-        { .data = &CX_ID_2(interfaceFullName, __typeinfo) },
+        { .data = &CX_ID_2(dynamicTypeFullName, __typeinfo) },
 
 #define CX_VTABLE_ENTRY(entry) \
     { .function = (cx_vtable_function)(entry) },
@@ -205,6 +205,20 @@
         /* TODO: .Interfaces = CX_ID_4(_, fullName, __typeinfo, _interfacesArray),*/ \
         /* TODO: .Fields = CX_ID_4(_, fullName, __typeinfo, _fieldsArray),*/ \
         /* TODO: .Functions = CX_ID_4(_, fullName, __typeinfo, _functionsArray)*/ \
+    }
+
+#define CX_CLASS_TYPEINFO_WITH_INTERFACES_DEF(fullName, nameString, namespaceString, baseType, interfaceMap, interfaceCount, hash, flags) \
+    struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
+        .Hash = hash,\
+        .Flags = flags, \
+        .Size = sizeof(struct fullName), \
+        .Name = &nameString, \
+        .Namespace = &namespaceString, \
+        .BaseType = { \
+            ._obj = &baseType\
+        }, \
+        .RuntimeInterfaces = (cx_ptr)(interfaceMap), \
+        .RuntimeInterfaceCount = interfaceCount, \
     }
 
 #define CX_STATIC_CLASS_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \

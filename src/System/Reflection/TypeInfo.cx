@@ -9,6 +9,8 @@ public struct TypeInfo {
     public const TypeInfo[] GenericParams;
     public const TypeInfo? BaseType;
     public const TypeInfo[] Interfaces;
+    private const ptr RuntimeInterfaces;
+    private const uint RuntimeInterfaceCount;
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
 }
