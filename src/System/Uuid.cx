@@ -8,5 +8,10 @@ public struct Uuid {
 
     public static extern Uuid Zero;
 
-    public extern constructor(uint a, uint b, uint c, uint d);
+    public constructor(uint a, uint b, uint c, uint d) {
+        _a = a;
+        _b = b;
+        _c = c;
+        _d = d;
+    }
 }

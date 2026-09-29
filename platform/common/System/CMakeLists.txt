@@ -1,10 +1,22 @@
 target_sources(cxcore 
     PRIVATE
         Array.c
+        Byte.c
         Char.c
         Console.c
+        Double.c
         Exception.c
+        Float.c
+        Int.c
+        Long.c
         Memory.c
         Nullable.c
         Object.c
-        String.c)
+        SByte.c
+        Short.c
+        String.c
+        UInt.c
+        ULong.c
+        UShort.c
+        Uuid.c
+        Void.c)
