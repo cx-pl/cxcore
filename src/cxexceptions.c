@@ -28,7 +28,6 @@ static void cx_exception_dispatch(void)
         cx_current_exception.thrownLine);
     exit(EXIT_FAILURE);
 }
-
 void cx_exception_push(struct cx_exception_frame* frame)
 {
     frame->previous = cx_current_exception_frame;
@@ -83,25 +82,4 @@ void cx_exception_clear(void)
     cx_current_exception.exceptionObject = CX_NULL;
     cx_current_exception.thrownFileName = CX_NULL;
     cx_current_exception.thrownLine = 0;
-}
-
-cx_bool cx_exception_matches(
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* typeInfo)
-{
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* currentType;
-    if (cx_current_exception.exceptionObject == CX_NULL)
-    {
-        return CX_FALSE;
-    }
-
-    currentType = &CX_GET_TYPEINFO(cx_current_exception.exceptionObject);
-    while (currentType != CX_NULL)
-    {
-        if (currentType == typeInfo)
-        {
-            return CX_TRUE;
-        }
-        currentType = currentType->BaseType._obj;
-    }
-    return CX_FALSE;
 }

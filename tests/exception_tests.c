@@ -6,7 +6,8 @@ typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
 
 struct test_exception { cx_ptr vtable; };
 
-static type_info exception_type = { 0 };
+static type_info exception_type = { .Hash = 1 };
+static type_info unrelated_type = { .Hash = 2 };
 static union cx_vtable_entry exception_vtable[] = { { .data = &exception_type } };
 static struct test_exception exception_object = { exception_vtable };
 
@@ -31,7 +32,12 @@ int main(void)
         cx_exception_pop(&outer_frame);
         reached_handler = 1;
         assert(cx_exception_current() == &exception_object);
-        assert(cx_exception_matches(&exception_type));
+        assert(CX_ID_4(cxcore, System, Exception, Matches)(
+            (const struct CX_ID_3(cxcore, System, Exception)*)&exception_object,
+            exception_type));
+        assert(!CX_ID_4(cxcore, System, Exception, Matches)(
+            (const struct CX_ID_3(cxcore, System, Exception)*)&exception_object,
+            unrelated_type));
         cx_exception_clear();
     }
     assert(reached_handler == 1);

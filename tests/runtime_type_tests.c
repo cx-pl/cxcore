@@ -7,9 +7,9 @@ typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
 struct test_base { cx_ptr vtable; };
 struct test_derived { struct test_base __base; };
 
-static type_info base_type = { 0 };
+static type_info base_type = { .Hash = 1 };
 static type_info derived_type;
-static type_info interface_type = { 0 };
+static type_info interface_type = { .Hash = 3 };
 static union cx_vtable_entry derived_vtable[] = { { .data = &derived_type } };
 static union cx_vtable_entry interface_vtable[] = { { .data = &derived_type } };
 static const struct cx_interface_impl interfaces[] = {
@@ -32,6 +32,7 @@ static const struct cx_reflection_function functions[] = {
     },
 };
 static type_info derived_type = {
+    .Hash = 2,
     .BaseType = { ._obj = &base_type },
     .RuntimeInterfaces = (cx_ptr)interfaces,
     .RuntimeInterfaceCount = 1,
@@ -53,6 +54,15 @@ int main(void)
     assert(cx_is_object(&object, &derived_type));
     assert(cx_is_object(&object, &base_type));
     assert(cx_is_object(&object, &interface_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
+        base_type,
+        derived_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
+        interface_type,
+        derived_type));
+    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
+        derived_type,
+        base_type));
     assert(!cx_is_object(CX_NULL, &derived_type));
     assert(cx_checked_cast_object(&object, &derived_type) == &object);
     assert(cx_checked_cast_object(CX_NULL, &derived_type) == CX_NULL);

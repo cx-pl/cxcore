@@ -1,6 +1,7 @@
 #include "../../platform.h"
 #ifdef CX_PLATFORM_WIN32
 
+#include <limits.h>
 #include <windows.h>
 #include "../../../src/cxcore.h"
 
@@ -64,17 +65,23 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeP
     DWORD tzResult = GetTimeZoneInformation(&tzInfo);
 
     // Calculate bias and offset
-    LONG totalBiasInMinutes = tzInfo.Bias;
-    if (tzResult == TIME_ZONE_ID_STANDARD) {
-        totalBiasInMinutes += tzInfo.StandardBias;
-    }
-    else if (tzResult == TIME_ZONE_ID_DAYLIGHT) {
-        totalBiasInMinutes += tzInfo.DaylightBias;
+    LONG totalBiasInMinutes = 0;
+    if (tzResult != TIME_ZONE_ID_INVALID) {
+        totalBiasInMinutes = tzInfo.Bias;
+        if (tzResult == TIME_ZONE_ID_STANDARD) {
+            totalBiasInMinutes += tzInfo.StandardBias;
+        }
+        else if (tzResult == TIME_ZONE_ID_DAYLIGHT) {
+            totalBiasInMinutes += tzInfo.DaylightBias;
+        }
     }
     LONG offset = (totalBiasInMinutes * -1) / 60;
+    cx_short offsetHours = (tzResult == TIME_ZONE_ID_INVALID || offset < SHRT_MIN || offset > SHRT_MAX)
+        ? (cx_short)0
+        : (cx_short)offset;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = offset, ._milliseconds = localMsYear1 };
+    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = offsetHours, ._milliseconds = localMsYear1 };
     return result;
 }
 

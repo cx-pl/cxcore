@@ -57,25 +57,9 @@ cx_bool cx_type_is(const cx_type_info* actualType, const cx_type_info* targetTyp
     {
         return CX_FALSE;
     }
-    for (const cx_type_info* current = actualType;
-         current != CX_NULL;
-         current = (const cx_type_info*)current->BaseType._obj)
-    {
-        if (current == targetType)
-        {
-            return CX_TRUE;
-        }
-        const struct cx_interface_impl* interfaces =
-            (const struct cx_interface_impl*)current->RuntimeInterfaces;
-        for (cx_uint index = 0; index < current->RuntimeInterfaceCount; index++)
-        {
-            if (interfaces[index].typeInfo == (cx_ptr)targetType)
-            {
-                return CX_TRUE;
-            }
-        }
-    }
-    return CX_FALSE;
+    return CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
+        targetType,
+        *actualType);
 }
 
 cx_bool cx_is_object(cx_ptr instance, const cx_type_info* targetType)

@@ -1,3 +1,5 @@
+import System.Reflection;
+
 namespace System;
 
 public class Exception {
@@ -16,6 +18,7 @@ public class Exception {
         }
     }
 
+    public TypeInfo RuntimeType { extern const get; }
     public string StackTrace { extern const get; }
 
     public constructor(const string message) {
@@ -28,4 +31,6 @@ public class Exception {
     }
 
     public static extern void Throw(const Exception exception);
+
+    public static extern bool Matches(const Exception exception, const TypeInfo typeInfo);
 }

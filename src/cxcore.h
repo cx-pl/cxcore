@@ -5,6 +5,15 @@
 
 #include <cx.h>
 
+#if defined(CX_CXCORE_BUILD)
+#define CX_CXCORE_DATA_API CX_EXPORT
+#elif defined(CX_STATIC_LINK)
+#define CX_CXCORE_DATA_API
+#else
+#define CX_CXCORE_DATA_API CX_IMPORT
+#endif
+#define CX_CURRENT_TYPE_API CX_CXCORE_DATA_API
+
 //
 // Forward type declarations
 //
@@ -65,13 +74,13 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, TypeInfo)) {
     const struct CX_ID_3(cxcore, System, String)* Name;
     const struct CX_ID_3(cxcore, System, String)* Namespace;
     const struct CX_ID_3(cxcore, System, Array)* GenericParams;
-    const struct CX_ID_3(cxcore, System, Nullable) BaseType;
+    struct CX_ID_3(cxcore, System, Nullable) BaseType;
     const struct CX_ID_3(cxcore, System, Array)* Interfaces;
-    const cx_ptr RuntimeInterfaces;
+    cx_ptr RuntimeInterfaces;
     cx_uint RuntimeInterfaceCount;
-    const cx_ptr RuntimeFields;
+    cx_ptr RuntimeFields;
     cx_uint RuntimeFieldCount;
-    const cx_ptr RuntimeFunctions;
+    cx_ptr RuntimeFunctions;
     cx_uint RuntimeFunctionCount;
     cx_uint GenericArity;
     const struct CX_ID_3(cxcore, System, Array)* Fields;
@@ -94,13 +103,13 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, Attribute)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Bool)) {
     cx_bool _value;
 };
-extern const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, FalseString);
-extern const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, TrueString);
+extern CX_CXCORE_DATA_API const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, FalseString);
+extern CX_CXCORE_DATA_API const struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Bool, TrueString);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Byte)) {
     cx_byte _value;
 };
-extern cx_byte CX_ID_4(cxcore, System, Byte, MinValue);
-extern cx_byte CX_ID_4(cxcore, System, Byte, MaxValue);
+extern CX_CXCORE_DATA_API cx_byte CX_ID_4(cxcore, System, Byte, MinValue);
+extern CX_CXCORE_DATA_API cx_byte CX_ID_4(cxcore, System, Byte, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Char)) {
     cx_char _value;
 };
@@ -112,8 +121,8 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, DateTime)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Double)) {
     cx_double _value;
 };
-extern cx_double CX_ID_4(cxcore, System, Double, MinValue);
-extern cx_double CX_ID_4(cxcore, System, Double, MaxValue);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Double, MinValue);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Double, MaxValue);
 CX_STATIC_TYPE_DEF(CX_ID_3(cxcore, System, Environment));
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Exception)) {
     struct CX_ID_3(cxcore, System, Object) __base;
@@ -123,8 +132,8 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, Exception)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Float)) {
     cx_float _value;
 };
-extern cx_float CX_ID_4(cxcore, System, Float, MinValue);
-extern cx_float CX_ID_4(cxcore, System, Float, MaxValue);
+extern CX_CXCORE_DATA_API cx_float CX_ID_4(cxcore, System, Float, MinValue);
+extern CX_CXCORE_DATA_API cx_float CX_ID_4(cxcore, System, Float, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, IDateTimeProvider)) {
     void* __vtable;
     void* __root;
@@ -140,19 +149,19 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, IWriter)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Int)) {
     cx_int _value;
 };
-extern cx_int CX_ID_4(cxcore, System, Int, MinValue);
-extern cx_int CX_ID_4(cxcore, System, Int, MaxValue);
+extern CX_CXCORE_DATA_API cx_int CX_ID_4(cxcore, System, Int, MinValue);
+extern CX_CXCORE_DATA_API cx_int CX_ID_4(cxcore, System, Int, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Long)) {
     cx_long _value;
 };
-extern cx_long CX_ID_4(cxcore, System, Long, MinValue);
-extern cx_long CX_ID_4(cxcore, System, Long, MaxValue);
+extern CX_CXCORE_DATA_API cx_long CX_ID_4(cxcore, System, Long, MinValue);
+extern CX_CXCORE_DATA_API cx_long CX_ID_4(cxcore, System, Long, MaxValue);
 CX_STATIC_TYPE_DEF(CX_ID_3(cxcore, System, Math));
-extern cx_double CX_ID_4(cxcore, System, Math, E);
-extern cx_double CX_ID_4(cxcore, System, Math, Pi);
-extern cx_double CX_ID_4(cxcore, System, Math, Tau);
-extern cx_double CX_ID_4(cxcore, System, Math, Sqrt2);
-extern cx_double CX_ID_4(cxcore, System, Math, Sqrt3);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Math, E);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Math, Pi);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Math, Tau);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Math, Sqrt2);
+extern CX_CXCORE_DATA_API cx_double CX_ID_4(cxcore, System, Math, Sqrt3);
 CX_STATIC_TYPE_DEF(CX_ID_3(cxcore, System, Memory));
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Random)) {
     cx_uint _seed;
@@ -187,13 +196,13 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, ModuleInfo)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, SByte)) {
     cx_sbyte _value;
 };
-extern cx_sbyte CX_ID_4(cxcore, System, SByte, MinValue);
-extern cx_sbyte CX_ID_4(cxcore, System, SByte, MaxValue);
+extern CX_CXCORE_DATA_API cx_sbyte CX_ID_4(cxcore, System, SByte, MinValue);
+extern CX_CXCORE_DATA_API cx_sbyte CX_ID_4(cxcore, System, SByte, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Short)) {
     cx_short _value;
 };
-extern cx_short CX_ID_4(cxcore, System, Short, MinValue);
-extern cx_short CX_ID_4(cxcore, System, Short, MaxValue);
+extern CX_CXCORE_DATA_API cx_short CX_ID_4(cxcore, System, Short, MinValue);
+extern CX_CXCORE_DATA_API cx_short CX_ID_4(cxcore, System, Short, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, String)) {
     struct CX_ID_3(cxcore, System, Object) __base;
     cx_uint _length;
@@ -208,190 +217,206 @@ CX_TYPE_DEF(CX_ID_3(cxcore, System, TimeSpan)) {
 CX_TYPE_DEF(CX_ID_3(cxcore, System, UInt)) {
     cx_uint _value;
 };
-extern cx_uint CX_ID_4(cxcore, System, UInt, MinValue);
-extern cx_uint CX_ID_4(cxcore, System, UInt, MaxValue);
+extern CX_CXCORE_DATA_API cx_uint CX_ID_4(cxcore, System, UInt, MinValue);
+extern CX_CXCORE_DATA_API cx_uint CX_ID_4(cxcore, System, UInt, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, ULong)) {
     cx_ulong _value;
 };
-extern cx_ulong CX_ID_4(cxcore, System, ULong, MinValue);
-extern cx_ulong CX_ID_4(cxcore, System, ULong, MaxValue);
+extern CX_CXCORE_DATA_API cx_ulong CX_ID_4(cxcore, System, ULong, MinValue);
+extern CX_CXCORE_DATA_API cx_ulong CX_ID_4(cxcore, System, ULong, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, UShort)) {
     cx_ushort _value;
 };
-extern cx_ushort CX_ID_4(cxcore, System, UShort, MinValue);
-extern cx_ushort CX_ID_4(cxcore, System, UShort, MaxValue);
+extern CX_CXCORE_DATA_API cx_ushort CX_ID_4(cxcore, System, UShort, MinValue);
+extern CX_CXCORE_DATA_API cx_ushort CX_ID_4(cxcore, System, UShort, MaxValue);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Uuid)) {
     cx_uint _a;
     cx_uint _b;
     cx_uint _c;
     cx_uint _d;
 };
-extern struct CX_ID_3(cxcore, System, Uuid) CX_ID_4(cxcore, System, Uuid, Zero);
+extern CX_CXCORE_DATA_API struct CX_ID_3(cxcore, System, Uuid) CX_ID_4(cxcore, System, Uuid, Zero);
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Void)) {
     cx_byte __dummy;
 };
-extern struct CX_ID_3(cxcore, System, Void) CX_ID_4(cxcore, System, Void, Unit);
+extern CX_CXCORE_DATA_API struct CX_ID_3(cxcore, System, Void) CX_ID_4(cxcore, System, Void, Unit);
 
 //
 // Function and property declarations
 //
 
-extern CX_EXPORT struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Object, Type, __const_get)(
+extern CX_API struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Object, Type, __const_get)(
     const struct CX_ID_3(cxcore, System, Object)* __this    
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Object, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Object, __constructor)(
     struct CX_ID_3(cxcore, System, Object)* __this    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Nullable, Null, __const_get)(
+extern CX_API void CX_ID_5(cxcore, System, Nullable, Null, __const_get)(
     void* __returnValue    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Nullable, HasValue, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Nullable, HasValue, __const_get)(
     const struct CX_ID_3(cxcore, System, Nullable)* __this    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Nullable, Value, __const_get)(
+extern CX_API void CX_ID_5(cxcore, System, Nullable, Value, __const_get)(
     const struct CX_ID_3(cxcore, System, Nullable)* __this,
     void* __returnValue    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Nullable, Value, __set)(
+extern CX_API void CX_ID_5(cxcore, System, Nullable, Value, __set)(
     struct CX_ID_3(cxcore, System, Nullable)* __this,
     void* value    
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Nullable, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Nullable, __constructor)(
     struct CX_ID_3(cxcore, System, Nullable)* __this,
     cx_ptr obj
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Reflection, VersionInfo, __constructor)(
+extern CX_API cx_ptr CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(
+    cx_ptr value,
+    cx_uint size
+);
+extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) target,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) source
+);
+extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) target,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) source
+);
+extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) typeInfo,
+    cx_ulong typeHash
+);
+extern CX_API void CX_ID_5(cxcore, System, Reflection, VersionInfo, __constructor)(
     struct CX_ID_4(cxcore, System, Reflection, VersionInfo)* __this,
     cx_int major,
     cx_int minor,
     cx_int patch,
     cx_int revision
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Array, Empty, __const_get)(
+extern CX_API void CX_ID_5(cxcore, System, Array, Empty, __const_get)(
     void* __returnValue    
 );
-extern CX_EXPORT cx_uint CX_ID_5(cxcore, System, Array, Length, __const_get)(
+extern CX_API cx_uint CX_ID_5(cxcore, System, Array, Length, __const_get)(
     const struct CX_ID_3(cxcore, System, Array)* __this    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Array, Item, __get)(
+extern CX_API void CX_ID_5(cxcore, System, Array, Item, __get)(
     struct CX_ID_3(cxcore, System, Array)* __this,
     cx_uint index
 ,
     void* __returnValue    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Array, Item, __const_get)(
+extern CX_API void CX_ID_5(cxcore, System, Array, Item, __const_get)(
     const struct CX_ID_3(cxcore, System, Array)* __this,
     cx_uint index
 ,
     void* __returnValue    
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Array, Item, __set)(
+extern CX_API void CX_ID_5(cxcore, System, Array, Item, __set)(
     struct CX_ID_3(cxcore, System, Array)* __this,
     cx_uint index
 ,
     void* value    
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Array, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Array, __constructor)(
     struct CX_ID_3(cxcore, System, Array)* __this,
     cx_uint length
 );
-extern void CX_ID_4(cxcore, System, Attribute, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Attribute, __constructor)(
     struct CX_ID_3(cxcore, System, Attribute)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsDigit, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsDigit, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsLower, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsLower, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(
+extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(
+extern CX_API cx_int CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(
+extern CX_API cx_bool CX_ID_4(cxcore, System, Char, IsBetween)(
     cx_char c,
     cx_char min,
     cx_char max
 );
-extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Char, ToLower)(
+extern CX_API cx_char CX_ID_4(cxcore, System, Char, ToLower)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Char, ToUpper)(
+extern CX_API cx_char CX_ID_4(cxcore, System, Char, ToUpper)(
     const struct CX_ID_3(cxcore, System, Char)* __this    
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(
+extern CX_API struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(
     cx_uint length
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, ReadLine)();
-extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, Write)(
+extern CX_API struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, ReadLine)();
+extern CX_API cx_uint CX_ID_4(cxcore, System, Console, Write)(
     const struct CX_ID_3(cxcore, System, String)* str
 );
-extern CX_EXPORT cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(
+extern CX_API cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(
     const struct CX_ID_3(cxcore, System, String)* str
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Milliseconds, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Milliseconds, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_short CX_ID_5(cxcore, System, DateTime, Offset, __const_get)(
+extern CX_API cx_short CX_ID_5(cxcore, System, DateTime, Offset, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Year, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Year, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Month, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Month, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Day, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Day, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, DayOfWeek, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, DayOfWeek, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Hour, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Hour, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Minute, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Minute, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Second, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Second, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, Millisecond, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, Millisecond, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, TotalDays, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, TotalHours, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, TotalHours, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, TotalMinutes, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, TotalMinutes, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, DateTime, TotalSeconds, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, DateTime, TotalSeconds, __const_get)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_4(cxcore, System, DateTime, DaysInMonth)(
+extern CX_API cx_long CX_ID_4(cxcore, System, DateTime, DaysInMonth)(
     cx_long month,
     cx_long year
 );
-extern CX_EXPORT cx_bool CX_ID_4(cxcore, System, DateTime, IsLeapYear)(
+extern CX_API cx_bool CX_ID_4(cxcore, System, DateTime, IsLeapYear)(
     cx_long year
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, DateTime, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, DateTime, __constructor)(
     struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long milliseconds,
     cx_short offset
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
+extern CX_API void CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
     struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_int year,
     cx_int month,
@@ -402,321 +427,328 @@ extern CX_EXPORT void CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
     cx_int millisecond,
     cx_short offset
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddYears)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddYears)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long years
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMonths)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMonths)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long months
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddDays)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddDays)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long days
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddHours)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddHours)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long hours
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMinutes)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMinutes)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long minutes
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddSeconds)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddSeconds)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long seconds
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMilliseconds)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMilliseconds)(
     const struct CX_ID_3(cxcore, System, DateTime)* __this,
     cx_long milliseconds
 );
-extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Double, Sign, __const_get)(
+extern CX_API cx_int CX_ID_5(cxcore, System, Double, Sign, __const_get)(
     const struct CX_ID_3(cxcore, System, Double)* __this    
 );
-extern CX_EXPORT const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, SystemName, __const_get)();
-extern CX_EXPORT const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, NewLine, __const_get)();
-extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Exception, Message, __const_get)(
+extern CX_API const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, SystemName, __const_get)();
+extern CX_API const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Environment, NewLine, __const_get)();
+extern CX_API struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Exception, Message, __const_get)(
     const struct CX_ID_3(cxcore, System, Exception)* __this    
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, Nullable) CX_ID_5(cxcore, System, Exception, InnerException, __const_get)(
+extern CX_API struct CX_ID_3(cxcore, System, Nullable) CX_ID_5(cxcore, System, Exception, InnerException, __const_get)(
     const struct CX_ID_3(cxcore, System, Exception)* __this    
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Exception, StackTrace, __const_get)(
+extern CX_API struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Exception, RuntimeType, __const_get)(
+    const struct CX_ID_3(cxcore, System, Exception)* __this
+);
+extern CX_API struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, Exception, StackTrace, __const_get)(
     const struct CX_ID_3(cxcore, System, Exception)* __this    
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Exception, __constructor)(
     struct CX_ID_3(cxcore, System, Exception)* __this,
     const struct CX_ID_3(cxcore, System, String)* message
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, Exception, __constructor, _2)(
+extern CX_API void CX_ID_5(cxcore, System, Exception, __constructor, _2)(
     struct CX_ID_3(cxcore, System, Exception)* __this,
     const struct CX_ID_3(cxcore, System, String)* message,
     const struct CX_ID_3(cxcore, System, Exception)* innerException
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Exception, Throw)(
+extern CX_API void CX_ID_4(cxcore, System, Exception, Throw)(
     const struct CX_ID_3(cxcore, System, Exception)* exception
 );
-extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Float, Sign, __const_get)(
+extern CX_API cx_bool CX_ID_4(cxcore, System, Exception, Matches)(
+    const struct CX_ID_3(cxcore, System, Exception)* exception,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) typeInfo
+);
+extern CX_API cx_int CX_ID_5(cxcore, System, Float, Sign, __const_get)(
     const struct CX_ID_3(cxcore, System, Float)* __this    
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Abs)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Abs)(
     cx_int value
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Abs, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Abs, _2)(
     cx_long value
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Abs, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Abs, _3)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Abs, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Abs, _4)(
     cx_double value
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Clamp)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Clamp)(
     cx_int value,
     cx_int min,
     cx_int max
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Clamp, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Clamp, _2)(
     cx_long value,
     cx_long min,
     cx_long max
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Clamp, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Clamp, _3)(
     cx_float value,
     cx_float min,
     cx_float max
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Clamp, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Clamp, _4)(
     cx_double value,
     cx_double min,
     cx_double max
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Floor)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Floor)(
     cx_int value
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Floor, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Floor, _2)(
     cx_long value
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Floor, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Floor, _3)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Floor, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Floor, _4)(
     cx_double value
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Ceiling)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Ceiling)(
     cx_int value
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Ceiling, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Ceiling, _2)(
     cx_long value
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Ceiling, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Ceiling, _3)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Ceiling, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Ceiling, _4)(
     cx_double value
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Min)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Min)(
     cx_int value1,
     cx_int value2
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Min, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Min, _2)(
     cx_long value1,
     cx_long value2
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Min, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Min, _3)(
     cx_float value1,
     cx_float value2
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Min, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Min, _4)(
     cx_double value1,
     cx_double value2
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Math, Max)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Math, Max)(
     cx_int value1,
     cx_int value2
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Math, Max, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Math, Max, _2)(
     cx_long value1,
     cx_long value2
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Max, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Max, _3)(
     cx_float value1,
     cx_float value2
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Max, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Max, _4)(
     cx_double value1,
     cx_double value2
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Math, Round)(
+extern CX_API cx_float CX_ID_4(cxcore, System, Math, Round)(
     cx_float value
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Round, _2)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Round, _2)(
     cx_float value,
     cx_int decimals
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Round, _3)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Round, _3)(
     cx_double value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Round, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Round, _4)(
     cx_double value,
     cx_int decimals
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Math, Log)(
+extern CX_API cx_float CX_ID_4(cxcore, System, Math, Log)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Log, _2)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Log, _2)(
     cx_double value
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Math, Log, _3)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Math, Log, _3)(
     cx_float value,
     cx_float newBase
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, Log, _4)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, Log, _4)(
     cx_double value,
     cx_double newBase
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Math, ReciprocalEstimate)(
+extern CX_API cx_float CX_ID_4(cxcore, System, Math, ReciprocalEstimate)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, ReciprocalEstimate, _2)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, ReciprocalEstimate, _2)(
     cx_double value
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Math, ReciprocalSqrtEstimate)(
+extern CX_API cx_float CX_ID_4(cxcore, System, Math, ReciprocalSqrtEstimate)(
     cx_float value
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Math, ReciprocalSqrtEstimate, _2)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Math, ReciprocalSqrtEstimate, _2)(
     cx_double value
 );
-extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
+extern CX_API cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
     cx_uint size
 );
-extern CX_EXPORT cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(
+extern CX_API cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(
     cx_ptr block,
     cx_uint size
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Free)(
+extern CX_API void CX_ID_4(cxcore, System, Memory, Free)(
     cx_ptr block
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Memory, Copy)(
+extern CX_API void CX_ID_4(cxcore, System, Memory, Copy)(
     cx_ptr dest,
     cx_ptr src,
     cx_uint size
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Random, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Random, __constructor)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_uint seed
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, Random) CX_ID_4(cxcore, System, Random, Create)();
-extern CX_EXPORT cx_byte CX_ID_4(cxcore, System, Random, NextByte)(
+extern CX_API struct CX_ID_3(cxcore, System, Random) CX_ID_4(cxcore, System, Random, Create)();
+extern CX_API cx_byte CX_ID_4(cxcore, System, Random, NextByte)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_byte CX_ID_5(cxcore, System, Random, NextByte, _2)(
+extern CX_API cx_byte CX_ID_5(cxcore, System, Random, NextByte, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_byte min,
     cx_byte max
 );
-extern CX_EXPORT cx_char CX_ID_4(cxcore, System, Random, NextChar)(
+extern CX_API cx_char CX_ID_4(cxcore, System, Random, NextChar)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_char min,
     cx_char max
 );
-extern CX_EXPORT cx_short CX_ID_4(cxcore, System, Random, NextShort)(
+extern CX_API cx_short CX_ID_4(cxcore, System, Random, NextShort)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_short CX_ID_5(cxcore, System, Random, NextShort, _2)(
+extern CX_API cx_short CX_ID_5(cxcore, System, Random, NextShort, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_short min,
     cx_short max
 );
-extern CX_EXPORT cx_int CX_ID_4(cxcore, System, Random, NextInt)(
+extern CX_API cx_int CX_ID_4(cxcore, System, Random, NextInt)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_int CX_ID_5(cxcore, System, Random, NextInt, _2)(
+extern CX_API cx_int CX_ID_5(cxcore, System, Random, NextInt, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_int min,
     cx_int max
 );
-extern CX_EXPORT cx_long CX_ID_4(cxcore, System, Random, NextLong)(
+extern CX_API cx_long CX_ID_4(cxcore, System, Random, NextLong)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, Random, NextLong, _2)(
+extern CX_API cx_long CX_ID_5(cxcore, System, Random, NextLong, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_long min,
     cx_long max
 );
-extern CX_EXPORT cx_float CX_ID_4(cxcore, System, Random, NextFloat)(
+extern CX_API cx_float CX_ID_4(cxcore, System, Random, NextFloat)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_float CX_ID_5(cxcore, System, Random, NextFloat, _2)(
+extern CX_API cx_float CX_ID_5(cxcore, System, Random, NextFloat, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_float min,
     cx_float max
 );
-extern CX_EXPORT cx_double CX_ID_4(cxcore, System, Random, NextDouble)(
+extern CX_API cx_double CX_ID_4(cxcore, System, Random, NextDouble)(
     struct CX_ID_3(cxcore, System, Random)* __this    
 );
-extern CX_EXPORT cx_double CX_ID_5(cxcore, System, Random, NextDouble, _2)(
+extern CX_API cx_double CX_ID_5(cxcore, System, Random, NextDouble, _2)(
     struct CX_ID_3(cxcore, System, Random)* __this,
     cx_double min,
     cx_double max
 );
-extern CX_EXPORT const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, String, Empty, __const_get)();
-extern CX_EXPORT cx_uint CX_ID_5(cxcore, System, String, Length, __const_get)(
+extern CX_API const struct CX_ID_3(cxcore, System, String)* CX_ID_5(cxcore, System, String, Empty, __const_get)();
+extern CX_API cx_uint CX_ID_5(cxcore, System, String, Length, __const_get)(
     const struct CX_ID_3(cxcore, System, String)* __this    
 );
-extern CX_EXPORT cx_char CX_ID_5(cxcore, System, String, Item, __const_get)(
+extern CX_API cx_char CX_ID_5(cxcore, System, String, Item, __const_get)(
     const struct CX_ID_3(cxcore, System, String)* __this,
     cx_uint index
     
 );
-extern void CX_ID_4(cxcore, System, String, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, String, __constructor)(
     struct CX_ID_3(cxcore, System, String)* __this    
 );
-extern void CX_ID_5(cxcore, System, String, __constructor, _2)(
+extern CX_API void CX_ID_5(cxcore, System, String, __constructor, _2)(
     struct CX_ID_3(cxcore, System, String)* __this,
     cx_uint length,
     cx_ptr data
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, String, __constructor, _3)(
+extern CX_API void CX_ID_5(cxcore, System, String, __constructor, _3)(
     struct CX_ID_3(cxcore, System, String)* __this,
     cx_uint length,
     cx_char ch
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(
     const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this    
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)(
+extern CX_API struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)(
     const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, Hours, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, Hours, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, Minutes, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, Minutes, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, Seconds, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, Seconds, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, Milliseconds, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, Milliseconds, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, TotalDays, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, TotalDays, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, TotalHours, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, TotalMinutes, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, TotalMinutes, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT cx_long CX_ID_5(cxcore, System, TimeSpan, TotalSeconds, __const_get)(
+extern CX_API cx_long CX_ID_5(cxcore, System, TimeSpan, TotalSeconds, __const_get)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this    
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, TimeSpan, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, TimeSpan, __constructor)(
     struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long milliseconds
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(
+extern CX_API void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(
     struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long days,
     cx_long hours,
@@ -724,32 +756,32 @@ extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _2)(
     cx_long seconds,
     cx_long milliseconds
 );
-extern CX_EXPORT void CX_ID_5(cxcore, System, TimeSpan, __constructor, _3)(
+extern CX_API void CX_ID_5(cxcore, System, TimeSpan, __constructor, _3)(
     struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     const struct CX_ID_3(cxcore, System, DateTime) from,
     const struct CX_ID_3(cxcore, System, DateTime) to
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(
+extern CX_API struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddDays)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long days
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddHours)(
+extern CX_API struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddHours)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long hours
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMinutes)(
+extern CX_API struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMinutes)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long minutes
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddSeconds)(
+extern CX_API struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddSeconds)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long seconds
 );
-extern CX_EXPORT struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMilliseconds)(
+extern CX_API struct CX_ID_3(cxcore, System, TimeSpan) CX_ID_4(cxcore, System, TimeSpan, AddMilliseconds)(
     const struct CX_ID_3(cxcore, System, TimeSpan)* __this,
     cx_long milliseconds
 );
-extern CX_EXPORT void CX_ID_4(cxcore, System, Uuid, __constructor)(
+extern CX_API void CX_ID_4(cxcore, System, Uuid, __constructor)(
     struct CX_ID_3(cxcore, System, Uuid)* __this,
     cx_uint a,
     cx_uint b,

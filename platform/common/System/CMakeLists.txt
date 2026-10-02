@@ -6,6 +6,7 @@ target_sources(cxcore
         Console.c
         Double.c
         Exception.c
+        Reflection/TypeInfo.c
         Float.c
         Int.c
         Long.c

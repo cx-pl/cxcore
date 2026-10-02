@@ -18,4 +18,8 @@ public struct TypeInfo {
     public const uint GenericArity;
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
+
+    public static extern bool IsAssignableFrom(const TypeInfo target, const TypeInfo source);
+    public static extern bool IsInBaseTypeChain(const TypeInfo target, const TypeInfo source);
+    public static extern bool HasRuntimeInterface(const TypeInfo typeInfo, ulong typeHash);
 }

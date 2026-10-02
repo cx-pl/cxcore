@@ -113,6 +113,14 @@
 #define CX_EXPORT __declspec(dllexport)
 #define CX_IMPORT __declspec(dllimport)
 
+#if defined(CX_CXCORE_BUILD)
+#define CX_API CX_EXPORT
+#elif defined(CX_STATIC_LINK)
+#define CX_API
+#else
+#define CX_API CX_IMPORT
+#endif
+
 //
 // Constants
 //
@@ -128,6 +136,13 @@
 #define CX_STRING_DECL(name) \
     extern struct CX_ID_3(cxcore, System, String) name
 
+#if defined(CX_DYNAMIC_MODULE)
+#define CX_STRING_DEF(name, text) \
+    struct CX_ID_3(cxcore, System, String) name = { \
+        ._length = sizeof(text) - 1, \
+        ._data = text \
+    }
+#else
 #define CX_STRING_DEF(name, text) \
     struct CX_ID_3(cxcore, System, String) name = { \
         .__base = { \
@@ -136,6 +151,7 @@
         ._length = sizeof(text) - 1, \
         ._data = text \
     }
+#endif
 
 //
 // Arrays
@@ -146,7 +162,7 @@
 //
 
 #define CX_VTABLE_DECL(fullName) \
-    extern union cx_vtable_entry CX_ID_2(fullName, __vtable)[]
+    extern CX_CURRENT_TYPE_API union cx_vtable_entry CX_ID_2(fullName, __vtable)[]
 
 #define CX_BEGIN_VTABLE_DEF(fullName) \
     union cx_vtable_entry CX_ID_2(fullName, __vtable)[] = { \
@@ -175,7 +191,7 @@
     CX_ID_2(fullName, __typeinfo)
 
 #define CX_TYPEINFO_DECL(fullName) \
-    extern struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName)
+    extern CX_CURRENT_TYPE_API struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName)
 
 #define CX_STRUCT_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \
     struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \

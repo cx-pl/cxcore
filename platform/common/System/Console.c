@@ -1,92 +1,90 @@
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../../../src/cxcore.h"
 
-#define MAX_READ_BUFFER_SIZE 256
+#define INITIAL_READ_CAPACITY 128U
 
-struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(    
+static struct CX_ID_3(cxcore, System, String)* cx_console_string_from_buffer(
+    char* buffer,
+    cx_uint length)
+{
+    struct CX_ID_3(cxcore, System, String)* result =
+        (struct CX_ID_3(cxcore, System, String)*)CX_ID_4(cxcore, System, Memory, Alloc)(
+            (cx_uint)sizeof(struct CX_ID_3(cxcore, System, String)));
+    CX_ID_5(cxcore, System, String, __constructor, _2)(result, length, buffer);
+    return result;
+}
+
+struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, Read)(
     cx_uint length
 ) {
-    char input[MAX_READ_BUFFER_SIZE];
-    int count = 0;
-    int ch;
-    char* str;
-    struct CX_ID_3(cxcore, System, String)* result;
+    char* input;
+    cx_uint count = 0;
 
-    // TODO: Throw if length > MAX_READ_BUFFER_SIZE
-
-    // Read getchar() until:
-    // * EOF
-    // * chars read reach MAX_READ_BUFFER_SIZE
-    // * chars read reach length argument
-    while ((ch = getchar()) != EOF && count < MAX_READ_BUFFER_SIZE && (cx_uint)count < length) {
+    if (length == 0) {
+        return cx_console_string_from_buffer(NULL, 0);
+    }
+    input = (char*)CX_ID_4(cxcore, System, Memory, Alloc)(length);
+    while (count < length) {
+        int ch = getchar();
+        if (ch == EOF) {
+            break;
+        }
         input[count++] = (char)ch;
     }
-
-    // Allocate string buffer on heap and copy from stack-allocated buffer
-    str = CX_ID_4(cxcore, System, Memory, Alloc)(
-        count
-    );
-    CX_ID_4(cxcore, System, Memory, Copy)(str, input, count);
-
-    // Allocate String object and call a constructor with allocated string
-    result = CX_ID_4(cxcore, System, Memory, Alloc)(
-        sizeof(struct CX_ID_3(cxcore, System, String))
-    );
-    CX_ID_5(cxcore, System, String, __constructor, _2)(result, (cx_uint)count, input);
-
-    return result;
+    if (count == 0) {
+        CX_ID_4(cxcore, System, Memory, Free)(input);
+        input = NULL;
+    }
+    return cx_console_string_from_buffer(input, count);
 }
 
 struct CX_ID_3(cxcore, System, String)* CX_ID_4(cxcore, System, Console, ReadLine)(
 ) {
-    char input[MAX_READ_BUFFER_SIZE];
-    char count = 0;
+    char* input = (char*)CX_ID_4(cxcore, System, Memory, Alloc)(INITIAL_READ_CAPACITY);
+    cx_uint capacity = INITIAL_READ_CAPACITY;
+    cx_uint count = 0;
     int ch;
-    char* str;
-    struct CX_ID_3(cxcore, System, String)* result;
-    
-    // TODO: Throw if length > MAX_READ_BUFFER_SIZE
 
-    // Read getchar() until:
-    // * newline
-    // * EOF
-    // * chars read reach MAX_READ_BUFFER_SIZE
-    while ((ch = getchar()) != '\n' && ch != EOF && count < sizeof(input)) {
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        if (count == capacity) {
+            cx_uint newCapacity;
+            if (capacity > UINT_MAX / 2U) {
+                CX_ID_4(cxcore, System, Memory, Free)(input);
+                abort();
+            }
+            newCapacity = capacity * 2U;
+            input = (char*)CX_ID_4(cxcore, System, Memory, Realloc)(input, newCapacity);
+            capacity = newCapacity;
+        }
         input[count++] = (char)ch;
     }
 
-    // Allocate string buffer on heap and copy from stack-allocated buffer
-    str = CX_ID_4(cxcore, System, Memory, Alloc)(
-        count
-    );
-    CX_ID_4(cxcore, System, Memory, Copy)(str, input, count);
-
-    // Allocate String object and call a constructor with allocated string
-    result = CX_ID_4(cxcore, System, Memory, Alloc)(
-        sizeof(struct CX_ID_3(cxcore, System, String))
-    );
-    CX_ID_5(cxcore, System, String, __constructor, _2)(result, (cx_uint)count, input);
-
-    return result;
-}
-
-cx_uint CX_ID_4(cxcore, System, Console, Write)(    
-    const struct CX_ID_3(cxcore, System, String)* str
-) {
-    cx_uint n;
-    const char* buf = str->_data;
-
-    for (n = 0; n < str->_length; n++, buf += CX_ID_5(cxcore, System, Char, NumBytes, __const_get)((const struct CX_ID_3(cxcore, System, Char)*)buf)) {
-        putchar(*(int*)buf);
+    if (count == 0) {
+        CX_ID_4(cxcore, System, Memory, Free)(input);
+        input = NULL;
     }
-
-    return n;
+    return cx_console_string_from_buffer(input, count);
 }
 
-cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(    
+cx_uint CX_ID_4(cxcore, System, Console, Write)(
     const struct CX_ID_3(cxcore, System, String)* str
 ) {
-    return
-        CX_ID_4(cxcore, System, Console, Write)(str) +
-        CX_ID_4(cxcore, System, Console, Write)(CX_ID_5(cxcore, System, Environment, NewLine, __const_get)());
+    size_t written;
+    if (str == NULL || (str->_length != 0 && str->_data == NULL)) {
+        return 0;
+    }
+    written = fwrite(str->_data, 1, str->_length, stdout);
+    return written > UINT_MAX ? UINT_MAX : (cx_uint)written;
+}
+
+cx_uint CX_ID_4(cxcore, System, Console, WriteLine)(
+    const struct CX_ID_3(cxcore, System, String)* str
+) {
+    cx_uint written = CX_ID_4(cxcore, System, Console, Write)(str);
+    const struct CX_ID_3(cxcore, System, String)* newline =
+        CX_ID_5(cxcore, System, Environment, NewLine, __const_get)();
+    cx_uint newlineWritten = CX_ID_4(cxcore, System, Console, Write)(newline);
+    return UINT_MAX - written < newlineWritten ? UINT_MAX : written + newlineWritten;
 }

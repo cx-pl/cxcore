@@ -34,3 +34,10 @@ void CX_ID_4(cxcore, System, Nullable, __constructor)(
 ) {
 	__this->_obj = obj;
 }
+
+cx_ptr CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(cx_ptr value, cx_uint size)
+{
+    cx_ptr storage = CX_ID_4(cxcore, System, Memory, Alloc)(size);
+    CX_ID_4(cxcore, System, Memory, Copy)(storage, value, size);
+    return storage;
+}

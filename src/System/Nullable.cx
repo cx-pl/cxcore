@@ -7,4 +7,8 @@ public struct Nullable<T> {
     public bool HasValue { extern const get; }
     public T Value { extern const get; extern set; }
     public extern constructor(T obj);
+
+    // Used by the compiler when lifting a value into its nullable representation.
+    // Keep allocation behind Memory so a future collector can own this storage.
+    public static extern ptr CreateValueStorage(ptr value, uint size);
 }

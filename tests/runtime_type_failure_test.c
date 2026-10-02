@@ -8,8 +8,8 @@ typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
 
 struct test_object { cx_ptr vtable; };
 
-static type_info actual_type = { 0 };
-static type_info unrelated_type = { 0 };
+static type_info actual_type = { .Hash = 1 };
+static type_info unrelated_type = { .Hash = 2 };
 static union cx_vtable_entry object_vtable[] = { { .data = &actual_type } };
 
 int main(void)
