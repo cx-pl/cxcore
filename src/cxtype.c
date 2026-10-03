@@ -37,13 +37,17 @@ static struct cx_iface_ref cx_find_interface(
          current != CX_NULL;
          current = (const cx_type_info*)current->BaseType._obj)
     {
-        const struct cx_interface_impl* interfaces =
-            (const struct cx_interface_impl*)current->RuntimeInterfaces;
-        for (cx_uint index = 0; index < current->RuntimeInterfaceCount; index++)
+        const struct cx_runtime_type_info* runtimeTypeInfo =
+            (const struct cx_runtime_type_info*)current->RuntimeTypeInfo;
+        if (runtimeTypeInfo == CX_NULL)
         {
-            if (interfaces[index].typeInfo == (cx_ptr)targetType)
+            continue;
+        }
+        for (cx_uint index = 0; index < runtimeTypeInfo->interfaceCount; index++)
+        {
+            if (runtimeTypeInfo->interfaces[index].typeInfo == (cx_ptr)targetType)
             {
-                result.vtable = interfaces[index].vtable;
+                result.vtable = runtimeTypeInfo->interfaces[index].vtable;
                 return result;
             }
         }
@@ -121,37 +125,40 @@ const struct cx_interface_impl* cx_reflection_interfaces(
     const cx_type_info* typeInfo,
     cx_uint* count)
 {
+    const struct cx_runtime_type_info* runtimeTypeInfo = typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_runtime_type_info*)typeInfo->RuntimeTypeInfo;
     if (count != CX_NULL)
     {
-        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeInterfaceCount;
+        *count = runtimeTypeInfo == CX_NULL ? 0 : runtimeTypeInfo->interfaceCount;
     }
-    return typeInfo == CX_NULL
-        ? CX_NULL
-        : (const struct cx_interface_impl*)typeInfo->RuntimeInterfaces;
+    return runtimeTypeInfo == CX_NULL ? CX_NULL : runtimeTypeInfo->interfaces;
 }
 
 const struct cx_reflection_field* cx_reflection_fields(
     const cx_type_info* typeInfo,
     cx_uint* count)
 {
+    const struct cx_runtime_type_info* runtimeTypeInfo = typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_runtime_type_info*)typeInfo->RuntimeTypeInfo;
     if (count != CX_NULL)
     {
-        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeFieldCount;
+        *count = runtimeTypeInfo == CX_NULL ? 0 : runtimeTypeInfo->fieldCount;
     }
-    return typeInfo == CX_NULL
-        ? CX_NULL
-        : (const struct cx_reflection_field*)typeInfo->RuntimeFields;
+    return runtimeTypeInfo == CX_NULL ? CX_NULL : runtimeTypeInfo->fields;
 }
 
 const struct cx_reflection_function* cx_reflection_functions(
     const cx_type_info* typeInfo,
     cx_uint* count)
 {
+    const struct cx_runtime_type_info* runtimeTypeInfo = typeInfo == CX_NULL
+        ? CX_NULL
+        : (const struct cx_runtime_type_info*)typeInfo->RuntimeTypeInfo;
     if (count != CX_NULL)
     {
-        *count = typeInfo == CX_NULL ? 0 : typeInfo->RuntimeFunctionCount;
+        *count = runtimeTypeInfo == CX_NULL ? 0 : runtimeTypeInfo->functionCount;
     }
-    return typeInfo == CX_NULL
-        ? CX_NULL
-        : (const struct cx_reflection_function*)typeInfo->RuntimeFunctions;
+    return runtimeTypeInfo == CX_NULL ? CX_NULL : runtimeTypeInfo->functions;
 }

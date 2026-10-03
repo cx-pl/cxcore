@@ -6,12 +6,16 @@ static cx_bool cx_typeinfo_has_runtime_interface(
     const cx_type_info* typeInfo,
     cx_ulong typeHash)
 {
-    const struct cx_interface_impl* interfaces =
-        (const struct cx_interface_impl*)typeInfo->RuntimeInterfaces;
-    for (cx_uint index = 0; index < typeInfo->RuntimeInterfaceCount; index++)
+    const struct cx_runtime_type_info* runtimeTypeInfo =
+        (const struct cx_runtime_type_info*)typeInfo->RuntimeTypeInfo;
+    if (runtimeTypeInfo == CX_NULL)
+    {
+        return CX_FALSE;
+    }
+    for (cx_uint index = 0; index < runtimeTypeInfo->interfaceCount; index++)
     {
         const cx_type_info* interfaceType =
-            (const cx_type_info*)interfaces[index].typeInfo;
+            (const cx_type_info*)runtimeTypeInfo->interfaces[index].typeInfo;
         if (interfaceType != CX_NULL && interfaceType->Hash == typeHash)
         {
             return CX_TRUE;
@@ -31,20 +35,20 @@ cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
     const cx_type_info* __this,
     const cx_type_info source)
 {
-    cx_type_info current = source;
+    const cx_type_info* current = &source;
     for (;;)
     {
-        if (current.Hash == __this->Hash)
+        if (current->Hash == __this->Hash)
         {
             return CX_TRUE;
         }
 
-        cx_type_info parent = current;
-        if (current.BaseType._obj != CX_NULL)
+        const cx_type_info* parent = current;
+        if (current->BaseType._obj != CX_NULL)
         {
-            parent = *(const cx_type_info*)current.BaseType._obj;
+            parent = (const cx_type_info*)current->BaseType._obj;
         }
-        if (parent.Hash == current.Hash)
+        if (parent->Hash == current->Hash)
         {
             return CX_FALSE;
         }
@@ -56,21 +60,21 @@ cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
     const cx_type_info* __this,
     const cx_type_info source)
 {
-    cx_type_info current = source;
+    const cx_type_info* current = &source;
     for (;;)
     {
-        if (current.Hash == __this->Hash ||
-            cx_typeinfo_has_runtime_interface(&current, __this->Hash))
+        if (current->Hash == __this->Hash ||
+            cx_typeinfo_has_runtime_interface(current, __this->Hash))
         {
             return CX_TRUE;
         }
 
-        cx_type_info parent = current;
-        if (current.BaseType._obj != CX_NULL)
+        const cx_type_info* parent = current;
+        if (current->BaseType._obj != CX_NULL)
         {
-            parent = *(const cx_type_info*)current.BaseType._obj;
+            parent = (const cx_type_info*)current->BaseType._obj;
         }
-        if (parent.Hash == current.Hash)
+        if (parent->Hash == current->Hash)
         {
             return CX_FALSE;
         }

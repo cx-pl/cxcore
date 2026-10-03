@@ -39,6 +39,18 @@ struct cx_interface_impl {
 	cx_ptr vtable;
 };
 
+struct cx_reflection_field;
+struct cx_reflection_function;
+
+struct cx_runtime_type_info {
+	const struct cx_interface_impl* interfaces;
+	cx_uint interfaceCount;
+	const struct cx_reflection_field* fields;
+	cx_uint fieldCount;
+	const struct cx_reflection_function* functions;
+	cx_uint functionCount;
+};
+
 struct cx_reflection_field {
 	cx_uint flags;
 	cx_uint offset;

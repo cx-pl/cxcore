@@ -76,15 +76,10 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, TypeInfo)) {
     const struct CX_ID_3(cxcore, System, Array)* GenericParams;
     struct CX_ID_3(cxcore, System, Nullable) BaseType;
     const struct CX_ID_3(cxcore, System, Array)* Interfaces;
-    cx_ptr RuntimeInterfaces;
-    cx_uint RuntimeInterfaceCount;
-    cx_ptr RuntimeFields;
-    cx_uint RuntimeFieldCount;
-    cx_ptr RuntimeFunctions;
-    cx_uint RuntimeFunctionCount;
     cx_uint GenericArity;
     const struct CX_ID_3(cxcore, System, Array)* Fields;
     const struct CX_ID_3(cxcore, System, Array)* Functions;
+    const cx_ptr RuntimeTypeInfo;
 };
 CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, VersionInfo)) {
     cx_int Major;

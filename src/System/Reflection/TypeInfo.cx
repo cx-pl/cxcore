@@ -9,15 +9,10 @@ public struct TypeInfo {
     public const TypeInfo[] GenericParams;
     public const TypeInfo? BaseType;
     public const TypeInfo[] Interfaces;
-    private const ptr RuntimeInterfaces;
-    private const uint RuntimeInterfaceCount;
-    private const ptr RuntimeFields;
-    private const uint RuntimeFieldCount;
-    private const ptr RuntimeFunctions;
-    private const uint RuntimeFunctionCount;
     public const uint GenericArity;
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
+    private const ptr RuntimeTypeInfo;
 
     public extern bool IsAssignableFrom(const TypeInfo source) const;
     public extern bool IsInBaseTypeChain(const TypeInfo source) const;

@@ -190,6 +190,9 @@
 #define CX_TYPEINFO_NAME(fullName) \
     CX_ID_2(fullName, __typeinfo)
 
+#define CX_RUNTIME_TYPEINFO_NAME(fullName) \
+    CX_ID_2(fullName, __runtime_type_info)
+
 #define CX_TYPEINFO_DECL(fullName) \
     extern CX_CURRENT_TYPE_API struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName)
 
@@ -224,6 +227,9 @@
     }
 
 #define CX_CLASS_TYPEINFO_WITH_INTERFACES_DEF(fullName, nameString, namespaceString, baseType, interfaceMap, interfaceCount, hash, flags) \
+    static const struct cx_runtime_type_info CX_RUNTIME_TYPEINFO_NAME(fullName) = { \
+        (const struct cx_interface_impl*)(interfaceMap), interfaceCount \
+    }; \
     struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_TYPEINFO_NAME(fullName) = { \
         .Hash = hash,\
         .Flags = flags, \
@@ -233,8 +239,7 @@
         .BaseType = { \
             ._obj = &baseType\
         }, \
-        .RuntimeInterfaces = (cx_ptr)(interfaceMap), \
-        .RuntimeInterfaceCount = interfaceCount, \
+        .RuntimeTypeInfo = (cx_ptr)&CX_RUNTIME_TYPEINFO_NAME(fullName), \
     }
 
 #define CX_STATIC_CLASS_TYPEINFO_DEF(fullName, nameString, namespaceString, hash, flags) \

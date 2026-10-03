@@ -31,15 +31,18 @@ static const struct cx_reflection_function functions[] = {
         1,
     },
 };
+static const struct cx_runtime_type_info runtime_type_info = {
+    .interfaces = interfaces,
+    .interfaceCount = 1,
+    .fields = fields,
+    .fieldCount = 1,
+    .functions = functions,
+    .functionCount = 1,
+};
 static type_info derived_type = {
     .Hash = 2,
     .BaseType = { ._obj = &base_type },
-    .RuntimeInterfaces = (cx_ptr)interfaces,
-    .RuntimeInterfaceCount = 1,
-    .RuntimeFields = (cx_ptr)fields,
-    .RuntimeFieldCount = 1,
-    .RuntimeFunctions = (cx_ptr)functions,
-    .RuntimeFunctionCount = 1,
+    .RuntimeTypeInfo = (cx_ptr)&runtime_type_info,
     .GenericArity = 1,
 };
 
@@ -96,6 +99,8 @@ int main(void)
     assert(count == 1 && reflected_functions[0].slot == 1);
     assert(reflected_functions[0].parameterCount == 1);
     assert(reflected_functions[0].parameters[0].typeInfo == &base_type);
+    assert(cx_reflection_fields(CX_NULL, &count) == CX_NULL && count == 0);
+    assert(cx_reflection_functions(CX_NULL, &count) == CX_NULL && count == 0);
     assert(derived_type.GenericArity == 1);
     return 0;
 }
