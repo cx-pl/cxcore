@@ -19,7 +19,7 @@ public struct TypeInfo {
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
 
-    public static extern bool IsAssignableFrom(const TypeInfo target, const TypeInfo source);
-    public static extern bool IsInBaseTypeChain(const TypeInfo target, const TypeInfo source);
-    public static extern bool HasRuntimeInterface(const TypeInfo typeInfo, ulong typeHash);
+    public extern bool IsAssignableFrom(const TypeInfo source) const;
+    public extern bool IsInBaseTypeChain(const TypeInfo source) const;
+    public extern bool HasRuntimeInterface(ulong typeHash) const;
 }

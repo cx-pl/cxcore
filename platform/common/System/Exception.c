@@ -13,7 +13,7 @@ cx_bool CX_ID_4(cxcore, System, Exception, Matches)(
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) typeInfo)
 {
     return CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
-        typeInfo,
+        &typeInfo,
         CX_ID_5(cxcore, System, Exception, RuntimeType, __const_get)(exception));
 }
 

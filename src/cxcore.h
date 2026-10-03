@@ -274,15 +274,15 @@ extern CX_API cx_ptr CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(
     cx_uint size
 );
 extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) target,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* __this,
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) source
 );
 extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) target,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* __this,
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) source
 );
 extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) typeInfo,
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo)* __this,
     cx_ulong typeHash
 );
 extern CX_API void CX_ID_5(cxcore, System, Reflection, VersionInfo, __constructor)(

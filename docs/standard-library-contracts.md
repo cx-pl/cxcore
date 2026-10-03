@@ -27,6 +27,10 @@ managed versus explicitly allocated storage.
   that allocation.
 - `Object` initializes its runtime vtable and leaves `_gc` null. No finalizer,
   reference counting, or automatic collection runs.
+- `DateTime` component construction validates the Gregorian date and time fields. `AddMonths`
+  uses calendar months, clamps the day to the last day of the destination month, and keeps
+  the time-of-day and offset. Invalid components and results outside the stored millisecond
+  range write a diagnostic and exit with failure.
 
 ## Strings, characters, and console
 
@@ -47,7 +51,9 @@ managed versus explicitly allocated storage.
   buffer and object with `Memory.Free`. `Console.Write` writes the stored UTF-8 bytes
   unchanged and returns the number of bytes written.
 
-Allocation failures in APIs without an error return terminate the process. Bounds,
+Allocation failures in `Memory.Alloc` and nonzero `Memory.Realloc` write `Out of memory`
+to standard error and exit with failure. The old allocation remains untouched when
+reallocation fails before process termination. Bounds,
 ownership, and UTF-8 errors do not currently raise typed CX exceptions.
 
 ## Shared-library declarations
@@ -56,3 +62,10 @@ ownership, and UTF-8 errors do not currently raise typed CX exceptions.
 consumers, and undecorated declarations for static consumers. Public runtime data uses
 `CX_CXCORE_DATA_API` with the same producer/consumer/static behavior. CMake propagates
 `CX_STATIC_LINK` from static `cxcore` targets to their consumers.
+
+## Platform support
+
+The current runtime implementation supports Windows through MSVC. `platform.h` rejects
+Linux and macOS builds because their environment and system-clock providers are not
+implemented. The common runtime paths are shared C code, but only Windows platform behavior
+has been built and tested so far.

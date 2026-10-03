@@ -200,11 +200,7 @@ public struct DateTime {
         return AddMonths(years * 12);
     }
 
-    public DateTime AddMonths(long months) const {
-        long days = months * 30; // TODO: add support for different number of days per month
-
-        return new DateTime(_milliseconds + days * (24 * 60 * 60 * 1000), _offset);
-    }
+    public extern DateTime AddMonths(long months) const;
 
     public DateTime AddDays(long days) const {
         return new DateTime(_milliseconds + days * (24 * 60 * 60 * 1000), _offset);

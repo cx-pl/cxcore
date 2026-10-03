@@ -55,13 +55,25 @@ int main(void)
     assert(cx_is_object(&object, &base_type));
     assert(cx_is_object(&object, &interface_type));
     assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        base_type,
+        &base_type,
         derived_type));
     assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        interface_type,
+        &interface_type,
         derived_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
+        &base_type,
+        derived_type));
+    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
+        &interface_type,
+        derived_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
+        &derived_type,
+        interface_type.Hash));
+    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
+        &derived_type,
+        base_type.Hash));
     assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        derived_type,
+        &derived_type,
         base_type));
     assert(!cx_is_object(CX_NULL, &derived_type));
     assert(cx_checked_cast_object(&object, &derived_type) == &object);

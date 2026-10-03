@@ -41,7 +41,31 @@ add_custom_command(TARGET cxcore_standard_library_tests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:cxcore>
         $<TARGET_FILE_DIR:cxcore_standard_library_tests>)
-add_test(NAME cxcore_standard_library_tests COMMAND cxcore_standard_library_tests)
+foreach(library_area IN ITEMS array char memory nullable object string)
+    add_test(
+        NAME cxcore_${library_area}_tests
+        COMMAND cxcore_standard_library_tests ${library_area})
+endforeach()
+
+add_executable(cxcore_memory_allocation_failure_tests memory_allocation_failure_tests.c)
+target_link_libraries(cxcore_memory_allocation_failure_tests PRIVATE cxcore)
+add_custom_command(TARGET cxcore_memory_allocation_failure_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:cxcore>
+        $<TARGET_FILE_DIR:cxcore_memory_allocation_failure_tests>)
+add_test(
+    NAME cxcore_memory_allocation_failure_tests
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_EXECUTABLE=$<TARGET_FILE:cxcore_memory_allocation_failure_tests>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/verify_memory_allocation_failure.cmake)
+
+add_executable(cxcore_datetime_tests datetime_tests.c)
+target_link_libraries(cxcore_datetime_tests PRIVATE cxcore)
+add_custom_command(TARGET cxcore_datetime_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:cxcore>
+        $<TARGET_FILE_DIR:cxcore_datetime_tests>)
+add_test(NAME cxcore_datetime_tests COMMAND cxcore_datetime_tests)
 
 add_executable(cxcore_console_read_tests console_read_tests.c)
 target_link_libraries(cxcore_console_read_tests PRIVATE cxcore)

@@ -4,6 +4,7 @@ target_sources(cxcore
         Byte.c
         Char.c
         Console.c
+        DateTime.c
         Double.c
         Exception.c
         Reflection/TypeInfo.c

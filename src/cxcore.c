@@ -187,21 +187,18 @@ static const struct cx_reflection_field CX_ID_5(cxcore, System, Reflection, Type
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC, (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), Functions), &CX_ID_4(cxcore, System, Array, __typeinfo), "Functions" },
 };
 static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_0)[] = {
-    { 0, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "target", CX_NULL },
     { 0, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "source", CX_NULL },
 };
 static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_1)[] = {
-    { 0, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "target", CX_NULL },
     { 0, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "source", CX_NULL },
 };
 static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_2)[] = {
-    { 0, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "typeInfo", CX_NULL },
     { 0, &CX_ID_4(cxcore, System, ULong, __typeinfo), "typeHash", CX_NULL },
 };
 static const struct cx_reflection_function CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_functions)[] = {
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "IsAssignableFrom", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_0), 2 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "IsInBaseTypeChain", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_1), 2 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "HasRuntimeInterface", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_2), 2 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "IsAssignableFrom", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_0), 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "IsInBaseTypeChain", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_1), 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "HasRuntimeInterface", CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_2), 1 },
 };
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo) = {
     .Hash = 0x9C779CB20AC317E6,
@@ -484,7 +481,7 @@ static const struct cx_reflection_function CX_ID_4(cxcore, System, DateTime, __r
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "DateTime", CX_ID_4(cxcore, System, DateTime, __reflection_params_2), 2 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "DateTime", CX_ID_4(cxcore, System, DateTime, __reflection_params_3), 8 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddYears", CX_ID_4(cxcore, System, DateTime, __reflection_params_4), 1 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddMonths", CX_ID_4(cxcore, System, DateTime, __reflection_params_5), 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddMonths", CX_ID_4(cxcore, System, DateTime, __reflection_params_5), 1 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddDays", CX_ID_4(cxcore, System, DateTime, __reflection_params_6), 1 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddHours", CX_ID_4(cxcore, System, DateTime, __reflection_params_7), 1 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL, CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, DateTime, __typeinfo), "AddMinutes", CX_ID_4(cxcore, System, DateTime, __reflection_params_8), 1 },
@@ -1799,16 +1796,6 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddYe
     struct CX_ID_3(cxcore, System, DateTime) __cx_return_value;
     (void)&__cx_return_value;
     return CX_ID_4(cxcore, System, DateTime, AddMonths)(__this, (years * 12));
-}
-
-struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddMonths)(const struct CX_ID_3(cxcore, System, DateTime)* __this, cx_long months) {
-    cx_int __cx_transfer = 0;
-    (void)&__cx_transfer;
-    struct CX_ID_3(cxcore, System, DateTime) __cx_return_value;
-    (void)&__cx_return_value;
-    cx_long days = (months * 30);
-    struct CX_ID_3(cxcore, System, DateTime) __cx_new_0;
-    return (CX_ID_4(cxcore, System, DateTime, __constructor)(&__cx_new_0, (__this->_milliseconds + (days * (((24 * 60) * 60) * 1000))), __this->_offset), __cx_new_0);
 }
 
 struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, DateTime, AddDays)(const struct CX_ID_3(cxcore, System, DateTime)* __this, cx_long days) {

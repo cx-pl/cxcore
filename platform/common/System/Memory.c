@@ -5,13 +5,41 @@
 
 // Note: This is the naive implementation. There should be some form of GC implemented here.
 
+#ifdef CXCORE_TESTING
+static cx_bool cx_memory_fail_next_allocation;
+
+CX_API void cx_memory_test_fail_next_allocation(void)
+{
+    cx_memory_fail_next_allocation = CX_TRUE;
+}
+#endif
+
+static cx_bool cx_memory_should_fail_allocation(void)
+{
+#ifdef CXCORE_TESTING
+    if (cx_memory_fail_next_allocation)
+    {
+        cx_memory_fail_next_allocation = CX_FALSE;
+        return CX_TRUE;
+    }
+#endif
+    return CX_FALSE;
+}
+
+static void cx_memory_out_of_memory(void)
+{
+    fputs("Out of memory\n", stderr);
+    exit(EXIT_FAILURE);
+}
+
 cx_ptr CX_ID_4(cxcore, System, Memory, Alloc)(
     cx_uint size
 ) {
-    cx_ptr object = calloc(1, size == 0 ? 1 : size);
+    cx_ptr object = cx_memory_should_fail_allocation()
+        ? NULL
+        : calloc(1, size == 0 ? 1 : size);
     if (object == NULL) {
-        fputs("Out of memory\n", stderr);
-        abort();
+        cx_memory_out_of_memory();
     }
     return object;
 }
@@ -25,10 +53,9 @@ cx_ptr CX_ID_4(cxcore, System, Memory, Realloc)(
         free(block);
         return CX_NULL;
     }
-    resized = realloc(block, size);
+    resized = cx_memory_should_fail_allocation() ? NULL : realloc(block, size);
     if (resized == NULL) {
-        fputs("Out of memory\n", stderr);
-        abort();
+        cx_memory_out_of_memory();
     }
     return resized;
 }

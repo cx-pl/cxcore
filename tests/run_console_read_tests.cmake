@@ -13,3 +13,7 @@ file(REMOVE "${input_path}")
 if(NOT result EQUAL 0)
     message(FATAL_ERROR "Console read test failed (${result}): ${output}${error}")
 endif()
+
+if(NOT output STREQUAL "xyz")
+    message(FATAL_ERROR "Console write test produced unexpected output: '${output}'")
+endif()
