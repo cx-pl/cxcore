@@ -6,7 +6,7 @@ public final class String {
 
     public static const String Empty { extern const get; }
     public uint Length { extern const get; }
-    public char Item { 
+    public char Item {
         extern const get(uint index);
     }
 

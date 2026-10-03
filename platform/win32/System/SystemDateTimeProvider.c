@@ -5,15 +5,14 @@
 #include <windows.h>
 #include "../../../src/cxcore.h"
 
-
 // Millisecond offset from Year 1 to Year 1601
 // There are exactly 504,911,232,000,000 milliseconds in those 1600 years
 // (This accounts for all leap years using the Gregorian calendar rules)
 const ULONGLONG _MILISECONDS_FROM_YEAR_1_TO_1601 = 504911232000000ULL;
 
-struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(
-    const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this
-    ) {
+struct CX_ID_3(cxcore, System, DateTime)
+    CX_ID_4(cxcore, System, SystemDateTimeProvider,
+            GetUtcNow)(const struct CX_ID_3(cxcore, System, SystemDateTimeProvider) * __this) {
     // Get the highest precision UTC time from Windows
     FILETIME utcFileTime;
     GetSystemTimePreciseAsFileTime(&utcFileTime);
@@ -30,13 +29,13 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeP
     ULONGLONG utcMsYear1 = utcMsFrom1601 + _MILISECONDS_FROM_YEAR_1_TO_1601;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = 0, ._milliseconds = utcMsYear1 };
+    struct CX_ID_3(cxcore, System, DateTime) result = {._offset = 0, ._milliseconds = utcMsYear1};
     return result;
 }
 
-struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)(
-    const struct CX_ID_3(cxcore, System, SystemDateTimeProvider)* __this
-    ) {
+struct CX_ID_3(cxcore, System, DateTime)
+    CX_ID_4(cxcore, System, SystemDateTimeProvider,
+            GetLocalNow)(const struct CX_ID_3(cxcore, System, SystemDateTimeProvider) * __this) {
     // Get the highest precision UTC time from Windows
     FILETIME utcFileTime;
     GetSystemTimePreciseAsFileTime(&utcFileTime);
@@ -70,20 +69,20 @@ struct CX_ID_3(cxcore, System, DateTime) CX_ID_4(cxcore, System, SystemDateTimeP
         totalBiasInMinutes = tzInfo.Bias;
         if (tzResult == TIME_ZONE_ID_STANDARD) {
             totalBiasInMinutes += tzInfo.StandardBias;
-        }
-        else if (tzResult == TIME_ZONE_ID_DAYLIGHT) {
+        } else if (tzResult == TIME_ZONE_ID_DAYLIGHT) {
             totalBiasInMinutes += tzInfo.DaylightBias;
         }
     }
     LONG offset = (totalBiasInMinutes * -1) / 60;
-    cx_short offsetHours = (tzResult == TIME_ZONE_ID_INVALID || offset < SHRT_MIN || offset > SHRT_MAX)
-        ? (cx_short)0
-        : (cx_short)offset;
+    cx_short offsetHours =
+        (tzResult == TIME_ZONE_ID_INVALID || offset < SHRT_MIN || offset > SHRT_MAX)
+            ? (cx_short)0
+            : (cx_short)offset;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = { ._offset = offsetHours, ._milliseconds = localMsYear1 };
+    struct CX_ID_3(cxcore, System, DateTime)
+        result = {._offset = offsetHours, ._milliseconds = localMsYear1};
     return result;
 }
-
 
 #endif // CX_PLATFORM_WIN32

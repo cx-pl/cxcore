@@ -5,15 +5,15 @@ public struct DateTime {
     private short _offset;
 
     public long Milliseconds {
-        const get { 
-            return _milliseconds; 
-        }  
+        const get {
+            return _milliseconds;
+        }
     }
 
     public short Offset {
-        const get { 
-            return _offset; 
-        }  
+        const get {
+            return _offset;
+        }
     }
 
     public long Year {
@@ -34,7 +34,7 @@ public struct DateTime {
             }
 
             return currentYear;
-        } 
+        }
     }
 
     public long Month {
@@ -94,55 +94,55 @@ public struct DateTime {
     public long DayOfWeek {
         const get {
             return (TotalDays + 1) % 7;
-        } 
+        }
     }
 
     public long Hour {
         const get {
             return TotalHours % 24;
-        } 
+        }
     }
 
     public long Minute {
         const get {
             return TotalMinutes % 60;
-        } 
+        }
     }
 
     public long Second {
         const get {
             return TotalSeconds % 60;
-        } 
+        }
     }
 
     public long Millisecond {
         const get {
             return _milliseconds % 1000;
-        } 
+        }
     }
 
-    public long TotalDays { 
+    public long TotalDays {
         const get {
             return _milliseconds / (24 * 60 * 60 * 1000);
-        } 
+        }
     }
 
-    public long TotalHours { 
+    public long TotalHours {
         const get {
             return _milliseconds / (60 * 60 * 1000);
-        } 
+        }
     }
 
-    public long TotalMinutes { 
+    public long TotalMinutes {
         const get {
             return _milliseconds / (60 * 1000);
-        } 
+        }
     }
 
-    public long TotalSeconds { 
+    public long TotalSeconds {
         const get {
             return _milliseconds / 1000;
-        } 
+        }
     }
 
     public static long DaysInMonth(long month, long year) {
@@ -186,12 +186,12 @@ public struct DateTime {
     }
 
     public extern constructor(
-        int year, 
-        int month, 
-        int day, 
-        int hour, 
-        int minute, 
-        int second, 
+        int year,
+        int month,
+        int day,
+        int hour,
+        int minute,
+        int second,
         int millisecond,
         short offset
     );
@@ -212,7 +212,7 @@ public struct DateTime {
 
     public DateTime AddMinutes(long minutes) const {
         return new DateTime(_milliseconds + minutes * (60 * 1000), _offset);
-    }    
+    }
 
     public DateTime AddSeconds(long seconds) const {
         return new DateTime(_milliseconds + seconds * 1000, _offset);

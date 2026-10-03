@@ -5,12 +5,8 @@
 #include "../../../inc/cxtypes.h"
 
 /* Decode one Unicode scalar from a bounded UTF-8 byte sequence. */
-static int cx_utf8_decode(
-    const cx_byte* bytes,
-    size_t remaining,
-    cx_uint* scalar,
-    size_t* byteCount)
-{
+static int cx_utf8_decode(const cx_byte *bytes, size_t remaining, cx_uint *scalar,
+                          size_t *byteCount) {
     cx_uint value;
     cx_byte first;
     size_t count;
@@ -29,16 +25,13 @@ static int cx_utf8_decode(
     if (first >= 0xC2 && first <= 0xDF) {
         value = first & 0x1F;
         count = 2;
-    }
-    else if (first >= 0xE0 && first <= 0xEF) {
+    } else if (first >= 0xE0 && first <= 0xEF) {
         value = first & 0x0F;
         count = 3;
-    }
-    else if (first >= 0xF0 && first <= 0xF4) {
+    } else if (first >= 0xF0 && first <= 0xF4) {
         value = first & 0x07;
         count = 4;
-    }
-    else {
+    } else {
         return 0;
     }
 
@@ -52,10 +45,8 @@ static int cx_utf8_decode(
         value = (value << 6) | (bytes[index] & 0x3F);
     }
 
-    if ((count == 2 && value < 0x80) ||
-        (count == 3 && value < 0x800) ||
-        (count == 4 && value < 0x10000) ||
-        (value >= 0xD800 && value <= 0xDFFF) ||
+    if ((count == 2 && value < 0x80) || (count == 3 && value < 0x800) ||
+        (count == 4 && value < 0x10000) || (value >= 0xD800 && value <= 0xDFFF) ||
         value > 0x10FFFF) {
         return 0;
     }
@@ -65,8 +56,7 @@ static int cx_utf8_decode(
     return 1;
 }
 
-static size_t cx_utf8_encode(cx_uint scalar, cx_byte output[4])
-{
+static size_t cx_utf8_encode(cx_uint scalar, cx_byte output[4]) {
     if (scalar <= 0x7F) {
         output[0] = (cx_byte)scalar;
         return 1;

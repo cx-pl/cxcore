@@ -22,33 +22,33 @@ public struct TimeSpan {
     }
 
     public long Milliseconds {
-        const get { 
-            return _milliseconds; 
-        }  
+        const get {
+            return _milliseconds;
+        }
     }
 
-    public long TotalDays { 
+    public long TotalDays {
         const get {
             return _milliseconds / (24 * 60 * 60 * 1000);
-        } 
+        }
     }
 
-    public long TotalHours { 
+    public long TotalHours {
         const get {
             return _milliseconds / (60 * 60 * 1000);
-        } 
+        }
     }
 
-    public long TotalMinutes { 
+    public long TotalMinutes {
         const get {
             return _milliseconds / (60 * 1000);
-        } 
+        }
     }
 
-    public long TotalSeconds { 
+    public long TotalSeconds {
         const get {
             return _milliseconds / 1000;
-        } 
+        }
     }
 
     public constructor(long milliseconds) {
@@ -56,10 +56,10 @@ public struct TimeSpan {
     }
 
     public constructor(
-        long days, 
-        long hours, 
-        long minutes, 
-        long seconds, 
+        long days,
+        long hours,
+        long minutes,
+        long seconds,
         long milliseconds
     ) {
         _milliseconds =

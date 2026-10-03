@@ -3,16 +3,14 @@
 
 typedef struct CX_ID_3(cxcore, System, DateTime) datetime;
 
-static datetime make_datetime(cx_int year, cx_int month, cx_int day)
-{
+static datetime make_datetime(cx_int year, cx_int month, cx_int day) {
     datetime value;
-    CX_ID_5(cxcore, System, DateTime, __constructor, _2)(
-        &value, year, month, day, 14, 5, 6, 789, 3);
+    CX_ID_5(cxcore, System, DateTime, __constructor, _2)(&value, year, month, day, 14, 5, 6, 789,
+                                                         3);
     return value;
 }
 
-static void assert_date(const datetime* value, cx_long year, cx_long month, cx_long day)
-{
+static void assert_date(const datetime *value, cx_long year, cx_long month, cx_long day) {
     assert(CX_ID_5(cxcore, System, DateTime, Year, __const_get)(value) == year);
     assert(CX_ID_5(cxcore, System, DateTime, Month, __const_get)(value) == month);
     assert(CX_ID_5(cxcore, System, DateTime, Day, __const_get)(value) == day);
@@ -23,8 +21,7 @@ static void assert_date(const datetime* value, cx_long year, cx_long month, cx_l
     assert(value->_offset == 3);
 }
 
-int main(void)
-{
+int main(void) {
     datetime january31 = make_datetime(2024, 1, 31);
     datetime leapFebruary = CX_ID_4(cxcore, System, DateTime, AddMonths)(&january31, 1);
     datetime march31 = make_datetime(2024, 3, 31);

@@ -2,7 +2,7 @@ namespace System;
 
 public class Object {
     private ptr _gc;
-    
+
     public TypeInfo Type { extern const get; }
 
     public extern constructor();

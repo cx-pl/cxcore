@@ -9,45 +9,35 @@
 #define CX_THREAD_LOCAL _Thread_local
 #endif
 
-static CX_THREAD_LOCAL struct cx_exception_frame* cx_current_exception_frame;
+static CX_THREAD_LOCAL struct cx_exception_frame *cx_current_exception_frame;
 static CX_THREAD_LOCAL struct cx_exception cx_current_exception;
 
-static void cx_exception_dispatch(void)
-{
-    if (cx_current_exception_frame != CX_NULL)
-    {
+static void cx_exception_dispatch(void) {
+    if (cx_current_exception_frame != CX_NULL) {
         longjmp(cx_current_exception_frame->environment, 1);
     }
 
-    fprintf(
-        stderr,
-        "Uncaught exception thrown at %s:%d\n",
-        cx_current_exception.thrownFileName == CX_NULL
-            ? "<unknown>"
-            : cx_current_exception.thrownFileName,
-        cx_current_exception.thrownLine);
+    fprintf(stderr, "Uncaught exception thrown at %s:%d\n",
+            cx_current_exception.thrownFileName == CX_NULL ? "<unknown>"
+                                                           : cx_current_exception.thrownFileName,
+            cx_current_exception.thrownLine);
     exit(EXIT_FAILURE);
 }
-void cx_exception_push(struct cx_exception_frame* frame)
-{
+void cx_exception_push(struct cx_exception_frame *frame) {
     frame->previous = cx_current_exception_frame;
     cx_current_exception_frame = frame;
 }
 
-void cx_exception_pop(struct cx_exception_frame* frame)
-{
-    if (cx_current_exception_frame != frame)
-    {
+void cx_exception_pop(struct cx_exception_frame *frame) {
+    if (cx_current_exception_frame != frame) {
         fputs("Invalid cx exception handler stack\n", stderr);
         abort();
     }
     cx_current_exception_frame = frame->previous;
 }
 
-void cx_exception_throw(cx_ptr exceptionObject, const char* fileName, int line)
-{
-    if (exceptionObject == CX_NULL)
-    {
+void cx_exception_throw(cx_ptr exceptionObject, const char *fileName, int line) {
+    if (exceptionObject == CX_NULL) {
         fputs("Cannot throw a null exception\n", stderr);
         abort();
     }
@@ -57,28 +47,23 @@ void cx_exception_throw(cx_ptr exceptionObject, const char* fileName, int line)
     cx_exception_dispatch();
 }
 
-void cx_exception_rethrow(void)
-{
-    if (cx_current_exception.exceptionObject == CX_NULL)
-    {
+void cx_exception_rethrow(void) {
+    if (cx_current_exception.exceptionObject == CX_NULL) {
         fputs("Cannot rethrow without an active exception\n", stderr);
         abort();
     }
     cx_exception_dispatch();
 }
 
-cx_ptr cx_exception_current(void)
-{
+cx_ptr cx_exception_current(void) {
     return cx_current_exception.exceptionObject;
 }
 
-cx_bool cx_exception_pending(void)
-{
+cx_bool cx_exception_pending(void) {
     return cx_current_exception.exceptionObject != CX_NULL;
 }
 
-void cx_exception_clear(void)
-{
+void cx_exception_clear(void) {
     cx_current_exception.exceptionObject = CX_NULL;
     cx_current_exception.thrownFileName = CX_NULL;
     cx_current_exception.thrownLine = 0;

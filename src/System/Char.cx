@@ -29,7 +29,7 @@ public struct Char {
 
     public bool IsWhiteSpace {
         const get {
-            return 
+            return
                 _value == ' ' ||
                 _value == '\t' ||
                 _value == '\r' ||

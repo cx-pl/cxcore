@@ -1,42 +1,33 @@
 #include "../../../src/cxcore.h"
 
-struct CX_ID_3(cxcore, System, Nullable) _null = { CX_NULL };
+struct CX_ID_3(cxcore, System, Nullable) _null = {CX_NULL};
 
-void CX_ID_5(cxcore, System, Nullable, Null, __const_get)(
-    void* __returnValue
-) {
-    *(struct CX_ID_3(cxcore, System, Nullable)*)__returnValue = _null;
+void CX_ID_5(cxcore, System, Nullable, Null, __const_get)(void *__returnValue) {
+    *(struct CX_ID_3(cxcore, System, Nullable) *)__returnValue = _null;
 }
 
-cx_bool CX_ID_5(cxcore, System, Nullable, HasValue, __const_get)(
-    const struct CX_ID_3(cxcore, System, Nullable)* __this    
-) {
-	return __this->_obj != CX_NULL;
+cx_bool CX_ID_5(cxcore, System, Nullable, HasValue,
+                __const_get)(const struct CX_ID_3(cxcore, System, Nullable) * __this) {
+    return __this->_obj != CX_NULL;
 }
 
-void CX_ID_5(cxcore, System, Nullable, Value, __const_get)(
-    const struct CX_ID_3(cxcore, System, Nullable)* __this,
-    void* __returnValue    
-) {
-	*(struct CX_ID_3(cxcore, System, Nullable)*)__returnValue = *__this;
+void CX_ID_5(cxcore, System, Nullable, Value,
+             __const_get)(const struct CX_ID_3(cxcore, System, Nullable) * __this,
+                          void *__returnValue) {
+    *(struct CX_ID_3(cxcore, System, Nullable) *)__returnValue = *__this;
 }
 
-void CX_ID_5(cxcore, System, Nullable, Value, __set)(
-    struct CX_ID_3(cxcore, System, Nullable)* __this,
-    void* value    
-) {
+void CX_ID_5(cxcore, System, Nullable, Value,
+             __set)(struct CX_ID_3(cxcore, System, Nullable) * __this, void *value) {
     __this->_obj = value;
 }
 
-void CX_ID_4(cxcore, System, Nullable, __constructor)(
-    struct CX_ID_3(cxcore, System, Nullable)* __this,
-    cx_ptr obj
-) {
-	__this->_obj = obj;
+void CX_ID_4(cxcore, System, Nullable,
+             __constructor)(struct CX_ID_3(cxcore, System, Nullable) * __this, cx_ptr obj) {
+    __this->_obj = obj;
 }
 
-cx_ptr CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(cx_ptr value, cx_uint size)
-{
+cx_ptr CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(cx_ptr value, cx_uint size) {
     cx_ptr storage = CX_ID_4(cxcore, System, Memory, Alloc)(size);
     CX_ID_4(cxcore, System, Memory, Copy)(storage, value, size);
     return storage;

@@ -6,18 +6,19 @@
 
 typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
 
-struct test_object { cx_ptr vtable; };
+struct test_object {
+    cx_ptr vtable;
+};
 
-static type_info actual_type = { .Hash = 1 };
-static type_info unrelated_type = { .Hash = 2 };
-static union cx_vtable_entry object_vtable[] = { { .data = &actual_type } };
+static type_info actual_type = {.Hash = 1};
+static type_info unrelated_type = {.Hash = 2};
+static union cx_vtable_entry object_vtable[] = {{.data = &actual_type}};
 
-int main(void)
-{
+int main(void) {
 #ifdef _WIN32
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
 #endif
-    struct test_object object = { object_vtable };
+    struct test_object object = {object_vtable};
     (void)cx_checked_cast_object(&object, &unrelated_type);
     return 0;
 }

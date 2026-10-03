@@ -4,22 +4,26 @@
 
 typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
 
-struct test_base { cx_ptr vtable; };
-struct test_derived { struct test_base __base; };
+struct test_base {
+    cx_ptr vtable;
+};
+struct test_derived {
+    struct test_base __base;
+};
 
-static type_info base_type = { .Hash = 1 };
+static type_info base_type = {.Hash = 1};
 static type_info derived_type;
-static type_info interface_type = { .Hash = 3 };
-static union cx_vtable_entry derived_vtable[] = { { .data = &derived_type } };
-static union cx_vtable_entry interface_vtable[] = { { .data = &derived_type } };
+static type_info interface_type = {.Hash = 3};
+static union cx_vtable_entry derived_vtable[] = {{.data = &derived_type}};
+static union cx_vtable_entry interface_vtable[] = {{.data = &derived_type}};
 static const struct cx_interface_impl interfaces[] = {
-    { &interface_type, interface_vtable },
+    {&interface_type, interface_vtable},
 };
 static const struct cx_reflection_field fields[] = {
-    { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, 0, &base_type, "value" },
+    {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, 0, &base_type, "value"},
 };
 static const struct cx_reflection_parameter parameters[] = {
-    { 0, &base_type, "scale", CX_NULL },
+    {0, &base_type, "scale", CX_NULL},
 };
 static const struct cx_reflection_function functions[] = {
     {
@@ -41,43 +45,35 @@ static const struct cx_runtime_type_info runtime_type_info = {
 };
 static type_info derived_type = {
     .Hash = 2,
-    .BaseType = { ._obj = &base_type },
+    .BaseType = {._obj = &base_type},
     .RuntimeTypeInfo = (cx_ptr)&runtime_type_info,
     .GenericArity = 1,
 };
 
-int main(void)
-{
-    struct test_derived object = { { derived_vtable } };
+int main(void) {
+    struct test_derived object = {{derived_vtable}};
     struct cx_iface_ref interface_reference;
-    const struct cx_interface_impl* reflected_interfaces;
-    const struct cx_reflection_field* reflected_fields;
-    const struct cx_reflection_function* reflected_functions;
+    const struct cx_interface_impl *reflected_interfaces;
+    const struct cx_reflection_field *reflected_fields;
+    const struct cx_reflection_function *reflected_functions;
     cx_uint count;
     assert(cx_is_object(&object, &derived_type));
     assert(cx_is_object(&object, &base_type));
     assert(cx_is_object(&object, &interface_type));
-    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        &base_type,
-        derived_type));
-    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        &interface_type,
-        derived_type));
-    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
-        &base_type,
-        derived_type));
-    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(
-        &interface_type,
-        derived_type));
-    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
-        &derived_type,
-        interface_type.Hash));
-    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
-        &derived_type,
-        base_type.Hash));
-    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(
-        &derived_type,
-        base_type));
+    assert(
+        CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(&base_type, derived_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(&interface_type,
+                                                                           derived_type));
+    assert(
+        CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(&base_type, derived_type));
+    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseTypeChain)(&interface_type,
+                                                                             derived_type));
+    assert(CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(&derived_type,
+                                                                              interface_type.Hash));
+    assert(!CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(&derived_type,
+                                                                               base_type.Hash));
+    assert(
+        !CX_ID_5(cxcore, System, Reflection, TypeInfo, IsAssignableFrom)(&derived_type, base_type));
     assert(!cx_is_object(CX_NULL, &derived_type));
     assert(cx_checked_cast_object(&object, &derived_type) == &object);
     assert(cx_checked_cast_object(CX_NULL, &derived_type) == CX_NULL);
@@ -87,7 +83,8 @@ int main(void)
     assert(interface_reference.vtable == interface_vtable);
     assert(cx_is_interface(interface_reference, &derived_type));
     assert(cx_checked_cast_interface(interface_reference, &derived_type) == &object);
-    assert(cx_checked_cast_interface_to_interface(interface_reference, &interface_type).vtable == interface_vtable);
+    assert(cx_checked_cast_interface_to_interface(interface_reference, &interface_type).vtable ==
+           interface_vtable);
     assert(cx_checked_cast_object_to_interface(CX_NULL, &interface_type).instance == CX_NULL);
 
     reflected_interfaces = cx_reflection_interfaces(&derived_type, &count);
