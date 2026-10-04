@@ -29,6 +29,11 @@ CX_EXPORT struct CX_ID_3(cxcore, System, Array) *
     return array;
 }
 
+CX_EXPORT cx_uint CX_ID_5(cxcore, System, Array, Length, __const_get)(
+    const struct CX_ID_3(cxcore, System, Array) *__this) {
+    return __this == NULL ? 0 : __this->_length;
+}
+
 CX_EXPORT cx_ptr cx_array_at(struct CX_ID_3(cxcore, System, Array) * array, cx_uint index,
                              cx_uint elementSize) {
     if (array == NULL || index >= array->_length || (elementSize == 0 && array->_length != 0) ||
