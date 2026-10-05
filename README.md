@@ -1,6 +1,10 @@
 # cxcore
 Core System Library
 
+The current generated-code ABI and its compatibility checks are documented in
+[`docs/runtime-abi.md`](docs/runtime-abi.md). The ABI is experimental; binary
+compatibility is not promised.
+
 ## Runtime type ABI
 
 Class type information contains a base-type link and, when needed, a private map

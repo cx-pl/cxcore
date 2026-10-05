@@ -4,10 +4,15 @@
 #include "cxdefs.h"
 #include "cxtypes.h"
 
+// Generated CX code checks this ABI before module initialization and program startup.
+#define CX_RUNTIME_ABI_VERSION 1
+
 struct CX_ID_3(cxcore, System, Array);
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo);
 
 CX_API struct CX_ID_3(cxcore, System, Array) * cx_array_new(cx_uint length, cx_uint elementSize);
+CX_API cx_uint cx_runtime_abi_version(void);
+CX_API void cx_runtime_require_abi(cx_uint expectedVersion);
 CX_API cx_ptr cx_array_at(struct CX_ID_3(cxcore, System, Array) * array, cx_uint index,
                           cx_uint elementSize);
 

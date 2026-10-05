@@ -2,6 +2,7 @@ target_sources(cxcore
     PRIVATE
         cxcore.h
         cxcore.c
+        cxabi.c
         cxexceptions.c
         cxtype.c)
 

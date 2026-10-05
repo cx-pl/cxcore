@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.31)
 project(cxcore)
 
+set(CXCORE_ABI_VERSION 1 CACHE INTERNAL "CX generated-code ABI version" FORCE)
+
 include(CTest)
 
 if(CX_BUILD_STATIC)
