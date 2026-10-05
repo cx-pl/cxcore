@@ -59,6 +59,16 @@ add_test(
         -DTEST_EXECUTABLE=$<TARGET_FILE:cxcore_memory_allocation_failure_tests>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/verify_memory_allocation_failure.cmake)
 
+add_executable(cxcore_managed_memory_tests managed_memory_tests.c)
+target_link_libraries(cxcore_managed_memory_tests PRIVATE cxcore)
+add_custom_command(TARGET cxcore_managed_memory_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:cxcore>
+        $<TARGET_FILE_DIR:cxcore_managed_memory_tests>)
+add_test(NAME cxcore_managed_memory_tests COMMAND cxcore_managed_memory_tests)
+add_test(NAME cxcore_managed_memory_second_thread COMMAND cxcore_managed_memory_tests second-thread)
+set_tests_properties(cxcore_managed_memory_second_thread PROPERTIES WILL_FAIL TRUE)
+
 add_executable(cxcore_datetime_tests datetime_tests.c)
 target_link_libraries(cxcore_datetime_tests PRIVATE cxcore)
 add_custom_command(TARGET cxcore_datetime_tests POST_BUILD

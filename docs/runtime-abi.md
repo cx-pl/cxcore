@@ -28,6 +28,9 @@ be updated together. ABI compatibility is only supported when the generated
 code's required version equals the runtime's provided version; no cross-major
 compatibility is implied.
 
-Before a stable ABI is promised, Milestone 11 must settle collector metadata,
-rooting, allocation, and native interop rules. A future stable ABI should also
-record architecture, compiler/toolchain, and platform constraints explicitly.
+Milestone 11 has established a first collector design and implementation, but it
+is restricted to one OS thread and requires native C static roots to be registered.
+Modules with registered roots cannot be unloaded. Keep the ABI experimental until
+the supported threading, safepoints, and native interop contracts are sufficient
+for a stable compatibility promise. A future stable ABI should also record
+architecture, compiler/toolchain, and platform constraints explicitly.

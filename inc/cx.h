@@ -13,6 +13,13 @@ struct CX_ID_4(cxcore, System, Reflection, TypeInfo);
 CX_API struct CX_ID_3(cxcore, System, Array) * cx_array_new(cx_uint length, cx_uint elementSize);
 CX_API cx_uint cx_runtime_abi_version(void);
 CX_API void cx_runtime_require_abi(cx_uint expectedVersion);
+struct cx_gc_root_region {
+    const void *address;
+    cx_uint size;
+};
+CX_API void cx_gc_register_static_roots(const struct cx_gc_root_region *roots, cx_uint count);
+CX_API void cx_gc_check_thread(void);
+CX_API void cx_gc_collect(void);
 CX_API cx_ptr cx_array_at(struct CX_ID_3(cxcore, System, Array) * array, cx_uint index,
                           cx_uint elementSize);
 
