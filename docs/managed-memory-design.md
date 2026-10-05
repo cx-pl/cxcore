@@ -1,7 +1,8 @@
 # Managed memory design
 
-Status: first implementation in place; ABI 1 remains experimental. This version
-is Windows-only and supports one OS thread per process.
+Status: first implementation in place; ABI 1 remains experimental. The Windows
+implementation has been validated. The initial Linux port preserves the same
+one-OS-thread-per-process contract; its runtime tests are pending.
 
 ## Collector
 

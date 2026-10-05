@@ -77,7 +77,8 @@ registered root or another managed block.
 
 ## Platform support
 
-The current runtime implementation supports Windows through MSVC. `platform.h` rejects
-Linux and macOS builds because their environment and system-clock providers are not
-implemented. The common runtime paths are shared C code, but only Windows platform behavior
-has been built and tested so far.
+The runtime supports Windows through MSVC and has an initial x64 Linux port for
+GCC. Linux selects native environment and system-clock providers and the
+platform-specific managed-memory helpers. Static and shared Linux targets
+compile in the repository's Docker development container; runtime test execution
+is still pending. macOS remains unsupported.

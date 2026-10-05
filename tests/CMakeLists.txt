@@ -12,8 +12,11 @@ add_custom_command(TARGET cxcore_runtime_type_failure_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:cxcore>
         $<TARGET_FILE_DIR:cxcore_runtime_type_failure_test>)
-add_test(NAME cxcore_runtime_type_failure_test COMMAND cxcore_runtime_type_failure_test)
-set_tests_properties(cxcore_runtime_type_failure_test PROPERTIES WILL_FAIL TRUE)
+add_test(
+    NAME cxcore_runtime_type_failure_test
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_EXECUTABLE=$<TARGET_FILE:cxcore_runtime_type_failure_test>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/verify_runtime_type_failure.cmake)
 
 add_executable(cxcore_exception_tests exception_tests.c)
 target_link_libraries(cxcore_exception_tests PRIVATE cxcore)
@@ -76,6 +79,12 @@ add_custom_command(TARGET cxcore_datetime_tests POST_BUILD
         $<TARGET_FILE:cxcore>
         $<TARGET_FILE_DIR:cxcore_datetime_tests>)
 add_test(NAME cxcore_datetime_tests COMMAND cxcore_datetime_tests)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_executable(cxcore_linux_platform_tests linux_platform_tests.c)
+    target_link_libraries(cxcore_linux_platform_tests PRIVATE cxcore)
+    add_test(NAME cxcore_linux_platform_tests COMMAND cxcore_linux_platform_tests)
+endif()
 
 add_executable(cxcore_console_read_tests console_read_tests.c)
 target_link_libraries(cxcore_console_read_tests PRIVATE cxcore)

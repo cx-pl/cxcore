@@ -1,5 +1,5 @@
 #include "../../platform.h"
-#ifdef CX_PLATFORM_WIN32
+#ifdef CX_PLATFORM_WIN
 
 #include <limits.h>
 #include <windows.h>
@@ -85,4 +85,4 @@ struct CX_ID_3(cxcore, System, DateTime)
     return result;
 }
 
-#endif // CX_PLATFORM_WIN32
+#endif // CX_PLATFORM_WIN

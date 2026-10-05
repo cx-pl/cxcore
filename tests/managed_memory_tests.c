@@ -1,7 +1,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
 #include <windows.h>
+#define CX_TEST_NOINLINE __declspec(noinline)
+#else
+#include <pthread.h>
+#define CX_TEST_NOINLINE __attribute__((noinline))
+#endif
 
 #include "../src/cxcore.h"
 
@@ -54,14 +60,14 @@ static void create_runtime_layout_graph(void) {
     string_root = string;
 }
 
-static __declspec(noinline) cx_bool retain_stack_root(void) {
+static CX_TEST_NOINLINE cx_bool retain_stack_root(void) {
     volatile cx_ptr stack_root = CX_ID_4(cxcore, System, Memory, Alloc)(64);
     ((cx_uint *)stack_root)[0] = 0x12345678u;
     cx_gc_collect();
     return stack_root != NULL && ((cx_uint *)stack_root)[0] == 0x12345678u;
 }
 
-static __declspec(noinline) void create_unrooted_cycle(void) {
+static CX_TEST_NOINLINE void create_unrooted_cycle(void) {
     volatile cx_ptr first = CX_ID_4(cxcore, System, Memory, Alloc)(sizeof(cx_ptr));
     volatile cx_ptr second = CX_ID_4(cxcore, System, Memory, Alloc)(sizeof(cx_ptr));
     ((cx_ptr *)first)[0] = (cx_ptr)second;
@@ -70,18 +76,26 @@ static __declspec(noinline) void create_unrooted_cycle(void) {
     second = NULL;
 }
 
-static __declspec(noinline) void allocate_pressure(void) {
+static CX_TEST_NOINLINE void allocate_pressure(void) {
     cx_uint index;
     for (index = 0; index < 32; ++index) {
         (void)CX_ID_4(cxcore, System, Memory, Alloc)(65536);
     }
 }
 
+#ifdef _WIN32
 static DWORD WINAPI allocate_from_second_thread(LPVOID context) {
     (void)context;
     cx_gc_check_thread();
     return 0;
 }
+#else
+static void *allocate_from_second_thread(void *context) {
+    (void)context;
+    cx_gc_check_thread();
+    return NULL;
+}
+#endif
 
 int main(int argc, char **argv) {
     size_t collections_before;
@@ -92,6 +106,7 @@ int main(int argc, char **argv) {
     struct cx_iface_ref *aggregate_interface;
 
     if (argc == 2 && strcmp(argv[1], "second-thread") == 0) {
+#ifdef _WIN32
         HANDLE thread;
         (void)CX_ID_4(cxcore, System, Memory, Alloc)(1);
         thread = CreateThread(NULL, 0, allocate_from_second_thread, NULL, 0, NULL);
@@ -100,6 +115,14 @@ int main(int argc, char **argv) {
         }
         WaitForSingleObject(thread, INFINITE);
         CloseHandle(thread);
+#else
+        pthread_t thread;
+        (void)CX_ID_4(cxcore, System, Memory, Alloc)(1);
+        if (pthread_create(&thread, NULL, allocate_from_second_thread, NULL) != 0) {
+            return 5;
+        }
+        pthread_join(thread, NULL);
+#endif
         return 0;
     }
     if (argc != 1) {

@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
 
+#include "../../platform.h"
 #include "../../../src/cxcore.h"
 
 #define CX_GC_INITIAL_THRESHOLD ((size_t)1024 * 1024)
@@ -24,7 +24,7 @@ struct cx_gc_registered_root {
 };
 
 static size_t cx_gc_heap_bytes;
-static __declspec(thread) LONG cx_gc_cached_thread;
+static CX_THREAD_LOCAL cx_platform_thread_id cx_gc_cached_thread;
 
 #ifdef CXCORE_TESTING
 static cx_bool cx_memory_fail_next_allocation;
@@ -51,7 +51,7 @@ CX_API size_t cx_memory_test_heap_bytes_get(void) {
 static struct cx_gc_allocation *cx_gc_allocations;
 static struct cx_gc_registered_root *cx_gc_roots;
 static size_t cx_gc_next_collection = CX_GC_INITIAL_THRESHOLD;
-static volatile LONG cx_gc_owner_thread;
+static cx_platform_atomic_thread_id cx_gc_owner_thread;
 
 static cx_bool cx_memory_should_fail_allocation(void) {
 #ifdef CXCORE_TESTING
@@ -74,14 +74,15 @@ static void cx_memory_out_of_memory(void) {
 }
 
 static void cx_gc_require_owner_thread(void) {
-    LONG owner = cx_gc_owner_thread;
-    LONG current_thread;
+    cx_platform_thread_id owner =
+        cx_platform_owner_thread_load(&cx_gc_owner_thread);
+    cx_platform_thread_id current_thread;
     if (cx_gc_cached_thread != 0 && cx_gc_cached_thread == owner) {
         return;
     }
-    current_thread = (LONG)GetCurrentThreadId();
+    current_thread = cx_platform_current_thread_id();
     if (owner == 0) {
-        owner = InterlockedCompareExchange(&cx_gc_owner_thread, current_thread, 0);
+        owner = cx_platform_owner_thread_claim(&cx_gc_owner_thread, current_thread);
         if (owner == 0) {
             owner = current_thread;
         }
@@ -170,8 +171,8 @@ void cx_gc_collect(void) {
     size_t collected_bytes = 0;
     jmp_buf registers;
     volatile cx_byte stack_marker = 0;
-    ULONG_PTR stack_low;
-    ULONG_PTR stack_high;
+    uintptr_t stack_low;
+    uintptr_t stack_high;
 
     cx_gc_require_owner_thread();
     allocation_count = cx_gc_count_allocations();
@@ -185,6 +186,15 @@ void cx_gc_collect(void) {
     if (worklist == NULL) {
         return;
     }
+    if (!cx_platform_current_stack_bounds(&stack_low, &stack_high)) {
+        free(worklist);
+        return;
+    }
+    if ((uintptr_t)&stack_marker < stack_low ||
+        (uintptr_t)&stack_marker >= stack_high) {
+        free(worklist);
+        return;
+    }
 
     for (allocation = cx_gc_allocations; allocation != NULL; allocation = allocation->next) {
         allocation->marked = CX_FALSE;
@@ -195,12 +205,9 @@ void cx_gc_collect(void) {
     if (setjmp(registers) == 0) {
         cx_gc_scan_region(registers, sizeof(registers), worklist, allocation_count, &worklist_count);
     }
-    GetCurrentThreadStackLimits(&stack_low, &stack_high);
-    if ((ULONG_PTR)&stack_marker >= stack_low && (ULONG_PTR)&stack_marker < stack_high) {
-        cx_gc_scan_region((const void *)&stack_marker,
-                          (size_t)(stack_high - (ULONG_PTR)&stack_marker),
-                          worklist, allocation_count, &worklist_count);
-    }
+    cx_gc_scan_region((const void *)&stack_marker,
+                      (size_t)(stack_high - (uintptr_t)&stack_marker),
+                      worklist, allocation_count, &worklist_count);
 
     while (worklist_index < worklist_count) {
         allocation = worklist[worklist_index++];

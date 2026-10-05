@@ -124,8 +124,16 @@
 // Import / Export
 //
 
+#if defined(_WIN32) || defined(WIN32)
 #define CX_EXPORT __declspec(dllexport)
 #define CX_IMPORT __declspec(dllimport)
+#elif defined(__GNUC__) || defined(__clang__)
+#define CX_EXPORT __attribute__((visibility("default")))
+#define CX_IMPORT
+#else
+#define CX_EXPORT
+#define CX_IMPORT
+#endif
 
 #if defined(CX_CXCORE_BUILD)
 #define CX_API CX_EXPORT

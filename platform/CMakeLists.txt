@@ -3,4 +3,11 @@ target_sources(cxcore
         platform.h)
 
 add_subdirectory(common)
-add_subdirectory(win32)
+
+if(WIN32)
+    add_subdirectory(win)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_subdirectory(linux)
+else()
+    message(FATAL_ERROR "cxcore does not support ${CMAKE_SYSTEM_NAME} yet")
+endif()

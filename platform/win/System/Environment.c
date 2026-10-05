@@ -1,5 +1,5 @@
 #include "../../platform.h"
-#ifdef CX_PLATFORM_WIN32
+#ifdef CX_PLATFORM_WIN
 
 #include <windows.h>
 #include "../../../src/cxcore.h"
@@ -17,4 +17,4 @@ const struct CX_ID_3(cxcore, System, String) *
     return &NewLine;
 }
 
-#endif // CX_PLATFORM_WIN32
+#endif // CX_PLATFORM_WIN
