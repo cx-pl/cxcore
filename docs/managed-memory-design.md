@@ -1,8 +1,9 @@
 # Managed memory design
 
-Status: first implementation in place; ABI 1 remains experimental. The Windows
-implementation has been validated. The initial Linux port preserves the same
-one-OS-thread-per-process contract; its runtime tests are pending.
+Status: first implementation in place; ABI 1 remains experimental. Windows
+x86/x64 and Linux x64 implementations have been built and validated. Linux
+static and shared builds pass the native runtime test suite. Both platforms
+preserve the one-OS-thread-per-process contract.
 
 ## Collector
 
@@ -73,7 +74,8 @@ The native test suite covers stack and registered static roots, object graphs,
 arrays and backing stores, nullable payloads, interface references, cycles,
 allocation pressure, references retained across the cxcore DLL boundary, and
 rejection of a second thread. The suite and Gradebook integration example have
-been built and run for x86 and x64. Manual `Free` and `Realloc` tracking are
-exercised through runtime API checks. The implementation remains experimental:
+been built and run for Windows x86/x64; the full suite also passes for Linux
+static and shared builds. Manual `Free` and `Realloc` tracking are exercised
+through runtime API checks. The implementation remains experimental:
 conservative scanning can retain unreachable blocks, native static roots must
 be registered, and modules with registered roots cannot be unloaded.

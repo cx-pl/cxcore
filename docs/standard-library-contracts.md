@@ -77,8 +77,8 @@ registered root or another managed block.
 
 ## Platform support
 
-The runtime supports Windows through MSVC and has an initial x64 Linux port for
-GCC. Linux selects native environment and system-clock providers and the
-platform-specific managed-memory helpers. Static and shared Linux targets
-compile in the repository's Docker development container; runtime test execution
-is still pending. macOS remains unsupported.
+The runtime supports Windows through MSVC and x64 Linux through GCC. Linux
+selects native environment and system-clock providers and the platform-specific
+managed-memory helpers. Static and shared Linux targets build and pass the native
+runtime test suite in the repository's Docker development container. macOS
+remains unsupported.
