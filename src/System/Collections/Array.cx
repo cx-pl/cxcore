@@ -1,0 +1,94 @@
+namespace System.Collections;
+
+public final class Array<T> : IEnumerable<T> {
+    public uint Length { const get { return this.Length; } }
+
+    public constructor(uint length) {}
+
+    public T Get(uint index) const {
+        return this[index];
+    }
+
+    public T GetOrDefault(uint index) const {
+        if (index >= Length) {
+            return default;
+        }
+        return this[index];
+    }
+
+    public void Set(uint index, T value) {
+        this[index] = value;
+    }
+
+    public bool TrySet(uint index, T value) {
+        if (index >= Length) {
+            return false;
+        }
+        this[index] = value;
+        return true;
+    }
+
+    public void Fill(T value) {
+        for (uint index = 0u; index < Length; index += 1u) {
+            this[index] = value;
+        }
+    }
+
+    public bool TryCopyTo(Array<T> destination, uint destinationIndex) const {
+        if (destinationIndex > destination.Length ||
+            Length > destination.Length - destinationIndex) {
+            return false;
+        }
+        for (uint index = 0u; index < Length; index += 1u) {
+            destination.Set(destinationIndex + index, this[index]);
+        }
+        return true;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ArrayEnumerator<T>(this, Length);
+    }
+
+    public ArrayEnumerator<T> GetEnumerator(uint count) const {
+        return new ArrayEnumerator<T>(this, count);
+    }
+
+}
+
+public final class ArrayEnumerator<T> : IEnumerator<T> {
+    private T[] _items;
+    private uint _count;
+    private uint _nextIndex;
+    private bool _reverse;
+
+    public T Current {
+        const get { return _items[_reverse ? _nextIndex : _nextIndex - 1u]; }
+    }
+
+    public constructor(T[] items, uint count) {
+        _items = items;
+        _count = count;
+        _nextIndex = 0u;
+        _reverse = false;
+    }
+
+    public void Reverse() {
+        _reverse = true;
+        _nextIndex = _count;
+    }
+
+    public bool MoveNext() {
+        if (_reverse) {
+            if (_nextIndex == 0u) {
+                return false;
+            }
+            _nextIndex -= 1u;
+            return true;
+        }
+        if (_nextIndex >= _count) {
+            return false;
+        }
+        _nextIndex += 1u;
+        return true;
+    }
+}

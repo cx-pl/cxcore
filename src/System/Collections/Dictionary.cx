@@ -1,0 +1,216 @@
+namespace System.Collections;
+
+public struct KeyValuePair<TKey, TValue> {
+    public TKey Key;
+    public TValue Value;
+
+    public constructor(TKey key, TValue value) {
+        Key = key;
+        Value = value;
+    }
+}
+
+public final class Dictionary<TKey, TValue> where TKey : class
+    : IEnumerable<KeyValuePair<TKey, TValue>> {
+    private Array<TKey> _keys;
+    private Array<TValue> _values;
+    private uint[] _buckets;
+    private int _bucketMask;
+    private IEqualityComparer<TKey> _comparer;
+    private uint _count;
+
+    public uint Count { const get { return _count; } }
+
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() const {
+        return new DictionaryEnumerator<TKey, TValue>(_keys, _values, _count);
+    }
+
+    public constructor(IEqualityComparer<TKey> comparer = null) {
+        _keys = new Array<TKey>(4u);
+        _values = new Array<TValue>(4u);
+        _buckets = new uint[8u];
+        _bucketMask = 7;
+        _comparer = comparer;
+        _count = 0u;
+    }
+
+    public TValue GetValueOrDefault(TKey key) const {
+        uint index = FindKey(key, GetKeyHash(key));
+        if (index == 0xFFFFFFFFu) {
+            return default;
+        }
+        return _values.Get(index);
+    }
+
+    public bool ContainsKey(TKey key) const {
+        return FindKey(key, GetKeyHash(key)) != 0xFFFFFFFFu;
+    }
+
+    public void Set(TKey key, TValue value) {
+        int hash = GetKeyHash(key);
+        uint index = FindKey(key, hash);
+        if (index != 0xFFFFFFFFu) {
+            _values.Set(index, value);
+            return;
+        }
+
+        EnsureCapacity(_count + 1u);
+        _keys.Set(_count, key);
+        _values.Set(_count, value);
+        _count += 1u;
+        InsertBucket(_count - 1u);
+    }
+
+    public bool TryAdd(TKey key, TValue value) {
+        int hash = GetKeyHash(key);
+        if (FindKey(key, hash) != 0xFFFFFFFFu) {
+            return false;
+        }
+
+        EnsureCapacity(_count + 1u);
+        _keys.Set(_count, key);
+        _values.Set(_count, value);
+        _count += 1u;
+        InsertBucket(_count - 1u);
+        return true;
+    }
+
+    public bool Remove(TKey key) {
+        uint index = FindKey(key, GetKeyHash(key));
+        if (index == 0xFFFFFFFFu) {
+            return false;
+        }
+        for (uint current = index; current + 1u < _count; current += 1u) {
+            _keys.Set(current, _keys.Get(current + 1u));
+            _values.Set(current, _values.Get(current + 1u));
+        }
+        _count -= 1u;
+        TKey emptyKey = default;
+        TValue emptyValue = default;
+        _keys.Set(_count, emptyKey);
+        _values.Set(_count, emptyValue);
+        RebuildBuckets();
+        return true;
+    }
+
+    public void Clear() {
+        TKey emptyKey = default;
+        TValue emptyValue = default;
+        while (_count > 0u) {
+            _count -= 1u;
+            _keys.Set(_count, emptyKey);
+            _values.Set(_count, emptyValue);
+        }
+        for (uint bucket = 0u; bucket < _buckets.Length; bucket += 1u) {
+            _buckets[bucket] = 0u;
+        }
+    }
+
+    private uint FindKey(TKey key, int hash) const {
+        int bucket = hash & _bucketMask;
+        for (uint probes = 0u; probes < _buckets.Length; probes += 1u) {
+            uint entry = _buckets[bucket];
+            if (entry == 0u) {
+                return 0xFFFFFFFFu;
+            }
+            uint index = entry - 1u;
+            if (GetKeyHash(_keys.Get(index)) == hash && KeysEqual(_keys.Get(index), key)) {
+                return index;
+            }
+            bucket = (bucket + 1) & _bucketMask;
+        }
+        return 0xFFFFFFFFu;
+    }
+
+    private int GetKeyHash(TKey key) const {
+        if (_comparer != null) {
+            return _comparer.GetHashCode(key);
+        }
+        object target = key;
+        if (target == null) {
+            return 0;
+        }
+        return target.GetHashCode();
+    }
+
+    private bool KeysEqual(TKey first, TKey second) const {
+        if (_comparer != null) {
+            return _comparer.Equals(first, second);
+        }
+        object left = first;
+        object right = second;
+        if (left == null) {
+            return right == null;
+        }
+        return left.Equals(right);
+    }
+
+    private void InsertBucket(uint index) {
+        int bucket = GetKeyHash(_keys.Get(index)) & _bucketMask;
+        while (_buckets[bucket] != 0u) {
+            bucket = (bucket + 1) & _bucketMask;
+        }
+        _buckets[bucket] = index + 1u;
+    }
+
+    private void RebuildBuckets() {
+        for (uint bucket = 0u; bucket < _buckets.Length; bucket += 1u) {
+            _buckets[bucket] = 0u;
+        }
+        for (uint index = 0u; index < _count; index += 1u) {
+            InsertBucket(index);
+        }
+    }
+
+    private void EnsureCapacity(uint required) {
+        if (required <= _keys.Length) {
+            return;
+        }
+        uint capacity = _keys.Length == 0u ? 4u : _keys.Length * 2u;
+        int bucketMask = (_bucketMask * 2) + 1;
+        while (capacity < required) {
+            capacity *= 2u;
+            bucketMask = (bucketMask * 2) + 1;
+        }
+        Array<TKey> expandedKeys = new Array<TKey>(capacity);
+        Array<TValue> expandedValues = new Array<TValue>(capacity);
+        for (uint index = 0u; index < _count; index += 1u) {
+            expandedKeys.Set(index, _keys.Get(index));
+            expandedValues.Set(index, _values.Get(index));
+        }
+        _keys = expandedKeys;
+        _values = expandedValues;
+        _buckets = new uint[capacity * 2u];
+        _bucketMask = bucketMask;
+        RebuildBuckets();
+    }
+}
+
+public final class DictionaryEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>> {
+    private Array<TKey> _keys;
+    private Array<TValue> _values;
+    private uint _count;
+    private uint _nextIndex;
+
+    public constructor(Array<TKey> keys, Array<TValue> values, uint count) {
+        _keys = keys;
+        _values = values;
+        _count = count;
+        _nextIndex = 0u;
+    }
+
+    public KeyValuePair<TKey, TValue> Current {
+        const get {
+        return new KeyValuePair<TKey, TValue>(
+            _keys.Get(_nextIndex - 1u), _values.Get(_nextIndex - 1u));
+        }
+    }
+
+    public bool MoveNext() {
+        if (_nextIndex >= _count) {
+            return false;
+        }
+        _nextIndex += 1u;
+        return true;
+    }
+}

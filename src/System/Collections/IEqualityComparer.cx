@@ -1,0 +1,6 @@
+namespace System.Collections;
+
+public interface IEqualityComparer<T> {
+    int GetHashCode(T value) const;
+    bool Equals(T first, T second) const;
+}

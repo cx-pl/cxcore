@@ -1,6 +1,6 @@
 namespace System;
 
-public final class String {
+public final class String : Object {
     private uint _length;
     private ptr _data;
 
@@ -9,6 +9,16 @@ public final class String {
     public char Item {
         extern const get(uint index);
     }
+
+    public override extern string ToString() const;
+    public override extern bool Equals(object other) const;
+    public override extern int GetHashCode() const;
+    public extern bool operator ==(string other) const;
+    public extern bool operator !=(string other) const;
+    public extern bool operator <(string other) const;
+    public extern bool operator <=(string other) const;
+    public extern bool operator >(string other) const;
+    public extern bool operator >=(string other) const;
 
     // public static extern string Format(const string format, params const object[] args);
     private extern constructor();

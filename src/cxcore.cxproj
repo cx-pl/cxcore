@@ -1,4 +1,5 @@
 name: cxcore
+type: Library
 version: 0.1.0-alpha
 description: Cx Core System Library
 licence: MIT

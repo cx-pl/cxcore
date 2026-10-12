@@ -7,3 +7,5 @@ build/
 
 # Visual Studio Code
 .vscode/
+/.obj/
+/.bin/

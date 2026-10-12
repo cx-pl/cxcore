@@ -1,0 +1,6 @@
+namespace System.Collections;
+
+public interface IEnumerator<T> {
+    T Current { const get; }
+    bool MoveNext();
+}

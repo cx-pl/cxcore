@@ -7,7 +7,7 @@
 #include "cxcore.h"
 
 typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) cx_type_info;
-typedef struct CX_ID_3(cxcore, System, Array) cx_array;
+typedef struct CX_ID_4(cxcore, System, Collections, Array) cx_array;
 typedef struct CX_ID_3(cxcore, System, String) cx_string;
 
 struct bench_object {

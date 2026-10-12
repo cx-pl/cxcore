@@ -17,4 +17,7 @@ public struct TypeInfo {
     public extern bool IsAssignableFrom(const TypeInfo source) const;
     public extern bool IsInBaseTypeChain(const TypeInfo source) const;
     public extern bool HasRuntimeInterface(ulong typeHash) const;
+    public extern object CreateInstance() const;
+    public extern object CreateInstance(const object[] arguments) const;
+    public extern object Invoke(object target, const string name, const object[] arguments) const;
 }

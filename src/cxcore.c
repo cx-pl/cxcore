@@ -10,8 +10,9 @@ CX_STRING_DEF(CX_ID_3(__name, System, Object), "Object");
 CX_STRING_DEF(CX_ID_3(__name, System, Nullable), "Nullable");
 CX_STRING_DEF(CX_ID_4(__name, System, Reflection, TypeInfo), "TypeInfo");
 CX_STRING_DEF(CX_ID_4(__name, System, Reflection, VersionInfo), "VersionInfo");
-CX_STRING_DEF(CX_ID_3(__name, System, Array), "Array");
-CX_STRING_DEF(CX_ID_3(__name, System, Attribute), "Attribute");
+CX_STRING_DEF(CX_ID_5(__name, cxcore, System, Collections, Array), "Array");
+CX_STRING_DEF(CX_ID_4(__namespace, cxcore, System, Collections), "System.Collections");
+CX_STRING_DEF(CX_ID_3(__name, System, Annotation), "Annotation");
 CX_STRING_DEF(CX_ID_3(__name, System, Bool), "Bool");
 CX_STRING_DEF(CX_ID_3(__name, System, Byte), "Byte");
 CX_STRING_DEF(CX_ID_3(__name, System, Char), "Char");
@@ -109,11 +110,25 @@ static struct CX_ID_3(cxcore, System, DateTime)
 // TypeInfos
 //
 
+#define CX_OBJECT_VTABLE_ENTRIES \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, Object, ToString)) \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, Object, Equals)) \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, Object, GetHashCode))
+#define CX_STRING_VTABLE_ENTRIES \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, String, ToString)) \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, String, Equals)) \
+    CX_VTABLE_ENTRY(CX_ID_4(cxcore, System, String, GetHashCode))
+
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Object))
+CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
 static const struct cx_reflection_field CX_ID_4(cxcore, System, Object, __reflection_fields)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
      (cx_uint)offsetof(struct CX_ID_3(cxcore, System, Object), _gc), CX_NULL, "_gc"},
+};
+static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Object,
+                                                    __reflection_params_0)[] = {
+    {0, &CX_ID_4(cxcore, System, Object, __typeinfo), "other", CX_NULL},
 };
 static const struct cx_reflection_function CX_ID_4(cxcore, System, Object,
                                                    __reflection_functions)[] = {
@@ -124,6 +139,19 @@ static const struct cx_reflection_function CX_ID_4(cxcore, System, Object,
          CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
      CX_REFLECTION_NO_SLOT, &CX_ID_5(cxcore, System, Reflection, TypeInfo, __typeinfo), "Type",
      CX_NULL, 0},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_VIRTUAL |
+         CX_REFLECTION_FLAG_EXTERN,
+     1, &CX_ID_4(cxcore, System, String, __typeinfo), "ToString", CX_NULL, 0},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_VIRTUAL |
+         CX_REFLECTION_FLAG_EXTERN,
+     2, &CX_ID_4(cxcore, System, Bool, __typeinfo), "Equals",
+     CX_ID_4(cxcore, System, Object, __reflection_params_0), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_VIRTUAL |
+         CX_REFLECTION_FLAG_EXTERN,
+     3, &CX_ID_4(cxcore, System, Int, __typeinfo), "GetHashCode", CX_NULL, 0},
 };
 static const struct cx_runtime_type_info CX_ID_4(cxcore, System, Object, __runtime_type_info) = {
     .interfaces = CX_NULL,
@@ -133,7 +161,7 @@ static const struct cx_runtime_type_info CX_ID_4(cxcore, System, Object, __runti
     .fieldCount = 1,
     .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, Object,
                                                                 __reflection_functions),
-    .functionCount = 2,
+    .functionCount = 5,
 };
 
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, Object, __typeinfo) = {
@@ -235,22 +263,22 @@ static const struct cx_reflection_field CX_ID_5(cxcore, System, Reflection, Type
      &CX_ID_4(cxcore, System, String, __typeinfo), "Namespace"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), GenericParams),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "GenericParams"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "GenericParams"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), BaseType),
      &CX_ID_4(cxcore, System, Nullable, __typeinfo), "BaseType"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), Interfaces),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "Interfaces"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Interfaces"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), GenericArity),
      &CX_ID_4(cxcore, System, UInt, __typeinfo), "GenericArity"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), Fields),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "Fields"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Fields"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), Functions),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "Functions"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Functions"},
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, TypeInfo), RuntimeTypeInfo),
      CX_NULL, "RuntimeTypeInfo"},
@@ -267,6 +295,12 @@ static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Reflection, 
                                                     __reflection_params_2)[] = {
     {0, &CX_ID_4(cxcore, System, ULong, __typeinfo), "typeHash", CX_NULL},
 };
+static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Reflection, TypeInfo,
+                                                    __reflection_params_4)[] = {
+    {0, &CX_ID_4(cxcore, System, Object, __typeinfo), "target", CX_NULL},
+    {0, &CX_ID_4(cxcore, System, String, __typeinfo), "name", CX_NULL},
+    {0, &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "arguments", CX_NULL},
+};
 static const struct cx_reflection_function CX_ID_5(cxcore, System, Reflection, TypeInfo,
                                                    __reflection_functions)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
@@ -281,6 +315,14 @@ static const struct cx_reflection_function CX_ID_5(cxcore, System, Reflection, T
          CX_REFLECTION_FLAG_EXTERN,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "HasRuntimeInterface",
      CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_2), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN,
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Object, __typeinfo), "CreateInstance",
+     CX_NULL, 0},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN,
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Object, __typeinfo), "Invoke",
+     CX_ID_5(cxcore, System, Reflection, TypeInfo, __reflection_params_4), 3},
 };
 static const struct cx_runtime_type_info CX_ID_5(cxcore, System, Reflection, TypeInfo,
                                                  __runtime_type_info) = {
@@ -291,7 +333,7 @@ static const struct cx_runtime_type_info CX_ID_5(cxcore, System, Reflection, Typ
     .fieldCount = 12,
     .functions = (const struct cx_reflection_function *)CX_ID_5(cxcore, System, Reflection,
                                                                 TypeInfo, __reflection_functions),
-    .functionCount = 3,
+    .functionCount = 5,
 };
 
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Reflection, TypeInfo,
@@ -363,110 +405,139 @@ struct CX_ID_4(cxcore, System, Reflection, TypeInfo)
         .GenericArity = 0,
 };
 
-CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Array))
+CX_BEGIN_VTABLE_DEF(CX_ID_4(cxcore, System, Collections, Array))
+CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
-static const struct cx_reflection_field CX_ID_4(cxcore, System, Array, __reflection_fields)[] = {
+static const struct cx_reflection_field CX_ID_5(cxcore, System, Collections, Array, __reflection_fields)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
-     (cx_uint)offsetof(struct CX_ID_3(cxcore, System, Array), _length),
+     (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Collections, Array), _length),
      &CX_ID_4(cxcore, System, UInt, __typeinfo), "_length"},
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
-     (cx_uint)offsetof(struct CX_ID_3(cxcore, System, Array), _data), CX_NULL, "_data"},
+     (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Collections, Array), _data), CX_NULL, "_data"},
 };
-static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Array,
+static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Collections, Array,
                                                     __reflection_params_0)[] = {
     {0, &CX_ID_4(cxcore, System, UInt, __typeinfo), "length", CX_NULL},
 };
-static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Array,
+static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Collections, Array,
                                                     __reflection_params_3)[] = {
     {0, &CX_ID_4(cxcore, System, UInt, __typeinfo), "index", CX_NULL},
 };
-static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Array,
+static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Collections, Array,
                                                     __reflection_params_4)[] = {
     {0, &CX_ID_4(cxcore, System, UInt, __typeinfo), "index", CX_NULL},
 };
-static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Array,
+static const struct cx_reflection_parameter CX_ID_5(cxcore, System, Collections, Array,
                                                     __reflection_params_5)[] = {
     {0, &CX_ID_4(cxcore, System, UInt, __typeinfo), "index", CX_NULL},
     {0, CX_NULL, "value", CX_NULL},
 };
-static const struct cx_reflection_function CX_ID_4(cxcore, System, Array,
+static const struct cx_reflection_function CX_ID_5(cxcore, System, Collections, Array,
                                                    __reflection_functions)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN |
          CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "Array",
-     CX_ID_4(cxcore, System, Array, __reflection_params_0), 1},
+     CX_ID_5(cxcore, System, Collections, Array, __reflection_params_0), 1},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC |
          CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN |
          CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
-     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Array, __typeinfo), "Empty", CX_NULL, 0},
+     CX_REFLECTION_NO_SLOT, &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Empty", CX_NULL, 0},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
          CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, UInt, __typeinfo), "Length", CX_NULL, 0},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN |
          CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
-     CX_REFLECTION_NO_SLOT, CX_NULL, "Item", CX_ID_4(cxcore, System, Array, __reflection_params_3),
+     CX_REFLECTION_NO_SLOT, CX_NULL, "Item", CX_ID_5(cxcore, System, Collections, Array, __reflection_params_3),
      1},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
          CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
-     CX_REFLECTION_NO_SLOT, CX_NULL, "Item", CX_ID_4(cxcore, System, Array, __reflection_params_4),
+     CX_REFLECTION_NO_SLOT, CX_NULL, "Item", CX_ID_5(cxcore, System, Collections, Array, __reflection_params_4),
      1},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN |
          CX_REFLECTION_FLAG_FUNCTION_PROPERTY_SET,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "Item",
-     CX_ID_4(cxcore, System, Array, __reflection_params_5), 2},
-};
-static const struct cx_runtime_type_info CX_ID_4(cxcore, System, Array, __runtime_type_info) = {
-    .interfaces = CX_NULL,
-    .interfaceCount = 0,
-    .fields = (const struct cx_reflection_field *)CX_ID_4(cxcore, System, Array,
-                                                          __reflection_fields),
-    .fieldCount = 2,
-    .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, Array,
-                                                                __reflection_functions),
-    .functionCount = 6,
+     CX_ID_5(cxcore, System, Collections, Array, __reflection_params_5), 2},
 };
 
-struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, Array, __typeinfo) = {
-    .Hash = 0x9772C21B64674617,
+static cx_ptr CX_ID_5(cxcore, System, Collections, Array, __reflection_invoke_length)(
+    cx_ptr target, const cx_ptr *arguments, cx_uint argumentCount) {
+    const struct CX_ID_4(cxcore, System, Collections, Array) *array =
+        (const struct CX_ID_4(cxcore, System, Collections, Array) *)target;
+    cx_uint length;
+
+    if (array == CX_NULL || argumentCount != 0 || arguments != CX_NULL) {
+        return CX_NULL;
+    }
+
+    length = array->_length;
+    return cx_box_value(&length, (cx_uint)sizeof(length),
+                        &CX_ID_4(cxcore, System, UInt, __typeinfo));
+}
+
+static const cx_reflection_invoker CX_ID_5(cxcore, System, Collections, Array,
+                                           __reflection_invokers)[] = {
+    CX_NULL,
+    CX_NULL,
+    CX_ID_5(cxcore, System, Collections, Array, __reflection_invoke_length),
+    CX_NULL,
+    CX_NULL,
+    CX_NULL,
+};
+
+static const struct cx_runtime_type_info CX_ID_5(cxcore, System, Collections, Array, __runtime_type_info) = {
+    .interfaces = CX_NULL,
+    .interfaceCount = 0,
+    .fields = (const struct cx_reflection_field *)CX_ID_5(cxcore, System, Collections, Array,
+                                                          __reflection_fields),
+    .fieldCount = 2,
+    .functions = (const struct cx_reflection_function *)CX_ID_5(cxcore, System, Collections, Array,
+                                                                __reflection_functions),
+    .functionCount = 6,
+    .invokers = CX_ID_5(cxcore, System, Collections, Array, __reflection_invokers),
+};
+
+struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_5(cxcore, System, Collections, Array, __typeinfo) = {
+    .Hash = 0xE0710BB22F195AB4,
     .Flags = CX_REFLECTION_FLAG_FINAL | CX_REFLECTION_FLAG_GENERIC |
              CX_REFLECTION_FLAG_TYPE_GENERIC | CX_REFLECTION_FLAG_VISIBILITY_PUBLIC |
              CX_REFLECTION_FLAG_TYPE_CLASS,
-    .Size = sizeof(struct CX_ID_3(cxcore, System, Array)),
-    .Name = &CX_ID_3(__name, System, Array),
-    .Namespace = &CX_ID_2(__namespace, System),
+    .Size = sizeof(struct CX_ID_4(cxcore, System, Collections, Array)),
+    .Name = &CX_ID_5(__name, cxcore, System, Collections, Array),
+    .Namespace = &CX_ID_4(__namespace, cxcore, System, Collections),
     .BaseType = {._obj = &CX_ID_4(cxcore, System, Object, __typeinfo)},
-    .RuntimeTypeInfo = (cx_ptr)&CX_ID_4(cxcore, System, Array, __runtime_type_info),
+    .RuntimeTypeInfo = (cx_ptr)&CX_ID_5(cxcore, System, Collections, Array, __runtime_type_info),
     .GenericArity = 1,
 };
 
-CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Attribute))
+CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Annotation))
+CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
-static const struct cx_reflection_function CX_ID_4(cxcore, System, Attribute,
+static const struct cx_reflection_function CX_ID_4(cxcore, System, Annotation,
                                                    __reflection_functions)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PROTECTED | CX_REFLECTION_FLAG_EXTERN |
          CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR,
-     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "Attribute", CX_NULL, 0},
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Void, __typeinfo), "Annotation", CX_NULL, 0},
 };
-static const struct cx_runtime_type_info CX_ID_4(cxcore, System, Attribute, __runtime_type_info) = {
+static const struct cx_runtime_type_info CX_ID_4(cxcore, System, Annotation, __runtime_type_info) = {
     .interfaces = CX_NULL,
     .interfaceCount = 0,
     .fields = CX_NULL,
     .fieldCount = 0,
-    .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, Attribute,
+    .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, Annotation,
                                                                 __reflection_functions),
     .functionCount = 1,
 };
 
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo)
-    CX_ID_4(cxcore, System, Attribute, __typeinfo) = {
-        .Hash = 0x166B532331C23EB3,
+    CX_ID_4(cxcore, System, Annotation, __typeinfo) = {
+        .Hash = 0x1935224FE4C96307,
         .Flags = CX_REFLECTION_FLAG_ABSTRACT | CX_REFLECTION_FLAG_VISIBILITY_PUBLIC |
                  CX_REFLECTION_FLAG_TYPE_CLASS,
-        .Size = sizeof(struct CX_ID_3(cxcore, System, Attribute)),
-        .Name = &CX_ID_3(__name, System, Attribute),
+        .Size = sizeof(struct CX_ID_3(cxcore, System, Annotation)),
+        .Name = &CX_ID_3(__name, System, Annotation),
         .Namespace = &CX_ID_2(__namespace, System),
         .BaseType = {._obj = &CX_ID_4(cxcore, System, Object, __typeinfo)},
-        .RuntimeTypeInfo = (cx_ptr)&CX_ID_4(cxcore, System, Attribute, __runtime_type_info),
+        .RuntimeTypeInfo = (cx_ptr)&CX_ID_4(cxcore, System, Annotation, __runtime_type_info),
         .GenericArity = 0,
 };
 
@@ -887,6 +958,7 @@ struct CX_ID_4(cxcore, System, Reflection, TypeInfo)
 };
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, Exception))
+CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
 static const struct cx_reflection_field CX_ID_4(cxcore, System, Exception,
                                                 __reflection_fields)[] = {
@@ -1703,7 +1775,7 @@ static const struct cx_reflection_field CX_ID_5(cxcore, System, Reflection, Func
      &CX_ID_4(cxcore, System, String, __typeinfo), "Name"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, FunctionInfo), Params),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "Params"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Params"},
 };
 static const struct cx_runtime_type_info CX_ID_5(cxcore, System, Reflection, FunctionInfo,
                                                  __runtime_type_info) = {
@@ -1791,7 +1863,7 @@ static const struct cx_reflection_field CX_ID_5(cxcore, System, Reflection, Modu
      &CX_ID_4(cxcore, System, String, __typeinfo), "Author"},
     {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC,
      (cx_uint)offsetof(struct CX_ID_4(cxcore, System, Reflection, ModuleInfo), Types),
-     &CX_ID_4(cxcore, System, Array, __typeinfo), "Types"},
+     &CX_ID_5(cxcore, System, Collections, Array, __typeinfo), "Types"},
 };
 static const struct cx_runtime_type_info CX_ID_5(cxcore, System, Reflection, ModuleInfo,
                                                  __runtime_type_info) = {
@@ -1882,6 +1954,7 @@ struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, Sho
 };
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, String))
+CX_STRING_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
 static const struct cx_reflection_field CX_ID_4(cxcore, System, String, __reflection_fields)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
@@ -1903,6 +1976,14 @@ static const struct cx_reflection_parameter CX_ID_4(cxcore, System, String,
 static const struct cx_reflection_parameter CX_ID_4(cxcore, System, String,
                                                     __reflection_params_5)[] = {
     {0, &CX_ID_4(cxcore, System, UInt, __typeinfo), "index", CX_NULL},
+};
+static const struct cx_reflection_parameter CX_ID_4(cxcore, System, String,
+                                                    __reflection_params_6)[] = {
+    {0, &CX_ID_4(cxcore, System, Object, __typeinfo), "other", CX_NULL},
+};
+static const struct cx_reflection_parameter CX_ID_4(cxcore, System, String,
+                                                    __reflection_params_7)[] = {
+    {0, &CX_ID_4(cxcore, System, String, __typeinfo), "other", CX_NULL},
 };
 static const struct cx_reflection_function CX_ID_4(cxcore, System, String,
                                                    __reflection_functions)[] = {
@@ -1928,6 +2009,24 @@ static const struct cx_reflection_function CX_ID_4(cxcore, System, String,
          CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Char, __typeinfo), "Item",
      CX_ID_4(cxcore, System, String, __reflection_params_5), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_VIRTUAL,
+     1, &CX_ID_4(cxcore, System, String, __typeinfo), "ToString", CX_NULL, 0},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_VIRTUAL,
+     2, &CX_ID_4(cxcore, System, Bool, __typeinfo), "Equals",
+     CX_ID_4(cxcore, System, String, __reflection_params_6), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_VIRTUAL,
+     3, &CX_ID_4(cxcore, System, Int, __typeinfo), "GetHashCode", CX_NULL, 0},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_OPERATOR,
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo), "__cx_operator_equal",
+     CX_ID_4(cxcore, System, String, __reflection_params_7), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_OPERATOR,
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo),
+     "__cx_operator_not_equal", CX_ID_4(cxcore, System, String, __reflection_params_7), 1},
 };
 static const struct cx_runtime_type_info CX_ID_4(cxcore, System, String, __runtime_type_info) = {
     .interfaces = CX_NULL,
@@ -1937,7 +2036,7 @@ static const struct cx_runtime_type_info CX_ID_4(cxcore, System, String, __runti
     .fieldCount = 2,
     .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, String,
                                                                 __reflection_functions),
-    .functionCount = 6,
+    .functionCount = 11,
 };
 
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, String, __typeinfo) = {
@@ -1953,6 +2052,7 @@ struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, Str
 };
 
 CX_BEGIN_VTABLE_DEF(CX_ID_3(cxcore, System, SystemDateTimeProvider))
+CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
 CX_BEGIN_INTERFACE_VTABLE_DEF(CX_ID_7(cxcore, System, SystemDateTimeProvider, __iface, System,
                                       IDateTimeProvider, __vtable),

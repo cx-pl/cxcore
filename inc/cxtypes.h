@@ -32,6 +32,7 @@ struct cx_struct_ref {
 struct cx_iface_ref {
     cx_ptr vtable;
     cx_ptr instance;
+    cx_ptr owner;
 };
 
 struct cx_interface_impl {
@@ -41,6 +42,9 @@ struct cx_interface_impl {
 
 struct cx_reflection_field;
 struct cx_reflection_function;
+typedef cx_ptr (*cx_reflection_factory)(void);
+typedef cx_ptr (*cx_reflection_invoker)(cx_ptr target, const cx_ptr *arguments,
+                                        cx_uint argumentCount);
 
 struct cx_runtime_type_info {
     const struct cx_interface_impl *interfaces;
@@ -49,6 +53,8 @@ struct cx_runtime_type_info {
     cx_uint fieldCount;
     const struct cx_reflection_function *functions;
     cx_uint functionCount;
+    cx_reflection_factory createInstance;
+    const cx_reflection_invoker *invokers;
 };
 
 struct cx_reflection_field {
@@ -78,7 +84,8 @@ static inline struct cx_iface_ref cx_iface_upcast(struct cx_iface_ref source, cx
     struct cx_iface_ref result = {source.vtable == (cx_ptr)0
                                       ? (cx_ptr)0
                                       : ((union cx_vtable_entry *)source.vtable)[vtableSlot].data,
-                                  source.instance};
+                                  source.instance,
+                                  source.owner};
     return result;
 }
 

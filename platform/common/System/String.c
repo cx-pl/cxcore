@@ -6,6 +6,152 @@
 
 CX_STRING_DEF(_empty, "");
 
+static cx_bool cx_string_content_equals(
+    const struct CX_ID_3(cxcore, System, String) *left,
+    const struct CX_ID_3(cxcore, System, String) *right) {
+    if (left == right) {
+        return 1;
+    }
+    if (left == CX_NULL || right == CX_NULL || left->_length != right->_length) {
+        return 0;
+    }
+    return left->_length == 0 ||
+        (left->_data != CX_NULL && right->_data != CX_NULL &&
+         memcmp(left->_data, right->_data, left->_length) == 0);
+}
+
+static cx_int cx_string_content_compare(
+    const struct CX_ID_3(cxcore, System, String) *left,
+    const struct CX_ID_3(cxcore, System, String) *right) {
+    cx_uint commonLength;
+    int byteComparison;
+
+    if (left == right) {
+        return 0;
+    }
+    if (left == CX_NULL) {
+        return -1;
+    }
+    if (right == CX_NULL) {
+        return 1;
+    }
+
+    commonLength = left->_length < right->_length
+        ? left->_length
+        : right->_length;
+    if (commonLength > 0 && left->_data != CX_NULL && right->_data != CX_NULL) {
+        byteComparison = memcmp(left->_data, right->_data, commonLength);
+        if (byteComparison < 0) {
+            return -1;
+        }
+        if (byteComparison > 0) {
+            return 1;
+        }
+    }
+    if (left->_length < right->_length) {
+        return -1;
+    }
+    if (left->_length > right->_length) {
+        return 1;
+    }
+    return 0;
+}
+
+struct CX_ID_3(cxcore, System, String) *CX_ID_4(
+    cxcore, System, String, ToString)(const struct CX_ID_3(cxcore, System, String) * __this) {
+    return (struct CX_ID_3(cxcore, System, String) *)__this;
+}
+
+cx_bool CX_ID_4(cxcore, System, String, Equals)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    struct CX_ID_3(cxcore, System, Object) *other) {
+    if (other == CX_NULL ||
+        CX_GET_TYPEINFO(other).Hash != 0x39E2CB3A11136EA4ULL) {
+        return 0;
+    }
+    return cx_string_content_equals(
+        __this, (const struct CX_ID_3(cxcore, System, String) *)other);
+}
+
+cx_int CX_ID_4(cxcore, System, String, GetHashCode)(
+    const struct CX_ID_3(cxcore, System, String) * __this) {
+    cx_uint hash = 2166136261u;
+    cx_uint index;
+    const cx_byte *bytes = (const cx_byte *)__this->_data;
+    for (index = 0; index < __this->_length; ++index) {
+        hash ^= bytes[index];
+        hash *= 16777619u;
+    }
+    return (cx_int)hash;
+}
+
+struct CX_ID_3(cxcore, System, String) *CX_ID_4(
+    cxcore, System, String, __cx_operator_plus)(
+    const struct CX_ID_3(cxcore, System, String) *left,
+    const struct CX_ID_3(cxcore, System, String) *right) {
+    cx_uint leftLength = left == CX_NULL ? 0 : left->_length;
+    cx_uint rightLength = right == CX_NULL ? 0 : right->_length;
+    cx_uint length;
+    cx_byte *data;
+    struct CX_ID_3(cxcore, System, String) *result;
+
+    if (leftLength > UINT_MAX - rightLength ||
+        (leftLength != 0 && left->_data == CX_NULL) ||
+        (rightLength != 0 && right->_data == CX_NULL)) {
+        abort();
+    }
+    length = leftLength + rightLength;
+    data = length == 0
+        ? CX_NULL
+        : (cx_byte *)CX_ID_4(cxcore, System, Memory, Alloc)(length);
+    if (leftLength != 0) {
+        memcpy(data, left->_data, leftLength);
+    }
+    if (rightLength != 0) {
+        memcpy(data + leftLength, right->_data, rightLength);
+    }
+    result = (struct CX_ID_3(cxcore, System, String) *)CX_ID_4(
+        cxcore, System, Memory, Alloc)((cx_uint)sizeof(*result));
+    CX_ID_5(cxcore, System, String, __constructor, _2)(result, length, data);
+    return result;
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return cx_string_content_equals(__this, other);
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_not_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return !cx_string_content_equals(__this, other);
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_less)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return cx_string_content_compare(__this, other) < 0;
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_less_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return cx_string_content_compare(__this, other) <= 0;
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_greater)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return cx_string_content_compare(__this, other) > 0;
+}
+
+cx_bool CX_ID_4(cxcore, System, String, __cx_operator_greater_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other) {
+    return cx_string_content_compare(__this, other) >= 0;
+}
+
 const struct CX_ID_3(cxcore, System, String) *
     CX_ID_5(cxcore, System, String, Empty, __const_get)() {
     return &_empty;
@@ -68,8 +214,8 @@ cx_char CX_ID_5(cxcore, System, String, Item,
 
 void CX_ID_4(cxcore, System, String,
              __constructor)(struct CX_ID_3(cxcore, System, String) * __this) {
-    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
     CX_ID_4(cxcore, System, Object, __constructor)(&__this->__base);
+    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
     __this->_length = 0;
     __this->_data = CX_NULL;
 }
@@ -77,8 +223,8 @@ void CX_ID_4(cxcore, System, String,
 CX_EXPORT void CX_ID_5(cxcore, System, String, __constructor,
                        _2)(struct CX_ID_3(cxcore, System, String) * __this, cx_uint length,
                            cx_ptr data) {
-    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
     CX_ID_4(cxcore, System, Object, __constructor)(&__this->__base);
+    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
     __this->_length = length;
     __this->_data = length == 0 ? CX_NULL : data;
 }

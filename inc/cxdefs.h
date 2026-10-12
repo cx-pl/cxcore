@@ -290,7 +290,7 @@
     }
 
 #define CX_TYPEINFO_GENERIC_PARAMS_EMPTY \
-    struct CX_ID_3(cxcore, System, Array) CX_ID_4(_, fullName, __typeinfo, _genericParamsArray) = CX_ARRAY_EMPTY
+    struct CX_ID_4(cxcore, System, Collections, Array) CX_ID_4(_, fullName, __typeinfo, _genericParamsArray) = CX_ARRAY_EMPTY
 
 #define CX_GET_TYPEINFO(obj) (*((struct CX_ID_4(cxcore, System, Reflection, TypeInfo)*)((union cx_vtable_entry*)CX_GET_VTABLE(obj))[0].data))
 

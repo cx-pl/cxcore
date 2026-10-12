@@ -14,10 +14,14 @@ rules remain experimental.
   failed reallocation terminates the process; it never returns a lost old pointer.
 - `Memory.Copy` is a no-op for size zero. Nonzero copies require valid, non-overlapping
   ranges, as with C `memcpy`.
-- `Array` owns a zero-initialized element buffer allocated by `cx_array_new`. The
-  current explicit cleanup is `Memory.Free(array->_data)` followed by
-  `Memory.Free(array)`. `cx_array_at` returns null for a null array, an out-of-range
-  index, invalid zero-sized elements, or missing backing storage.
+- Built-in `T[]` storage and the public `System.Collections.Array<T>` API use
+  the same `System.Collections.Array` runtime structure and own a
+  zero-initialized element buffer allocated by `cx_array_new`. The public type
+  is declared in `src/System/Collections/Array.cx` and exposes `Length`, `Get`,
+  and `Set`. The current explicit cleanup
+  is `Memory.Free(array->_data)` followed by `Memory.Free(array)`.
+  `cx_array_at` returns null for a null array, an out-of-range index, invalid
+  zero-sized elements, or missing backing storage.
 - Runtime-owned allocations go through `Memory.Alloc` and are eligible for collection
   when unreachable. `Memory.Free` immediately unregisters and releases a block; freeing
   a block while a live reference may be used is invalid. `Memory.Realloc` tracks the
@@ -26,8 +30,9 @@ rules remain experimental.
   non-owning pointer; compiler-generated lifts call `Nullable<T>.CreateValueStorage`,
   which allocates a copy of the supplied bytes through `Memory.Alloc`; the payload is
   traced conservatively with the rest of the managed heap.
-- `Object` initializes its runtime vtable and leaves `_gc` reserved and null. No
-  finalizers run. The non-moving collector may retain unreachable blocks when stale
+- `Object` initializes its runtime vtable. Ordinary objects leave `_gc` null;
+  boxed value objects use it to retain their managed box header and payload.
+  No finalizers run. The non-moving collector may retain unreachable blocks when stale
   pointer-shaped values remain on a scanned stack or in a registered root.
 - `DateTime` component construction validates the Gregorian date and time fields. `AddMonths`
   uses calendar months, clamps the day to the last day of the destination month, and keeps
@@ -40,6 +45,16 @@ rules remain experimental.
   scalar values, and `String.Item` indexes those scalar values. The item getter returns
   `-1` for an invalid index or malformed UTF-8 sequence. `Length` counts each malformed
   byte as one replacement position so it stays bounded by the stored byte length.
+- `String ==`, `String !=`, `Equals`, and `GetHashCode` use the stored UTF-8 bytes;
+  equal byte sequences compare equal and produce the same hash. `ToString()` returns
+  the same string instance. String constructors initialize the `String` vtable after
+  the base `Object` constructor initializes the base object state.
+- `String <`, `<=`, `>`, and `>=` compare UTF-8 byte sequences lexicographically.
+  For valid UTF-8, this gives Unicode scalar value ordering. A null string sorts
+  before a non-null string when the comparison is made through typed string values.
+- `String + String` copies both UTF-8 byte sequences into a new managed string.
+  A null operand contributes no bytes. Length overflow and allocation failure
+  terminate according to the runtime allocation contract.
 - `String.__constructor(length, data)` borrows an immutable byte buffer. The buffer
   must remain alive and unchanged while the string uses it. String literals borrow
   static storage. The character-fill constructor allocates its encoded UTF-8 buffer;

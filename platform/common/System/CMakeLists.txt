@@ -1,6 +1,5 @@
 target_sources(cxcore 
     PRIVATE
-        Array.c
         Byte.c
         Char.c
         Console.c
@@ -22,3 +21,5 @@ target_sources(cxcore
         UShort.c
         Uuid.c
         Void.c)
+
+add_subdirectory(Collections)

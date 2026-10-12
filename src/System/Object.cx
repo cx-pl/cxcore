@@ -4,6 +4,9 @@ public class Object {
     private ptr _gc;
 
     public TypeInfo Type { extern const get; }
+    public virtual extern string ToString() const;
+    public virtual extern bool Equals(object other) const;
+    public virtual extern int GetHashCode() const;
 
     public extern constructor();
 }

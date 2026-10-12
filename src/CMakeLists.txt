@@ -1,4 +1,4 @@
-target_sources(cxcore 
+target_sources(cxcore
     PRIVATE
         cxcore.h
         cxcore.c

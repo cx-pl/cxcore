@@ -1,5 +1,5 @@
 namespace System;
 
-public abstract class Attribute {
+public abstract class Annotation {
     protected extern constructor();
 }

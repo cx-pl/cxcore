@@ -12,7 +12,8 @@ Use a non-moving, conservative mark-and-sweep collector for blocks obtained from
 objects, arrays, array backing stores, strings and their buffers, and nullable
 value storage without changing their layouts. The collector stores allocation
 records separately from managed blocks, so the existing `Object._gc` field
-remains reserved and object/interface ABI layouts do not change.
+remains available for box metadata while ordinary objects leave it null; object
+and interface ABI layouts do not change.
 
 The collector treats aligned pointer-sized words in a block as possible
 references. It accepts interior pointers and marks the containing allocation.

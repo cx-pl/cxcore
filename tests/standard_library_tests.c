@@ -57,6 +57,61 @@ static void test_string_utf8_indexing(void) {
     assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 4) == -1);
 
     {
+        static const cx_byte same_left[] = {'c', 'x'};
+        static const cx_byte same_right[] = {'c', 'x'};
+        static const cx_byte different[] = {'c', 'y'};
+        struct CX_ID_3(cxcore, System, String) left;
+        struct CX_ID_3(cxcore, System, String) right;
+        struct CX_ID_3(cxcore, System, String) other;
+        CX_ID_5(cxcore, System, String, __constructor, _2)(
+            &left, (cx_uint)sizeof(same_left), (cx_ptr)same_left);
+        CX_ID_5(cxcore, System, String, __constructor, _2)(
+            &right, (cx_uint)sizeof(same_right), (cx_ptr)same_right);
+        CX_ID_5(cxcore, System, String, __constructor, _2)(
+            &other, (cx_uint)sizeof(different), (cx_ptr)different);
+
+        assert(CX_ID_4(cxcore, System, String, __cx_operator_equal)(&left, &right));
+        assert(CX_ID_4(cxcore, System, String, __cx_operator_not_equal)(&left, &other));
+        assert(CX_ID_4(cxcore, System, String, Equals)(
+            &left, (struct CX_ID_3(cxcore, System, Object) *)&right));
+        assert(!CX_ID_4(cxcore, System, String, Equals)(
+            &left, (struct CX_ID_3(cxcore, System, Object) *)&other));
+        assert(CX_ID_4(cxcore, System, String, GetHashCode)(&left) ==
+               CX_ID_4(cxcore, System, String, GetHashCode)(&right));
+        assert(CX_ID_4(cxcore, System, String, ToString)(&left) == &left);
+        assert(CX_GET_TYPEINFO(&left).Hash == 0x39E2CB3A11136EA4ULL);
+    }
+
+    {
+        static const cx_byte left_bytes[] = {'A', 0xE2, 0x82, 0xAC};
+        static const cx_byte right_bytes[] = {0xF0, 0x9F, 0x98, 0x80};
+        static const cx_byte expected_bytes[] = {'A', 0xE2, 0x82, 0xAC,
+                                                 0xF0, 0x9F, 0x98, 0x80};
+        struct CX_ID_3(cxcore, System, String) left;
+        struct CX_ID_3(cxcore, System, String) right;
+        struct CX_ID_3(cxcore, System, String) *joined;
+
+        CX_ID_5(cxcore, System, String, __constructor, _2)(
+            &left, (cx_uint)sizeof(left_bytes), (cx_ptr)left_bytes);
+        CX_ID_5(cxcore, System, String, __constructor, _2)(
+            &right, (cx_uint)sizeof(right_bytes), (cx_ptr)right_bytes);
+        joined = CX_ID_4(cxcore, System, String, __cx_operator_plus)(&left, &right);
+        assert(joined->_length == (cx_uint)sizeof(expected_bytes));
+        assert(memcmp(joined->_data, expected_bytes, sizeof(expected_bytes)) == 0);
+        assert(CX_ID_5(cxcore, System, String, Length, __const_get)(joined) == 3);
+        CX_ID_4(cxcore, System, Memory, Free)(joined->_data);
+        CX_ID_4(cxcore, System, Memory, Free)(joined);
+    }
+
+    {
+        struct CX_ID_3(cxcore, System, String) *joined;
+        joined = CX_ID_4(cxcore, System, String, __cx_operator_plus)(CX_NULL, CX_NULL);
+        assert(joined->_length == 0);
+        assert(joined->_data == CX_NULL);
+        CX_ID_4(cxcore, System, Memory, Free)(joined);
+    }
+
+    {
         struct CX_ID_3(cxcore, System, String) repeated;
         CX_ID_5(cxcore, System, String, __constructor, _3)(&repeated, 3, 0x20AC);
         assert(repeated._length == 9);
@@ -76,7 +131,7 @@ static void test_string_utf8_indexing(void) {
 }
 
 static void test_array(void) {
-    struct CX_ID_3(cxcore, System, Array) *array = cx_array_new(3, (cx_uint)sizeof(cx_int));
+    struct CX_ID_4(cxcore, System, Collections, Array) *array = cx_array_new(3, (cx_uint)sizeof(cx_int));
     cx_int *first = (cx_int *)cx_array_at(array, 0, (cx_uint)sizeof(cx_int));
     cx_int *last = (cx_int *)cx_array_at(array, 2, (cx_uint)sizeof(cx_int));
     assert(array->_length == 3);
@@ -87,7 +142,7 @@ static void test_array(void) {
     assert(cx_array_at(array, 2, 0) == CX_NULL);
     assert(cx_array_at(CX_NULL, 0, (cx_uint)sizeof(cx_int)) == CX_NULL);
     {
-        struct CX_ID_3(cxcore, System, Array) *empty = cx_array_new(0, 0);
+        struct CX_ID_4(cxcore, System, Collections, Array) *empty = cx_array_new(0, 0);
         assert(empty->_data == CX_NULL);
         assert(cx_array_at(empty, 0, 0) == CX_NULL);
         CX_ID_4(cxcore, System, Memory, Free)(empty);

@@ -1,0 +1,156 @@
+namespace System.Collections;
+
+public final class List<T> : IEnumerable<T> {
+    private Array<T> _items;
+    private uint _count;
+
+    public uint Count { const get { return _count; } }
+
+    public constructor() {
+        _items = new Array<T>(4u);
+        _count = 0u;
+    }
+
+    public T Get(uint index) const {
+        return _items.Get(index);
+    }
+
+    public T GetOrDefault(uint index) const {
+        if (index >= _count) {
+            return default;
+        }
+        return _items.Get(index);
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return _items.GetEnumerator(_count);
+    }
+
+    public ArrayEnumerator<T> GetReverseEnumerator() const {
+        ArrayEnumerator<T> enumerator = _items.GetEnumerator(_count);
+        enumerator.Reverse();
+        return enumerator;
+    }
+
+    public Array<T> ToArray() const {
+        Array<T> result = new Array<T>(_count);
+        for (uint index = 0u; index < _count; index += 1u) {
+            result.Set(index, _items.Get(index));
+        }
+        return result;
+    }
+
+    public void CopyTo(Array<T> destination, uint destinationIndex) const {
+        for (uint index = 0u; index < _count; index += 1u) {
+            destination.Set(destinationIndex + index, _items.Get(index));
+        }
+    }
+
+    public void Set(uint index, T value) {
+        _items.Set(index, value);
+    }
+
+    public bool TrySet(uint index, T value) {
+        if (index >= _count) {
+            return false;
+        }
+        _items.Set(index, value);
+        return true;
+    }
+
+    public void Add(T value) {
+        EnsureCapacity(_count + 1u);
+        _items.Set(_count, value);
+        _count += 1u;
+    }
+
+    public void AddRange(List<T> values) {
+        uint valuesCount = values.Count;
+        EnsureCapacity(_count + valuesCount);
+        for (uint index = 0u; index < valuesCount; index += 1u) {
+            _items.Set(_count, values.Get(index));
+            _count += 1u;
+        }
+    }
+
+    public void Insert(uint index, T value) {
+        EnsureCapacity(_count + 1u);
+        for (uint current = _count; current > index; current -= 1u) {
+            _items.Set(current, _items.Get(current - 1u));
+        }
+        _items.Set(index, value);
+        _count += 1u;
+    }
+
+    public bool TryInsert(uint index, T value) {
+        if (index > _count) {
+            return false;
+        }
+        EnsureCapacity(_count + 1u);
+        for (uint current = _count; current > index; current -= 1u) {
+            _items.Set(current, _items.Get(current - 1u));
+        }
+        _items.Set(index, value);
+        _count += 1u;
+        return true;
+    }
+
+    public bool TryCopyTo(Array<T> destination, uint destinationIndex) const {
+        if (destinationIndex > destination.Length ||
+            _count > destination.Length - destinationIndex) {
+            return false;
+        }
+        for (uint index = 0u; index < _count; index += 1u) {
+            destination.Set(destinationIndex + index, _items.Get(index));
+        }
+        return true;
+    }
+
+    public void RemoveAt(uint index) {
+        for (uint current = index; current + 1u < _count; current += 1u) {
+            _items.Set(current, _items.Get(current + 1u));
+        }
+        _count -= 1u;
+        T empty = default;
+        _items.Set(_count, empty);
+    }
+
+    public bool TryRemoveAt(uint index) {
+        if (index >= _count) {
+            return false;
+        }
+
+        for (uint current = index; current + 1u < _count; current += 1u) {
+            _items.Set(current, _items.Get(current + 1u));
+        }
+        _count -= 1u;
+        T empty = default;
+        _items.Set(_count, empty);
+        return true;
+    }
+
+    public void Clear() {
+        T empty = default;
+        while (_count > 0u) {
+            _count -= 1u;
+            _items.Set(_count, empty);
+        }
+    }
+
+    private void EnsureCapacity(uint required) {
+        if (required <= _items.Length) {
+            return;
+        }
+
+        uint capacity = _items.Length == 0u ? 4u : _items.Length * 2u;
+        while (capacity < required) {
+            capacity *= 2u;
+        }
+
+        Array<T> expanded = new Array<T>(capacity);
+        for (uint index = 0u; index < _count; index += 1u) {
+            expanded.Set(index, _items.Get(index));
+        }
+        _items = expanded;
+    }
+}

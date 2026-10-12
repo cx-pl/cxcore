@@ -22,8 +22,8 @@ struct CX_ID_3(cxcore, System, Object);
 struct CX_ID_3(cxcore, System, Nullable);
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo);
 struct CX_ID_4(cxcore, System, Reflection, VersionInfo);
-struct CX_ID_3(cxcore, System, Array);
-struct CX_ID_3(cxcore, System, Attribute);
+struct CX_ID_4(cxcore, System, Collections, Array);
+struct CX_ID_3(cxcore, System, Annotation);
 struct CX_ID_3(cxcore, System, Bool);
 struct CX_ID_3(cxcore, System, Byte);
 struct CX_ID_3(cxcore, System, Char);
@@ -73,12 +73,12 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, TypeInfo)) {
     cx_uint Size;
     const struct CX_ID_3(cxcore, System, String) * Name;
     const struct CX_ID_3(cxcore, System, String) * Namespace;
-    const struct CX_ID_3(cxcore, System, Array) * GenericParams;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * GenericParams;
     struct CX_ID_3(cxcore, System, Nullable) BaseType;
-    const struct CX_ID_3(cxcore, System, Array) * Interfaces;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * Interfaces;
     cx_uint GenericArity;
-    const struct CX_ID_3(cxcore, System, Array) * Fields;
-    const struct CX_ID_3(cxcore, System, Array) * Functions;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * Fields;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * Functions;
     const cx_ptr RuntimeTypeInfo;
 };
 CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, VersionInfo)) {
@@ -87,12 +87,12 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, VersionInfo)) {
     cx_int Patch;
     cx_int Revision;
 };
-CX_TYPE_DEF(CX_ID_3(cxcore, System, Array)) {
+CX_TYPE_DEF(CX_ID_4(cxcore, System, Collections, Array)) {
     struct CX_ID_3(cxcore, System, Object) __base;
     cx_uint _length;
     cx_ptr _data;
 };
-CX_TYPE_DEF(CX_ID_3(cxcore, System, Attribute)) {
+CX_TYPE_DEF(CX_ID_3(cxcore, System, Annotation)) {
     struct CX_ID_3(cxcore, System, Object) __base;
 };
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Bool)) {
@@ -174,7 +174,7 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, FunctionInfo)) {
     cx_uint Offset;
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) ReturnType;
     const struct CX_ID_3(cxcore, System, String) * Name;
-    const struct CX_ID_3(cxcore, System, Array) * Params;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * Params;
 };
 CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, FunctionParamInfo)) {
     cx_uint Flags;
@@ -188,7 +188,7 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, ModuleInfo)) {
     const struct CX_ID_4(cxcore, System, Reflection, VersionInfo) Version;
     const struct CX_ID_3(cxcore, System, String) * Description;
     const struct CX_ID_3(cxcore, System, String) * Author;
-    const struct CX_ID_3(cxcore, System, Array) * Types;
+    const struct CX_ID_4(cxcore, System, Collections, Array) * Types;
 };
 CX_TYPE_DEF(CX_ID_3(cxcore, System, SByte)) {
     cx_sbyte _value;
@@ -245,6 +245,13 @@ extern CX_CXCORE_DATA_API struct CX_ID_3(cxcore, System, Void) CX_ID_4(cxcore, S
 extern CX_API struct CX_ID_4(cxcore, System, Reflection, TypeInfo)
     CX_ID_5(cxcore, System, Object, Type,
             __const_get)(const struct CX_ID_3(cxcore, System, Object) * __this);
+extern CX_API struct CX_ID_3(cxcore, System, String) *CX_ID_4(
+    cxcore, System, Object, ToString)(const struct CX_ID_3(cxcore, System, Object) * __this);
+extern CX_API cx_bool CX_ID_4(cxcore, System, Object, Equals)(
+    const struct CX_ID_3(cxcore, System, Object) * __this,
+    struct CX_ID_3(cxcore, System, Object) *other);
+extern CX_API cx_int CX_ID_4(cxcore, System, Object, GetHashCode)(
+    const struct CX_ID_3(cxcore, System, Object) * __this);
 extern CX_API void CX_ID_4(cxcore, System, Object,
                            __constructor)(struct CX_ID_3(cxcore, System, Object) * __this);
 extern CX_API void CX_ID_5(cxcore, System, Nullable, Null, __const_get)(void *__returnValue);
@@ -268,27 +275,40 @@ extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, IsInBaseType
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) source);
 extern CX_API cx_bool CX_ID_5(cxcore, System, Reflection, TypeInfo, HasRuntimeInterface)(
     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * __this, cx_ulong typeHash);
+extern CX_API struct CX_ID_3(cxcore, System, Object) *CX_ID_5(
+    cxcore, System, Reflection, TypeInfo, CreateInstance)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * __this);
+extern CX_API struct CX_ID_3(cxcore, System, Object) *CX_ID_6(
+    cxcore, System, Reflection, TypeInfo, CreateInstance, _2)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * __this,
+    const struct CX_ID_4(cxcore, System, Collections, Array) *arguments);
+extern CX_API struct CX_ID_3(cxcore, System, Object) *CX_ID_5(
+    cxcore, System, Reflection, TypeInfo, Invoke)(
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * __this,
+    struct CX_ID_3(cxcore, System, Object) * target,
+    const struct CX_ID_3(cxcore, System, String) * name,
+    const struct CX_ID_4(cxcore, System, Collections, Array) * arguments);
 extern CX_API void
     CX_ID_5(cxcore, System, Reflection, VersionInfo,
             __constructor)(struct CX_ID_4(cxcore, System, Reflection, VersionInfo) * __this,
                            cx_int major, cx_int minor, cx_int patch, cx_int revision);
-extern CX_API void CX_ID_5(cxcore, System, Array, Empty, __const_get)(void *__returnValue);
-extern CX_API cx_uint CX_ID_5(cxcore, System, Array, Length,
-                              __const_get)(const struct CX_ID_3(cxcore, System, Array) * __this);
-extern CX_API void CX_ID_5(cxcore, System, Array, Item,
-                           __get)(struct CX_ID_3(cxcore, System, Array) * __this, cx_uint index,
+extern CX_API void CX_ID_6(cxcore, System, Collections, Array, Empty, __const_get)(void *__returnValue);
+extern CX_API cx_uint CX_ID_6(cxcore, System, Collections, Array, Length,
+                              __const_get)(const struct CX_ID_4(cxcore, System, Collections, Array) * __this);
+extern CX_API void CX_ID_6(cxcore, System, Collections, Array, Item,
+                           __get)(struct CX_ID_4(cxcore, System, Collections, Array) * __this, cx_uint index,
                                   void *__returnValue);
-extern CX_API void CX_ID_5(cxcore, System, Array, Item,
-                           __const_get)(const struct CX_ID_3(cxcore, System, Array) * __this,
+extern CX_API void CX_ID_6(cxcore, System, Collections, Array, Item,
+                           __const_get)(const struct CX_ID_4(cxcore, System, Collections, Array) * __this,
                                         cx_uint index, void *__returnValue);
-extern CX_API void CX_ID_5(cxcore, System, Array, Item,
-                           __set)(struct CX_ID_3(cxcore, System, Array) * __this, cx_uint index,
+extern CX_API void CX_ID_6(cxcore, System, Collections, Array, Item,
+                           __set)(struct CX_ID_4(cxcore, System, Collections, Array) * __this, cx_uint index,
                                   void *value);
-extern CX_API void CX_ID_4(cxcore, System, Array,
-                           __constructor)(struct CX_ID_3(cxcore, System, Array) * __this,
+extern CX_API void CX_ID_5(cxcore, System, Collections, Array,
+                           __constructor)(struct CX_ID_4(cxcore, System, Collections, Array) * __this,
                                           cx_uint length);
-extern CX_API void CX_ID_4(cxcore, System, Attribute,
-                           __constructor)(struct CX_ID_3(cxcore, System, Attribute) * __this);
+extern CX_API void CX_ID_4(cxcore, System, Annotation,
+                           __constructor)(struct CX_ID_3(cxcore, System, Annotation) * __this);
 extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsDigit,
                               __const_get)(const struct CX_ID_3(cxcore, System, Char) * __this);
 extern CX_API cx_bool CX_ID_5(cxcore, System, Char, IsLower,
@@ -495,6 +515,23 @@ extern CX_API cx_char CX_ID_5(cxcore, System, String, Item,
                                            cx_uint index
 
 );
+extern CX_API struct CX_ID_3(cxcore, System, String) *CX_ID_4(
+    cxcore, System, String, ToString)(const struct CX_ID_3(cxcore, System, String) * __this);
+extern CX_API cx_bool CX_ID_4(cxcore, System, String, Equals)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    struct CX_ID_3(cxcore, System, Object) *other);
+extern CX_API cx_int CX_ID_4(cxcore, System, String, GetHashCode)(
+    const struct CX_ID_3(cxcore, System, String) * __this);
+extern CX_API struct CX_ID_3(cxcore, System, String) *CX_ID_4(
+    cxcore, System, String, __cx_operator_plus)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other);
+extern CX_API cx_bool CX_ID_4(cxcore, System, String, __cx_operator_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other);
+extern CX_API cx_bool CX_ID_4(cxcore, System, String, __cx_operator_not_equal)(
+    const struct CX_ID_3(cxcore, System, String) * __this,
+    const struct CX_ID_3(cxcore, System, String) *other);
 extern CX_API void CX_ID_4(cxcore, System, String,
                            __constructor)(struct CX_ID_3(cxcore, System, String) * __this);
 extern CX_API void CX_ID_5(cxcore, System, String, __constructor,

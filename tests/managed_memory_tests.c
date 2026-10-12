@@ -35,7 +35,7 @@ static void create_rooted_graph(void) {
 }
 
 static void create_runtime_layout_graph(void) {
-    struct CX_ID_3(cxcore, System, Array) *array = cx_array_new(1, (cx_uint)sizeof(cx_ptr));
+    struct CX_ID_4(cxcore, System, Collections, Array) *array = cx_array_new(1, (cx_uint)sizeof(cx_ptr));
     struct CX_ID_3(cxcore, System, Nullable) *nullable =
         (struct CX_ID_3(cxcore, System, Nullable) *)CX_ID_4(cxcore, System, Memory, Alloc)(
             (cx_uint)sizeof(*nullable));
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
     size_t collections_before;
     size_t collected_before;
     size_t heap_before;
-    struct CX_ID_3(cxcore, System, Array) *aggregate_array;
+    struct CX_ID_4(cxcore, System, Collections, Array) *aggregate_array;
     struct CX_ID_3(cxcore, System, Nullable) *aggregate_nullable;
     struct cx_iface_ref *aggregate_interface;
 
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
     }
     create_runtime_layout_graph();
     cx_gc_collect();
-    aggregate_array = (struct CX_ID_3(cxcore, System, Array) *)aggregate_root;
+    aggregate_array = (struct CX_ID_4(cxcore, System, Collections, Array) *)aggregate_root;
     aggregate_nullable = aggregate_array == NULL
         ? NULL
         : (struct CX_ID_3(cxcore, System, Nullable) *)*(cx_ptr *)aggregate_array->_data;

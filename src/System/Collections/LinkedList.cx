@@ -1,0 +1,99 @@
+namespace System.Collections;
+
+internal class LinkedListNode<T> {
+    internal T Value;
+    internal LinkedListNode<T> Previous;
+    internal LinkedListNode<T> Next;
+
+    internal constructor(T value) {
+        Value = value;
+        Previous = null;
+        Next = null;
+    }
+}
+
+public final class LinkedList<T> : IEnumerable<T> {
+    private LinkedListNode<T> _first;
+    private LinkedListNode<T> _last;
+    private uint _count;
+
+    public uint Count { const get { return _count; } }
+
+    public void AddFirst(T value) {
+        LinkedListNode<T> node = new LinkedListNode<T>(value);
+        node.Next = _first;
+        if (_count == 0u) {
+            _last = node;
+        } else {
+            _first.Previous = node;
+        }
+        _first = node;
+        _count += 1u;
+    }
+
+    public void AddLast(T value) {
+        LinkedListNode<T> node = new LinkedListNode<T>(value);
+        node.Previous = _last;
+        if (_count == 0u) {
+            _first = node;
+        } else {
+            _last.Next = node;
+        }
+        _last = node;
+        _count += 1u;
+    }
+
+    public T RemoveFirst() {
+        T value = _first.Value;
+        _first = _first.Next;
+        _count -= 1u;
+        if (_count == 0u) {
+            _last = null;
+        } else {
+            _first.Previous = null;
+        }
+        return value;
+    }
+
+    public T RemoveLast() {
+        T value = _last.Value;
+        _last = _last.Previous;
+        _count -= 1u;
+        if (_count == 0u) {
+            _first = null;
+        } else {
+            _last.Next = null;
+        }
+        return value;
+    }
+
+    public void Clear() {
+        _first = null;
+        _last = null;
+        _count = 0u;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new LinkedListEnumerator<T>(_first);
+    }
+}
+
+public final class LinkedListEnumerator<T> : IEnumerator<T> {
+    private LinkedListNode<T> _next;
+    private T _current;
+
+    public constructor(LinkedListNode<T> first) {
+        _next = first;
+    }
+
+    public T Current { const get { return _current; } }
+
+    public bool MoveNext() {
+        if (_next == null) {
+            return false;
+        }
+        _current = _next.Value;
+        _next = _next.Next;
+        return true;
+    }
+}
