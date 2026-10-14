@@ -11,7 +11,7 @@ public struct KeyValuePair<TKey, TValue> {
 }
 
 public final class Dictionary<TKey, TValue> where TKey : class
-    : IEnumerable<KeyValuePair<TKey, TValue>> {
+    : ICollection<KeyValuePair<TKey, TValue>> {
     private Array<TKey> _keys;
     private Array<TValue> _values;
     private uint[] _buckets;

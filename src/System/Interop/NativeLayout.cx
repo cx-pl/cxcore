@@ -1,0 +1,9 @@
+namespace System.Interop;
+
+public final class NativeLayout : System.Annotation {
+    public extern constructor(string layout = "sequential", int pack = 0, int alignment = 0, int size = 0);
+}
+
+public final class NativeField : System.Annotation {
+    public extern constructor(int offset);
+}

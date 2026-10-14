@@ -1,0 +1,6 @@
+namespace System;
+
+// A UTF-16 code unit, including surrogate values, independently of C wchar_t.
+public struct WChar {
+    private wchar _value;
+}

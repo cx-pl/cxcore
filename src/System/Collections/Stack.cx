@@ -1,9 +1,10 @@
 namespace System.Collections;
 
-public final class Stack<T> : IEnumerable<T> {
+public final class Stack<T> : ICollection<T> {
     private List<T> _items;
+    private uint _count;
 
-    public uint Count { const get { return _items.Count; } }
+    public uint Count { const get { return _count; } }
 
     public IEnumerator<T> GetEnumerator() const {
         return _items.GetReverseEnumerator();
@@ -15,6 +16,7 @@ public final class Stack<T> : IEnumerable<T> {
 
     public void Push(T value) {
         _items.Add(value);
+        _count += 1u;
     }
 
     public T Peek() const {
@@ -25,11 +27,13 @@ public final class Stack<T> : IEnumerable<T> {
         uint last = _items.Count - 1u;
         T value = _items.Get(last);
         _items.RemoveAt(last);
+        _count -= 1u;
         return value;
     }
 
     public void Clear() {
         _items.Clear();
+        _count = 0u;
     }
 
 }

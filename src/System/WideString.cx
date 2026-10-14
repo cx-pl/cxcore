@@ -1,0 +1,20 @@
+namespace System;
+
+public final class WideString : Object {
+    private uint _length;
+    private ptr _data;
+
+    public static WideString Empty { extern const get; }
+    public uint Length { extern const get; }
+    public wchar Item { extern const get(uint index); }
+    public uint ScalarCount { extern const get; }
+    public extern char ScalarAt(uint index) const;
+    public extern constructor();
+    public unsafe extern constructor(ptr<const wchar> data, uint length);
+    public override extern string ToString() const;
+    public override extern bool Equals(object other) const;
+    public override extern int GetHashCode() const;
+    public extern int CompareOrdinal(WideString other) const;
+    public extern bool operator ==(WideString other) const;
+    public extern bool operator !=(WideString other) const;
+}

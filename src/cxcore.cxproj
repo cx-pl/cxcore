@@ -1,7 +1,7 @@
 name: cxcore
 type: Library
 version: 0.1.0-alpha
-description: Cx Core System Library
+description: CX Core System Library
 licence: MIT
 website: https://github.com/cx-pl/cxcore
 author: Krzysztof Klein

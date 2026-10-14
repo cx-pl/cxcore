@@ -197,10 +197,15 @@ static void test_memory_helpers(void) {
 
 static void test_object_constructor(void) {
     struct CX_ID_3(cxcore, System, Object) value;
+    cx_uint fieldCount = 0;
+    const struct cx_reflection_field *fields;
     CX_ID_4(cxcore, System, Object, __constructor)(&value);
     assert(value.__vtable != CX_NULL);
-    assert(value._gc == CX_NULL);
+    assert(value._box == CX_NULL);
     assert(CX_GET_TYPEINFO(&value).Size == sizeof(value));
+    fields = cx_reflection_fields(
+        &CX_ID_4(cxcore, System, Object, __typeinfo), &fieldCount);
+    assert(fieldCount == 1 && strcmp(fields[0].name, "_box") == 0);
 }
 
 static void test_public_runtime_constants(void) {
@@ -208,6 +213,45 @@ static void test_public_runtime_constants(void) {
     assert(CX_ID_4(cxcore, System, Int, MaxValue) > 0);
     assert(CX_ID_4(cxcore, System, Bool, FalseString) != CX_NULL);
     assert(CX_ID_4(cxcore, System, Bool, TrueString) != CX_NULL);
+}
+
+static void test_reflection_function_info(void) {
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *stringType =
+        &CX_ID_4(cxcore, System, String, __typeinfo);
+    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *equalsParameterTypes[] = {
+        &CX_ID_4(cxcore, System, String, __typeinfo),
+    };
+    const struct cx_reflection_function *toString = cx_reflection_find_function(
+        stringType, "ToString", 0, CX_NULL);
+    const struct cx_reflection_function *equalOperator = cx_reflection_find_function(
+        stringType, "__cx_operator_equal", 1, equalsParameterTypes);
+    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) info =
+        cx_reflection_get_function_info(toString);
+    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) equalsInfo =
+        cx_reflection_get_function_info(equalOperator);
+    struct CX_ID_4(cxcore, System, Reflection, FunctionParamInfo) *parameter;
+    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) empty =
+        cx_reflection_get_function_info(CX_NULL);
+
+    assert(toString != CX_NULL);
+    assert(equalOperator != CX_NULL);
+    assert(info.Flags == toString->flags);
+    assert(info.Offset == toString->slot);
+    assert(info.ReturnType.Hash == stringType->Hash);
+    assert(info.Name != CX_NULL && info.Name->_length == strlen("ToString"));
+    assert(memcmp(info.Name->_data, "ToString", strlen("ToString")) == 0);
+    assert(info.Params == CX_NULL);
+
+    assert(equalsInfo.Params != CX_NULL && equalsInfo.Params->_length == 1);
+    parameter = (struct CX_ID_4(cxcore, System, Reflection, FunctionParamInfo) *)
+        cx_array_at((struct CX_ID_4(cxcore, System, Collections, Array) *)equalsInfo.Params,
+                    0, (cx_uint)sizeof(*parameter));
+    assert(parameter->Type.Hash == stringType->Hash);
+    assert(parameter->Name != CX_NULL && parameter->Name->_length == strlen("other"));
+    assert(memcmp(parameter->Name->_data, "other", strlen("other")) == 0);
+
+    assert(empty.Flags == 0 && empty.Offset == 0 && empty.Name == CX_NULL &&
+           empty.Params == CX_NULL && empty.ReturnType.Hash == 0);
 }
 
 int main(int argc, char **argv) {
@@ -227,6 +271,8 @@ int main(int argc, char **argv) {
         test_public_runtime_constants();
     } else if (strcmp(argv[1], "string") == 0)
         test_string_utf8_indexing();
+    else if (strcmp(argv[1], "reflection") == 0)
+        test_reflection_function_info();
     else
         return 2;
     return 0;

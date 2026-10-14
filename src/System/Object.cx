@@ -1,7 +1,7 @@
 namespace System;
 
 public class Object {
-    private ptr _gc;
+    private ptr _box;
 
     public TypeInfo Type { extern const get; }
     public virtual extern string ToString() const;

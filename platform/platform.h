@@ -1,7 +1,11 @@
 #ifndef _PLATFORM_H_
 #define _PLATFORM_H_
 
+#include <setjmp.h>
+#include <stddef.h>
 #include <stdint.h>
+
+#include "cxdefs.h"
 
 #if defined(_WIN32) || defined(WIN32)
 #define CX_PLATFORM_WIN
@@ -28,5 +32,13 @@ cx_platform_thread_id cx_platform_owner_thread_claim(
     cx_platform_atomic_thread_id *owner,
     cx_platform_thread_id current_thread);
 int cx_platform_current_stack_bounds(uintptr_t *low, uintptr_t *high);
+CX_NORETURN void cx_platform_exception_jump(jmp_buf environment);
+
+uint32_t cx_platform_last_error(void);
+void cx_platform_set_last_error(uint32_t error);
+int cx_platform_native_library_uses_utf16(void);
+void *cx_platform_native_library_open(const void *path);
+int cx_platform_native_library_resolve(void *handle, const char *name,
+    void *result, size_t result_size);
 
 #endif // _PLATFORM_H_

@@ -1,9 +1,10 @@
 namespace System.Collections;
 
-public final class Queue<T> : IEnumerable<T> {
+public final class Queue<T> : ICollection<T> {
     private List<T> _items;
+    private uint _count;
 
-    public uint Count { const get { return _items.Count; } }
+    public uint Count { const get { return _count; } }
 
     public IEnumerator<T> GetEnumerator() const {
         return _items.GetEnumerator();
@@ -15,6 +16,7 @@ public final class Queue<T> : IEnumerable<T> {
 
     public void Enqueue(T value) {
         _items.Add(value);
+        _count += 1u;
     }
 
     public T Peek() const {
@@ -24,11 +26,13 @@ public final class Queue<T> : IEnumerable<T> {
     public T Dequeue() {
         T value = _items.Get(0u);
         _items.RemoveAt(0u);
+        _count -= 1u;
         return value;
     }
 
     public void Clear() {
         _items.Clear();
+        _count = 0u;
     }
 
 }

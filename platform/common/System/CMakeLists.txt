@@ -1,11 +1,13 @@
 target_sources(cxcore 
     PRIVATE
+        Annotation.c
         Byte.c
         Char.c
         Console.c
         DateTime.c
         Double.c
         Exception.c
+        EncodingException.c
         Reflection/TypeInfo.c
         Float.c
         Int.c
@@ -16,10 +18,14 @@ target_sources(cxcore
         SByte.c
         Short.c
         String.c
+        Text.internal.h
         UInt.c
         ULong.c
         UShort.c
         Uuid.c
-        Void.c)
+        Void.c
+        WideString.c)
 
 add_subdirectory(Collections)
+add_subdirectory(Interop)
+add_subdirectory(Threading)

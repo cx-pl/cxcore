@@ -19,5 +19,4 @@ int main(void) {
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
 #endif
     CX_THROW(&exception_object);
-    return 0;
 }

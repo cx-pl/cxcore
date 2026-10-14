@@ -1,0 +1,16 @@
+namespace System.Interop;
+
+public enum NativeCallingConvention { PlatformDefault, Cdecl, Stdcall, Winapi }
+public enum NativeErrorPolicy { None, LastError, Errno }
+
+// Compiler metadata annotation. Its constructor is never executed during binding.
+public final class NativeImport : System.Annotation {
+    public extern constructor(string library, string entryPoint = null,
+        NativeCallingConvention callingConvention = NativeCallingConvention.PlatformDefault,
+        NativeErrorPolicy captureError = NativeErrorPolicy.None, bool blocking = false);
+}
+
+public static class NativeError {
+    public static extern uint GetLastError();
+    public static extern int GetErrno();
+}

@@ -12,7 +12,7 @@ internal class LinkedListNode<T> {
     }
 }
 
-public final class LinkedList<T> : IEnumerable<T> {
+public final class LinkedList<T> : ICollection<T> {
     private LinkedListNode<T> _first;
     private LinkedListNode<T> _last;
     private uint _count;

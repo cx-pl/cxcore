@@ -1,0 +1,6 @@
+namespace System.Interop;
+
+public final class NativeType : System.Annotation {
+    public extern constructor(string name, string header = "", bool opaque = false,
+        string kind = "record", int size = 0, int alignment = 0);
+}

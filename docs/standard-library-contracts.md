@@ -1,8 +1,9 @@
 # Standard-library runtime contracts
 
 These contracts describe the current C runtime. CX allocations are managed by a
-non-moving conservative collector under the initial single-threaded Windows
-runtime model. The collector design and limits are documented in
+non-moving conservative collector with explicit native worker registration and
+cooperative stop-the-world coordination and public `System.Threading` workers,
+mutexes, and atomic integer cells. The collector design and limits are documented in
 [`managed-memory-design.md`](managed-memory-design.md). The ABI and ownership
 rules remain experimental.
 
@@ -30,7 +31,7 @@ rules remain experimental.
   non-owning pointer; compiler-generated lifts call `Nullable<T>.CreateValueStorage`,
   which allocates a copy of the supplied bytes through `Memory.Alloc`; the payload is
   traced conservatively with the rest of the managed heap.
-- `Object` initializes its runtime vtable. Ordinary objects leave `_gc` null;
+- `Object` initializes its runtime vtable. Ordinary objects leave `_box` null;
   boxed value objects use it to retain their managed box header and payload.
   No finalizers run. The non-moving collector may retain unreachable blocks when stale
   pointer-shaped values remain on a scanned stack or in a registered root.
@@ -83,12 +84,17 @@ consumers, and undecorated declarations for static consumers. Public runtime dat
 
 ## Managed-memory limits
 
-The collector scans the current thread stack, saved registers, managed blocks, and
+The collector scans registered thread stacks, saved registers, managed blocks, and
 registered static-field regions. Generated modules register their static fields;
 native C code must register static storage that retains managed pointers. Heap
-operations from a second OS thread fail. Native calls on the collector thread may
-call CX synchronously; references retained beyond that call must be kept in a
-registered root or another managed block.
+operations from an unregistered OS thread fail. Native workers must attach,
+poll safepoints, park during native-only blocking calls, and detach before exit;
+see [threading-gc-design.md](threading-gc-design.md). Application fields require
+their own synchronization. Synchronous native calls on a running attached thread
+retain their stack roots; references retained beyond the call must be kept in a
+registered root or another managed block. Foreign callbacks use owned attachment
+scopes and removable root handles; reentry from a parked native-only blocking
+callback still requires a future explicit adapter.
 
 ## Platform support
 
@@ -97,3 +103,29 @@ selects native environment and system-clock providers and the platform-specific
 managed-memory helpers. Static and shared Linux targets build and pass the native
 runtime test suite in the repository's Docker development container. macOS
 remains unsupported.
+
+## Native interop and text
+
+wchar is a 16-bit UTF-16 code unit on every target. System.WideString owns immutable
+copied storage; Length/Item count units and ScalarCount/ScalarAt validate scalars.
+Equality, hashing and ordinal comparison use units. Empty values and embedded zeros
+are preserved. String.ToWideString and the Object.ToString override on WideString
+transcode explicitly, without normalization or implicit conversion. Malformed UTF-8
+or unpaired UTF-16 throws EncodingException with a byte/unit Position.
+
+System.Interop.NativeBuffer owns malloc storage. AllocateAligned takes a power-of-two
+alignment for stronger SDK layouts. FromUtf8/FromUtf16 copy input with optional
+termination; ByteLength includes that terminator. ToUtf8String/ToWideString copy
+explicit output lengths without scanning for zero. Dispose is explicit/idempotent;
+never dispose while native code retains Data. SDK objects and buffers require their
+own allocator/destructor, not Memory.Alloc or NativeBuffer.Dispose.
+
+NativeLibrary keeps loaded handles until process exit; Resolve<T> returns typed
+native functions or throws a load/symbol error. NativeError holds immediate TLS
+errno/last-error snapshots. NativeCallback.Register<T> roots a closure and optional
+owner until successful SDK unregistration and completion of in-flight callbacks.
+Unregister failure permits retry; self-unregistration is rejected. LastException
+survives close, and late callbacks receive their configured failure result. Small
+context tombstones stay until process exit; managed payloads are freed on close.
+Callbacks catch CX exceptions before foreign frames and restore native TLS state.
+See [native-interop-design.md](native-interop-design.md) for ABI and lifetime rules.

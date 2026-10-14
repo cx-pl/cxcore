@@ -6,6 +6,10 @@ It identifies the C calling conventions, runtime entry points, runtime type
 layouts, interface reference representation, reflection layouts, object vtable,
 and value boxing helpers exposed through `cx.h` and generated project headers.
 
+Runtime ABI checks are implemented in `platform/common/cxabi.c`, and type,
+boxing, and reflection helpers in `platform/common/cxtype.c`. The internal GC
+coordination header is `platform/common/cxgc.h` and is private to the runtime build.
+
 An interface reference contains its dispatch vtable, receiver pointer, and an
 optional owning object. For a boxed value type, the receiver points to the
 boxed payload while the owner keeps the managed box available and allows casts
@@ -34,9 +38,22 @@ generated-code requirement and `cxcore`'s header, runtime, and CMake version
 must be updated together.
 
 Milestone 11 has established a first collector design and implementation, but
-it is restricted to one OS thread and requires native C static roots to be
-registered. Modules with registered roots cannot be unloaded. Keep the ABI
+Milestone 16 extends it with explicit native worker attachment and cooperative
+collection. Native C static roots must still be registered, and modules with
+registered roots cannot be unloaded. Generated CX workers and `System.Threading`
+APIs now use the shared runtime and cooperative safepoints;
+see [threading-gc-design.md](threading-gc-design.md). Keep the ABI
 experimental until the supported threading, safepoints, and native interop
 contracts are sufficient for a stable compatibility promise. A future stable
 ABI should also record architecture, compiler/toolchain, and platform
 constraints explicitly.
+
+Milestone 17 extends version 1 with fixed UTF-16 wchar/WideString metadata, owned
+native buffers, typed C function pointers, native loaders, callback registrations
+and a reentrant native-call GC boundary. This remains a pre-release experimental
+ABI: rebuild generated code and runtime together when layouts change. SDK records
+use their C layout without CX headers; native functions never use managed delegate
+or boxing representations. Supported foreign ABIs are MSVC Windows x86/x64 and
+GCC/Clang Linux x64. Future stable compatibility changes must increment the version
+and publish platform/toolchain constraints. See
+[native-interop-design.md](native-interop-design.md) for the complete contract.

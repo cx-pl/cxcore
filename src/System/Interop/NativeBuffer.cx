@@ -1,0 +1,19 @@
+namespace System.Interop;
+
+// Owns malloc storage. Dispose is explicit and idempotent; GC timing does not
+// release it. Do not dispose while foreign code still borrows Data.
+public final class NativeBuffer {
+    private ptr _data;
+    private ulong _byteLength;
+    private ptr _allocation;
+    public ptr Data { extern const get; }
+    public ulong ByteLength { extern const get; }
+    public static extern NativeBuffer Allocate(ulong byteLength);
+    public static extern NativeBuffer AllocateAligned(ulong byteLength, uint alignment);
+    public static extern NativeBuffer FromUtf8(string value, bool terminated = true);
+    public static extern NativeBuffer FromUtf16(System.WideString value, bool terminated = true);
+    public extern string ToUtf8String(uint byteLength) const;
+    public extern System.WideString ToWideString(uint codeUnitLength) const;
+    public extern void Dispose();
+    public static unsafe extern void Copy(ptr destination, ptr source, ulong byteLength);
+}

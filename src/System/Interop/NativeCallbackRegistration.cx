@@ -1,0 +1,13 @@
+namespace System.Interop;
+
+// Create through NativeCallback.Register<T>. Unregister runs the library's
+// unregistration action, waits for in-flight callbacks, then releases roots.
+public final class NativeCallbackRegistration {
+    private ptr _state;
+    private System.Exception _lastException;
+    private extern constructor();
+    public ptr Context { extern const get; }
+    public System.Exception LastException { extern const get; }
+    public unsafe extern T Function<T>() const;
+    public extern void Unregister(delegate() => void unregister);
+}

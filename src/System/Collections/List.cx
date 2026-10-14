@@ -1,6 +1,6 @@
 namespace System.Collections;
 
-public final class List<T> : IEnumerable<T> {
+public final class List<T> : ICollection<T> {
     private Array<T> _items;
     private uint _count;
 

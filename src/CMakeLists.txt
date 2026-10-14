@@ -2,9 +2,9 @@ target_sources(cxcore
     PRIVATE
         cxcore.h
         cxcore.c
-        cxabi.c
-        cxexceptions.c
-        cxtype.c)
+        cxtext.metadata.c
+        cxthreading.h
+        cxthreading.metadata.c)
 
 target_include_directories(cxcore
     PUBLIC

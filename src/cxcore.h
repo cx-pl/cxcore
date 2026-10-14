@@ -13,6 +13,10 @@
 #define CX_CXCORE_DATA_API CX_IMPORT
 #endif
 #define CX_CURRENT_TYPE_API CX_CXCORE_DATA_API
+#include "cxthreading.h"
+struct CX_ID_3(cxcore, System, Exception);
+CX_API void CX_ID_5(cxcore, System, Exception, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, Exception) *self);
 
 //
 // Forward type declarations
@@ -62,7 +66,7 @@ struct CX_ID_3(cxcore, System, Void);
 
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Object)) {
     void *__vtable;
-    cx_ptr _gc;
+    cx_ptr _box;
 };
 CX_TYPE_DEF(CX_ID_3(cxcore, System, Nullable)) {
     cx_ptr _obj;
@@ -182,6 +186,8 @@ CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, FunctionParamInfo)) {
     const struct CX_ID_3(cxcore, System, String) * Name;
     const cx_ptr DefaultValue;
 };
+CX_API struct CX_ID_4(cxcore, System, Reflection, FunctionInfo)
+cx_reflection_get_function_info(const struct cx_reflection_function *function);
 CX_TYPE_DEF(CX_ID_4(cxcore, System, Reflection, ModuleInfo)) {
     cx_uint Flags;
     const struct CX_ID_3(cxcore, System, String) * Name;
@@ -592,5 +598,20 @@ extern CX_API struct CX_ID_3(cxcore, System, TimeSpan)
 extern CX_API void CX_ID_4(cxcore, System, Uuid,
                            __constructor)(struct CX_ID_3(cxcore, System, Uuid) * __this, cx_uint a,
                                           cx_uint b, cx_uint c, cx_uint d);
+
+#include "cxtext.api.h"
+CX_API struct CX_ID_3(cxcore, System, WideString) *CX_ID_4(cxcore, System, String, ToWideString)(
+    const struct CX_ID_3(cxcore, System, String) *self);
+CX_API void cx_interop_library_resolve(const struct CX_ID_4(cxcore, System, Interop, NativeLibrary) *library,
+    const struct CX_ID_3(cxcore, System, String) *name, void *result, size_t resultSize);
+struct cx_native_registration_scope { void *state; struct cx_native_registration_scope *previous; };
+CX_API struct CX_ID_4(cxcore, System, Interop, NativeCallbackRegistration) *cx_interop_registration_create(
+    const void *callback, size_t callbackSize, const char *signature, cx_ptr owner);
+CX_API void cx_interop_registration_require(const struct CX_ID_4(cxcore, System, Interop, NativeCallbackRegistration) *registration,
+    const char *signature);
+CX_API cx_bool cx_interop_registration_acquire(void *context, struct cx_native_registration_scope *scope);
+CX_API void cx_interop_registration_release(struct cx_native_registration_scope *scope);
+CX_API const void *cx_interop_registration_payload(void *context);
+CX_API void cx_interop_registration_failed(void *context, cx_ptr error);
 
 #endif // _CXCORE_H_

@@ -1,0 +1,15 @@
+namespace System.Threading;
+
+// Copies share one managed worker state. Start publishes the delegate before
+// native startup; Join establishes publication and rethrows a worker failure.
+public struct Thread {
+    private ptr _state;
+    public extern constructor();
+    public static extern Thread Start(delegate() => void action);
+    public extern void Join() const;
+    public bool IsAlive { extern const get; }
+    public ulong Id { extern const get; }
+    public static ulong CurrentId { extern const get; }
+    public static extern void Sleep(int milliseconds);
+    public static extern void Yield();
+}

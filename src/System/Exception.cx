@@ -30,6 +30,8 @@ public class Exception {
         _innerException = innerException;
     }
 
+    public constructor() : this(null) { }
+
     public static extern void Throw(const Exception exception);
 
     public static extern bool Matches(const Exception exception, const TypeInfo typeInfo);

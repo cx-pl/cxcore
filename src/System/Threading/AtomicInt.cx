@@ -1,0 +1,14 @@
+namespace System.Threading;
+
+// Copies share one atomic cell. All operations synchronize participating
+// threads; arithmetic wraps in the 32-bit representation.
+public struct AtomicInt {
+    private ptr _state;
+    public extern constructor(int value);
+    public extern constructor();
+    public int Value { extern const get; extern set; }
+    public extern int Increment() const;
+    public extern int Decrement() const;
+    public extern int Exchange(int value) const;
+    public extern int CompareExchange(int value, int comparand) const;
+}

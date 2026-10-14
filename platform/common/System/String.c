@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../../../src/cxcore.h"
 #include "Utf8.h"
+#include "Text.internal.h"
 
 CX_STRING_DEF(_empty, "");
 
@@ -248,4 +249,35 @@ void CX_ID_5(cxcore, System, String, __constructor,
     }
 
     CX_ID_5(cxcore, System, String, __constructor, _2)(__this, (cx_uint)byteLength, data);
+}
+
+typedef struct CX_ID_3(cxcore, System, WideString) cx_wide_string;
+
+cx_wide_string *CX_ID_4(cxcore, System, String, ToWideString)(
+    const struct CX_ID_3(cxcore, System, String) *self) {
+    const cx_byte *bytes = self->_data;
+    size_t offset = 0, count;
+    cx_uint scalar, length = 0, index = 0;
+    cx_wchar *data;
+    cx_wide_string *result;
+    cx_gc_check_thread();
+    while (offset < self->_length) {
+        if (!cx_utf8_decode(bytes + offset, self->_length - offset, &scalar, &count)) cx_encoding_error((cx_uint)offset);
+        if (length > UINT_MAX / sizeof(cx_wchar) - 2) cx_text_error();
+        length += scalar > 0xFFFF ? 2 : 1;
+        offset += count;
+    }
+    data = length == 0 ? NULL : CX_ID_4(cxcore, System, Memory, Alloc)(length * (cx_uint)sizeof(cx_wchar));
+    offset = 0;
+    while (offset < self->_length) {
+        if (!cx_utf8_decode(bytes + offset, self->_length - offset, &scalar, &count)) cx_encoding_error((cx_uint)offset);
+        if (scalar <= 0xFFFF) data[index++] = (cx_wchar)scalar;
+        else { scalar -= 0x10000; data[index++] = (cx_wchar)(0xD800 + (scalar >> 10)); data[index++] = (cx_wchar)(0xDC00 + (scalar & 0x3FF)); }
+        offset += count;
+    }
+    result = CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)sizeof(*result));
+    CX_ID_4(cxcore, System, WideString, __constructor)(result);
+    result->_data = data;
+    result->_length = length;
+    return result;
 }

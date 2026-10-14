@@ -1,8 +1,9 @@
-target_sources(cxcore 
+target_sources(cxcore
     PUBLIC
         cx.h
         cxdefs.h
-        cxtypes.h)
+        cxtypes.h
+        cxruntime.h)
 
 target_include_directories(cxcore
     PUBLIC

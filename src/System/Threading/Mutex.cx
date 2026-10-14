@@ -1,0 +1,10 @@
+namespace System.Threading;
+
+// Copies refer to the same recursive mutex. Pair every successful Lock with
+// Unlock, normally in finally. Mutex state has no persistent native handle.
+public struct Mutex {
+    private ptr _state;
+    public extern constructor();
+    public extern void Lock() const;
+    public extern void Unlock() const;
+}

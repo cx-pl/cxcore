@@ -1,0 +1,11 @@
+namespace System.Interop;
+
+public final class NativeFunction : System.Annotation {
+    public extern constructor(NativeCallingConvention callingConvention = NativeCallingConvention.PlatformDefault,
+        string failureResult = "0", int contextParameter = -1, bool symbolOnly = false);
+}
+public static class NativeCallback {
+    public static extern System.Exception GetLastException();
+    public static extern void ClearLastException();
+    public static unsafe extern NativeCallbackRegistration Register<T>(ptr callback);
+}

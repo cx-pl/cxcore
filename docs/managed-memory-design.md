@@ -2,8 +2,11 @@
 
 Status: first implementation in place; ABI 1 remains experimental. Windows
 x86/x64 and Linux x64 implementations have been built and validated. Linux
-static and shared builds pass the native runtime test suite. Both platforms
-preserve the one-OS-thread-per-process contract.
+static and shared builds pass the native runtime test suite. Milestone 16 now
+adds explicit native thread attachment and cooperative stop-the-world collection;
+see [threading-gc-design.md](threading-gc-design.md). Generated CX workers and
+public threading/synchronization APIs are implemented and verified across
+the supported platform/link-mode matrix.
 
 ## Collector
 
@@ -11,7 +14,7 @@ Use a non-moving, conservative mark-and-sweep collector for blocks obtained from
 `Memory.Alloc`. Centralizing allocation in `Memory` lets the runtime track
 objects, arrays, array backing stores, strings and their buffers, and nullable
 value storage without changing their layouts. The collector stores allocation
-records separately from managed blocks, so the existing `Object._gc` field
+records separately from managed blocks, so the existing `Object._box` field
 remains available for box metadata while ordinary objects leave it null; object
 and interface ABI layouts do not change.
 
@@ -23,8 +26,8 @@ delay reclamation; moving objects and finalizers are out of scope.
 
 ## Roots and modules
 
-At a collection point, scan the active native stack and a saved register context
-for the current thread. Generated modules register the address and size of each
+At a collection point, scan the collector's active native stack and saved register
+context plus those of every parked, registered thread. Generated modules register the address and size of each
 static field that can retain a managed pointer. Native C code that stores a
 managed pointer in static storage must register that storage through the runtime
 root API. Synchronous native calls on the CX thread are safe because their live
@@ -39,14 +42,19 @@ executing CX functions, including in library-only modules.
 
 ## Threading and collection points
 
-The first collector supports one OS thread per process. The first managed-heap
-operation claims the collector thread. Allocation, reallocation, freeing, root
-registration, and collection from another thread fail with a diagnostic. This
-avoids unsafe collection while another stack or the heap is changing. CX code
-may call native C synchronously on the collector thread; native code must not
-transfer managed pointers to other threads. Multi-threaded CX and foreign-thread
-callbacks require a later design with thread registration, safepoints, and
-stop-the-world coordination.
+The first managed-heap operation implicitly attaches the startup thread. Native
+workers explicitly attach before managed operations and detach before exit.
+Unregistered threads fail with a diagnostic. Heap bookkeeping and static root
+registration are serialized; collection waits for every other attached thread
+to park at a heap operation or `cx_gc_safepoint`. Allocation-free native loops
+must poll explicitly. Native-only blocking waits use `cx_gc_run_blocking`, whose
+active frame keeps the caller's stack and registers available to the collector.
+The callback must return normally and must not access managed data or enter CX.
+Application data sharing still requires synchronization. Generated CX workers
+poll at function entry and supported loops. Module initialization, pending TLS
+exceptions, and Console blocking waits are coordinated with collection.
+Native callback scopes and removable root handles establish retention ownership;
+callback reentry from a parked native-only call requires a Milestone 17 adapter.
 
 Collection occurs under allocation pressure and can be requested explicitly
 through the C runtime API for embedding and native diagnostics. The initial
@@ -74,7 +82,10 @@ cannot be satisfied. The collector never moves or finalizes blocks.
 The native test suite covers stack and registered static roots, object graphs,
 arrays and backing stores, nullable payloads, interface references, cycles,
 allocation pressure, references retained across the cxcore DLL boundary, and
-rejection of a second thread. The suite and Gradebook integration example have
+rejection of an unregistered second thread. Milestone 16 native tests cover four
+attached workers, parked stack/interior roots, static roots, concurrent
+allocation/reallocation/free/collection, native joins, attach/detach lifecycle,
+and forbidden managed entry from a blocking callback. The earlier suite and Gradebook integration example have
 been built and run for Windows x86/x64; the full suite also passes for Linux
 static and shared builds. Manual `Free` and `Realloc` tracking are exercised
 through runtime API checks. The implementation remains experimental:

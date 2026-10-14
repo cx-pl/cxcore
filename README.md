@@ -1,6 +1,19 @@
 # cxcore
 Core System Library
 
+## Source organization
+
+Implement native `extern` members in C files that mirror their CX source path:
+`src/System/Char.cx` maps to `platform/common/System/Char.c`, and OS-specific
+members belong in the matching `platform/win` or `platform/linux` path.
+A CX source file that declares several types keeps their externs together in
+its matching C file. Shared implementations may call small OS-specific backends,
+as `System/Threading/Thread.c` does for thread startup, sleep, and yield.
+
+Generated implementation and metadata files remain under `src`. Runtime helpers
+without a CX source counterpart live directly under `platform/common`; private
+headers there are included only by the runtime build.
+
 ## Linux development
 
 Linux support is being developed for x64 Linux with GCC. The repository includes

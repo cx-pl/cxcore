@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include "../../../src/cxcore.h"
 
+void CX_ID_5(cxcore, System, Exception, __constructor, _3)(
+    struct CX_ID_3(cxcore, System, Exception) *self) {
+    CX_ID_4(cxcore, System, Exception, __constructor)(self, CX_NULL);
+}
+
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo)
     CX_ID_5(cxcore, System, Exception, RuntimeType,
             __const_get)(const struct CX_ID_3(cxcore, System, Exception) * __this) {

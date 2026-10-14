@@ -84,12 +84,18 @@ modifying the collection or destination. The queue uses a list and shifts
 elements on dequeue; the dictionary stores bucket indices separately from its
 ordered entries and rebuilds the buckets after removals and capacity growth.
 
-`IEnumerable<T>` and `IEnumerator<T>` are declared. Closed generic enumerator
+`ICollection<T>` inherits `IEnumerable<T>` and exposes a read-only `uint Count`
+property. Array, List, Stack, Queue, LinkedList, and Dictionary implement it;
+Dictionary's item type is `KeyValuePair<TKey, TValue>`. Built-in `T[]` shares
+`Array<T>`'s implementation
+and therefore exposes the same collection count. `IEnumerable<T>` and
+`IEnumerator<T>` are declared. Closed generic enumerator
 metadata now supports `ArrayEnumerator<T>`, `LinkedListEnumerator<T>`, and
-`DictionaryEnumerator<TKey, TValue>`. Array, List, Stack, Queue, LinkedList,
-and Dictionary expose `IEnumerable<T>` contracts; native fixtures cover
-interface dispatch for List, Stack, Queue, LinkedList, and Dictionary. The
-Array fixture covers `IEnumerator<T>` dispatch and structural `foreach`; a
+`DictionaryEnumerator<TKey, TValue>`. These collection types also expose
+`IEnumerable<T>` contracts. Native fixtures cover Array's `Count` alias,
+`ICollection<T>` property dispatch for List, Stack, Queue, LinkedList, and
+Dictionary, and inherited `IEnumerable<T>` dispatch for those collection types.
+The Array fixture covers `IEnumerator<T>` dispatch and structural `foreach`; a
 same-module native fixture also verifies built-in `T[]` conversion to
 `IEnumerable<T>` and interface enumeration. Next, broaden dictionary key/value
 combinations, including reference values and value-type keys once their equality

@@ -64,6 +64,47 @@ static type_info derived_type = {
     .GenericArity = 1,
 };
 
+static const cx_ptr echo_int_type_arguments[] = {&base_type};
+static const cx_ptr echo_interface_type_arguments[] = {&interface_type};
+
+static cx_int generic_virtual_echo_int(cx_ptr receiver, cx_int value) {
+    (void)receiver;
+    return value + 1;
+}
+
+static cx_int generic_virtual_echo_interface(cx_ptr receiver, cx_int value) {
+    (void)receiver;
+    return value + 2;
+}
+
+static struct cx_generic_virtual_registration echo_int_registration = {
+    &derived_type,
+    "Example.Base.Echo`1(T)->T",
+    echo_int_type_arguments,
+    1,
+    "Example.Derived.Echo<int>",
+    (cx_vtable_function)generic_virtual_echo_int,
+    CX_NULL,
+};
+static struct cx_generic_virtual_registration echo_interface_registration = {
+    &derived_type,
+    "Example.Base.Echo`1(T)->T",
+    echo_interface_type_arguments,
+    1,
+    "Example.Derived.Echo<IExample>",
+    (cx_vtable_function)generic_virtual_echo_interface,
+    CX_NULL,
+};
+static struct cx_generic_virtual_registration echo_int_duplicate_registration = {
+    &derived_type,
+    "Example.Base.Echo`1(T)->T",
+    echo_int_type_arguments,
+    1,
+    "Example.Derived.Echo<int>",
+    (cx_vtable_function)generic_virtual_echo_interface,
+    CX_NULL,
+};
+
 struct boxed_struct_value {
     cx_int value;
 };
@@ -98,6 +139,25 @@ int main(void) {
     const struct cx_reflection_field *reflected_fields;
     const struct cx_reflection_function *reflected_functions;
     cx_uint count;
+
+    cx_register_generic_virtual_method(&echo_int_registration);
+    cx_register_generic_virtual_method(&echo_interface_registration);
+    cx_register_generic_virtual_method(&echo_int_duplicate_registration);
+    cx_register_generic_virtual_method(&echo_int_registration);
+    assert(cx_get_generic_virtual_method(
+               &derived_type, "Example.Base.Echo`1(T)->T",
+               echo_int_type_arguments, 1) ==
+           (cx_vtable_function)generic_virtual_echo_int);
+    assert(cx_get_generic_virtual_method(
+               &derived_type, "Example.Base.Echo`1(T)->T",
+               echo_interface_type_arguments, 1) ==
+           (cx_vtable_function)generic_virtual_echo_interface);
+    assert(cx_get_generic_virtual_method(
+               &base_type, "Example.Base.Echo`1(T)->T",
+               echo_int_type_arguments, 1) == CX_NULL);
+    assert(cx_get_generic_virtual_method(
+               &derived_type, "Example.Base.Other`1(T)->T",
+               echo_int_type_arguments, 1) == CX_NULL);
     const type_info *array_type = &CX_ID_5(cxcore, System, Collections, Array, __typeinfo);
     assert(array_type->Hash == 0xE0710BB22F195AB4ULL);
     assert_reflection_string(array_type->Name, "Array");

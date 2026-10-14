@@ -3,67 +3,6 @@
 
 #include "cxdefs.h"
 #include "cxtypes.h"
-
-// Generated CX code checks this ABI before module initialization and program startup.
-#define CX_RUNTIME_ABI_VERSION 1
-
-struct CX_ID_4(cxcore, System, Collections, Array);
-struct CX_ID_4(cxcore, System, Reflection, TypeInfo);
-
-CX_API struct CX_ID_4(cxcore, System, Collections, Array) * cx_array_new(cx_uint length, cx_uint elementSize);
-CX_API cx_uint cx_runtime_abi_version(void);
-CX_API void cx_runtime_require_abi(cx_uint expectedVersion);
-struct cx_gc_root_region {
-    const void *address;
-    cx_uint size;
-};
-CX_API void cx_gc_register_static_roots(const struct cx_gc_root_region *roots, cx_uint count);
-CX_API void cx_gc_check_thread(void);
-CX_API void cx_gc_collect(void);
-CX_API cx_ptr cx_array_at(struct CX_ID_4(cxcore, System, Collections, Array) * array, cx_uint index,
-                          cx_uint elementSize);
-
-CX_API void cx_exception_push(struct cx_exception_frame *frame);
-CX_API void cx_exception_pop(struct cx_exception_frame *frame);
-CX_API void cx_exception_throw(cx_ptr exceptionObject, const char *fileName, int line);
-CX_API void cx_exception_rethrow(void);
-CX_API cx_ptr cx_exception_current(void);
-CX_API cx_bool cx_exception_pending(void);
-CX_API void cx_exception_clear(void);
-CX_API cx_bool cx_type_is(const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * actualType,
-                          const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * targetType);
-CX_API cx_ptr cx_box_value(const void *value, cx_uint valueSize,
-                           const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *valueType);
-CX_API cx_ptr cx_unbox_value(cx_ptr instance,
-                             const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *valueType);
-CX_API const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *
-cx_boxed_value_type(cx_ptr instance);
-CX_API cx_bool cx_is_object(cx_ptr instance,
-                            const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *
-                                targetType);
-CX_API cx_bool cx_is_interface(struct cx_iface_ref source,
-                               const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *
-                                   targetType);
-CX_API cx_ptr cx_checked_cast_object(cx_ptr instance,
-                                     const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *
-                                         targetType);
-CX_API cx_ptr cx_checked_cast_interface(struct cx_iface_ref source,
-                                        const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *
-                                            targetType);
-CX_API struct cx_iface_ref cx_checked_cast_object_to_interface(
-    cx_ptr instance, const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * targetType);
-CX_API struct cx_iface_ref cx_checked_cast_interface_to_interface(
-    struct cx_iface_ref source,
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * targetType);
-
-CX_API const struct cx_interface_impl *
-cx_reflection_interfaces(const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * typeInfo,
-                         cx_uint *count);
-CX_API const struct cx_reflection_field *
-cx_reflection_fields(const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * typeInfo,
-                     cx_uint *count);
-CX_API const struct cx_reflection_function *
-cx_reflection_functions(const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) * typeInfo,
-                        cx_uint *count);
+#include "cxruntime.h"
 
 #endif // __CX_H__

@@ -1,0 +1,10 @@
+namespace System.Interop;
+
+// Loaded native libraries remain loaded until process exit. Resolved typed
+// functions therefore remain valid even after this managed wrapper is collected.
+public final class NativeLibrary {
+    private ptr _handle;
+    private extern constructor();
+    public static extern NativeLibrary Load(string path);
+    public unsafe extern T Resolve<T>(string name) const;
+}

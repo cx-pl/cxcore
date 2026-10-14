@@ -1,0 +1,7 @@
+namespace System;
+
+public class EncodingException : Exception {
+    private uint _position;
+    public uint Position { extern const get; }
+    public extern constructor(uint position);
+}

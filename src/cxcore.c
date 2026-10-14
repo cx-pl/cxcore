@@ -124,7 +124,7 @@ CX_OBJECT_VTABLE_ENTRIES
 CX_END_VTABLE_DEF;
 static const struct cx_reflection_field CX_ID_4(cxcore, System, Object, __reflection_fields)[] = {
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
-     (cx_uint)offsetof(struct CX_ID_3(cxcore, System, Object), _gc), CX_NULL, "_gc"},
+     (cx_uint)offsetof(struct CX_ID_3(cxcore, System, Object), _box), CX_NULL, "_box"},
 };
 static const struct cx_reflection_parameter CX_ID_4(cxcore, System, Object,
                                                     __reflection_params_0)[] = {
@@ -2027,6 +2027,9 @@ static const struct cx_reflection_function CX_ID_4(cxcore, System, String,
          CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_OPERATOR,
      CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, Bool, __typeinfo),
      "__cx_operator_not_equal", CX_ID_4(cxcore, System, String, __reflection_params_7), 1},
+    {CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL |
+         CX_REFLECTION_FLAG_EXTERN,
+     CX_REFLECTION_NO_SLOT, &CX_ID_4(cxcore, System, WideString, __typeinfo), "ToWideString", CX_NULL, 0},
 };
 static const struct cx_runtime_type_info CX_ID_4(cxcore, System, String, __runtime_type_info) = {
     .interfaces = CX_NULL,
@@ -2036,7 +2039,7 @@ static const struct cx_runtime_type_info CX_ID_4(cxcore, System, String, __runti
     .fieldCount = 2,
     .functions = (const struct cx_reflection_function *)CX_ID_4(cxcore, System, String,
                                                                 __reflection_functions),
-    .functionCount = 11,
+    .functionCount = 12,
 };
 
 struct CX_ID_4(cxcore, System, Reflection, TypeInfo) CX_ID_4(cxcore, System, String, __typeinfo) = {

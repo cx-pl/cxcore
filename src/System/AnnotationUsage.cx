@@ -1,0 +1,7 @@
+namespace System;
+
+public final class AnnotationUsage : Annotation {
+    public extern constructor(
+        string targets = "class,function,constructor,field,property,enum,delegate,parameter,return",
+        bool repeatable = false);
+}

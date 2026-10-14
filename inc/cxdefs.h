@@ -2,6 +2,12 @@
 #define __CX_DEFS_H__
 
 //
+// Version
+//
+
+#define CX_RUNTIME_ABI_VERSION 1
+
+//
 // Naming
 //
 
@@ -124,6 +130,12 @@
 // Import / Export
 //
 
+#if defined(_MSC_VER)
+#define CX_NORETURN __declspec(noreturn)
+#else
+#define CX_NORETURN __attribute__((noreturn))
+#endif
+
 #if defined(_WIN32) || defined(WIN32)
 #define CX_EXPORT __declspec(dllexport)
 #define CX_IMPORT __declspec(dllimport)
@@ -141,6 +153,25 @@
 #define CX_API
 #else
 #define CX_API CX_IMPORT
+#endif
+
+//
+// Native
+//
+
+#if defined(_WIN32)
+#define CX_NATIVE_STDCALL __stdcall
+#define CX_NATIVE_CDECL __cdecl
+#else
+#define CX_NATIVE_STDCALL
+#define CX_NATIVE_CDECL
+#endif
+#define CX_NATIVE_DEFAULT
+#if defined(_MSC_VER)
+#include <malloc.h>
+#define CX_NATIVE_STACK_ALLOC(size) _alloca((size_t)size)
+#else
+#define CX_NATIVE_STACK_ALLOC(size) __builtin_alloca((size_t)size)
 #endif
 
 //
