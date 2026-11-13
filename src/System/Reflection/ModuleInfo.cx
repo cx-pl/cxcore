@@ -1,3 +1,5 @@
+import System.Interop;
+
 namespace System.Reflection;
 
 public struct ModuleInfo {
@@ -7,4 +9,19 @@ public struct ModuleInfo {
     public const string Description;
     public const string Author;
     public const TypeInfo[] Types;
+    private ptr _descriptor;
+
+    /// Descriptor for the module containing this call.
+    public static extern ModuleInfo Current();
+    public string VersionText { extern const get; }
+    public uint ReferenceCount { extern const get; }
+    @NoEscape public extern ModuleInfo GetReference(uint index) const;
+    public uint AnnotationCount { extern const get; }
+    @NoEscape public extern AnnotationInfo GetAnnotation(uint index) const;
+    /// Closed argument metadata recorded by this module; empty if unavailable.
+    @NoEscape public extern TypeInfo[] GetGenericArguments(TypeInfo type) const;
+    @NoEscape public extern bool CanReadFunctionArray(TypeInfo owner, uint functionIndex) const;
+    @NoEscape public extern TypeInfo GetFunctionArrayElementType(TypeInfo owner, uint functionIndex) const;
+    /// Snapshots a compatible array value without invoking its producing function.
+    @NoEscape public extern object[] ReadFunctionArray(TypeInfo owner, uint functionIndex, object value, uint maximumLength) const;
 }

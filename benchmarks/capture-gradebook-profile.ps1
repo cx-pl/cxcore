@@ -1,5 +1,5 @@
 param(
-    [string]$GradebookExecutable = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'examples\7. Gradebook\.bin\Release\Gradebook.exe'),
+    [string]$GradebookExecutable = (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'examples\07-gradebook\.bin\Release\Gradebook.exe'),
     [int]$Runs = 50,
     [string]$OutputPath = ''
 )

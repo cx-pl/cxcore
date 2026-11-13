@@ -1,3 +1,5 @@
+import System.Interop;
+
 namespace System;
 
 public final class WideString : Object {
@@ -8,7 +10,8 @@ public final class WideString : Object {
     public uint Length { extern const get; }
     public wchar Item { extern const get(uint index); }
     public uint ScalarCount { extern const get; }
-    public extern char ScalarAt(uint index) const;
+    @NoEscape public extern char ScalarAt(uint index) const;
+    @NoEscape public extern wchar CodeUnitAt(uint index) const;
     public extern constructor();
     public unsafe extern constructor(ptr<const wchar> data, uint length);
     public override extern string ToString() const;

@@ -1,0 +1,8 @@
+namespace System;
+
+public struct Decimal {
+    private decimal _value;
+    public static extern const decimal MinValue;
+    public static extern const decimal MaxValue;
+    public static extern decimal? TryParse(string text);
+}

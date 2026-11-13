@@ -1,6 +1,8 @@
 namespace System;
 
 public struct ULong {
+    public static extern ulong? TryParse(string text);
+
     private ulong _value;
 
     public static extern ulong MinValue;

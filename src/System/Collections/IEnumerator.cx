@@ -1,6 +1,8 @@
+import System.Interop;
+
 namespace System.Collections;
 
-public interface IEnumerator<T> {
+public interface IEnumerator<T> : System.IDisposable {
     T Current { const get; }
-    bool MoveNext();
+    @NoEscape bool MoveNext();
 }

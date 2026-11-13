@@ -1,4 +1,4 @@
-foreach(allocation_operation IN ITEMS alloc realloc)
+foreach(allocation_operation IN ITEMS alloc arena-alloc realloc)
     execute_process(
         COMMAND "${TEST_EXECUTABLE}" "${allocation_operation}"
         RESULT_VARIABLE result

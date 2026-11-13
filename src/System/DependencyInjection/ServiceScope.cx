@@ -1,0 +1,17 @@
+import System;
+
+namespace System.DependencyInjection;
+
+internal final class ServiceScope : IServiceScope {
+    private ServiceProvider _provider;
+
+    public IServiceProvider ServiceProvider { const get { return _provider; } }
+
+    public constructor(ServiceProvider provider) {
+        _provider = provider;
+    }
+
+    public void Dispose() {
+        _provider.Dispose();
+    }
+}

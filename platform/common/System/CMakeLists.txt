@@ -5,19 +5,24 @@ target_sources(cxcore
         Char.c
         Console.c
         DateTime.c
+        Diagnostics/MonotonicClock.c
+        Decimal.c
         Double.c
         Exception.c
         EncodingException.c
         Reflection/TypeInfo.c
+        Reflection/ModuleInfo.c
         Float.c
         Int.c
         Long.c
+        Math.c
         Memory.c
         Nullable.c
         Object.c
         SByte.c
         Short.c
         String.c
+        StringBuilder.c
         Text.internal.h
         UInt.c
         ULong.c

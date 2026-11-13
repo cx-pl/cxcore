@@ -1,4 +1,5 @@
 #include "../../../platform.h"
+#ifdef CX_PLATFORM_WIN
 
 #include <string.h>
 #include <windows.h>
@@ -20,3 +21,5 @@ int cx_platform_native_library_resolve(void *handle, const char *name,
     memcpy(result, &symbol, result_size);
     return 1;
 }
+
+#endif // CX_PLATFORM_WIN

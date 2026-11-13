@@ -1,0 +1,16 @@
+import System.Collections;
+import System;
+
+namespace System.DependencyInjection;
+
+public class ServiceProviderDisposalException : Exception {
+    private List<Exception> _errors;
+
+    public uint ErrorCount { const get { return _errors.Count; } }
+    public Exception GetError(uint index) const { return _errors.Get(index); }
+
+    public constructor(List<Exception> errors)
+        : base() {
+        _errors = errors;
+    }
+}

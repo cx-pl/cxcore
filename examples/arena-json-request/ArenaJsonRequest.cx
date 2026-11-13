@@ -1,0 +1,254 @@
+import System;
+import System.Diagnostics;
+
+public static class RequestCache {
+    public static string Response;
+}
+
+public class JsonCursor {
+    private WideString _text;
+    private uint _length;
+    private uint _index;
+
+    public constructor(WideString text, uint length) {
+        _text = text;
+        _length = length;
+        _index = 0u;
+    }
+
+    public char Peek() {
+        if (_index >= _length) return '\0';
+        return (char)_text.CodeUnitAt(_index);
+    }
+
+    public char Read() {
+        if (_index >= _length) JsonRequestProcessor.Fail("Unexpected end of JSON request.");
+        char value = (char)_text.CodeUnitAt(_index);
+        _index += 1u;
+        return value;
+    }
+
+    public void SkipWhitespace() {
+        while (Peek() == ' ' || Peek() == '\t' || Peek() == '\r' || Peek() == '\n') {
+            _index += 1u;
+        }
+    }
+
+    public void Expect(char expected) {
+        if (Read() != expected) JsonRequestProcessor.Fail("Invalid JSON request shape.");
+    }
+
+    public int ReadInteger() {
+        char value = Peek();
+        if (value < '0' || value > '9')
+            JsonRequestProcessor.Fail("Request values must be non-negative integers.");
+
+        int result = 0;
+        while (true) {
+            value = Peek();
+            if (value < '0' || value > '9') break;
+            int digit = (int)value - (int)'0';
+            if (result > 214748364 || (result == 214748364 && digit > 7))
+                JsonRequestProcessor.Fail("Request integer is too large.");
+            result = result * 10 + digit;
+            _index += 1u;
+        }
+        return result;
+    }
+
+    public bool AtEnd() {
+        return _index >= _length;
+    }
+}
+
+public static class JsonRequestProcessor {
+    public static void Fail(string message) {
+        Exception failure = null;
+        Memory.WithDurable(() => { failure = new Exception(message); });
+        throw failure;
+    }
+
+    public static string ParseAndSerialize(string requestText, bool durableResponse) {
+        uint requestLength = requestText.Length;
+        WideString wideRequest = requestText.ToWideString();
+        JsonCursor cursor = new JsonCursor(wideRequest, requestLength);
+        int[] parsedValues = new int[requestLength];
+        uint parsedCount = 0u;
+        int selectedSum = 0;
+
+        cursor.SkipWhitespace();
+        cursor.Expect('{');
+        cursor.SkipWhitespace();
+        cursor.Expect('"');
+        cursor.Expect('v');
+        cursor.Expect('a');
+        cursor.Expect('l');
+        cursor.Expect('u');
+        cursor.Expect('e');
+        cursor.Expect('s');
+        cursor.Expect('"');
+        cursor.SkipWhitespace();
+        cursor.Expect(':');
+        cursor.SkipWhitespace();
+        cursor.Expect('[');
+        cursor.SkipWhitespace();
+
+        if (cursor.Peek() != ']') {
+            while (true) {
+                int value = cursor.ReadInteger();
+                if (value == 0 || value > 1073741823)
+                    Fail("Request values must be positive and safely transformable.");
+                parsedValues[parsedCount] = value;
+                parsedCount += 1u;
+                cursor.SkipWhitespace();
+                if (cursor.Peek() == ']') break;
+                cursor.Expect(',');
+                cursor.SkipWhitespace();
+            }
+        }
+        cursor.Expect(']');
+        cursor.SkipWhitespace();
+        cursor.Expect('}');
+        cursor.SkipWhitespace();
+        if (!cursor.AtEnd()) Fail("Trailing JSON content is not allowed.");
+
+        for (uint index = 0u; index < parsedCount; index += 1u) {
+            int value = parsedValues[index];
+            value *= 2;
+            if (selectedSum > 2147483647 - value)
+                Fail("Transformed request sum is too large.");
+            selectedSum += value;
+        }
+
+        if (durableResponse) {
+            string response = null;
+            Memory.WithDurable(() => { response = BuildResponse(parsedCount, selectedSum); });
+            return response;
+        }
+        return BuildResponse(parsedCount, selectedSum);
+    }
+
+    private static string BuildResponse(uint count, int sum) {
+        StringBuilder builder = new StringBuilder(40u);
+        builder.Append("{\"count\":").Append(count)
+            .Append(",\"sum\":").Append(sum).Append('}');
+        return builder.ToString();
+    }
+
+    public static void ProcessOnHeap(string requestText) {
+        RequestCache.Response = ParseAndSerialize(requestText, false);
+    }
+
+    public static void ProcessInArena(string requestText) {
+        Memory.WithArena(() => {
+            string response = ParseAndSerialize(requestText, true);
+            Memory.WithDurable(() => { RequestCache.Response = response; });
+        });
+    }
+
+    public static bool Rejects(string requestText) {
+        try {
+            ParseAndSerialize(requestText, false);
+            return false;
+        } catch (Exception) {
+            return true;
+        }
+    }
+
+    public static bool RejectsInArena(string requestText) {
+        try {
+            ProcessInArena(requestText);
+            return false;
+        } catch (Exception) {
+            return true;
+        }
+    }
+}
+
+public void MeasureHeapBatch(string requestText, uint iterations, ulong[] samples, uint sample) {
+    ulong start = MonotonicClock.GetMicroseconds();
+    for (uint index = 0u; index < iterations; index += 1u)
+        JsonRequestProcessor.ProcessOnHeap(requestText);
+    samples[sample] = MonotonicClock.GetMicroseconds() - start;
+}
+
+public void MeasureArenaBatch(string requestText, uint iterations, ulong[] samples, uint sample) {
+    ulong start = MonotonicClock.GetMicroseconds();
+    for (uint index = 0u; index < iterations; index += 1u)
+        JsonRequestProcessor.ProcessInArena(requestText);
+    samples[sample] = MonotonicClock.GetMicroseconds() - start;
+}
+
+public int Main() {
+    StringBuilder requestBuilder = new StringBuilder(512u);
+    requestBuilder.Append("{\"values\":[");
+    for (int value = 1; value <= 100; value++) {
+        if (value > 1) requestBuilder.Append(',');
+        requestBuilder.Append(value);
+    }
+    requestBuilder.Append("]}");
+    string request = requestBuilder.ToString();
+    string expected = "{\"count\":100,\"sum\":10100}";
+    const uint iterations = 500u;
+    const uint samples = 7u;
+    ulong[] heapSamples = new ulong[samples];
+    ulong[] arenaSamples = new ulong[samples];
+
+    if (JsonRequestProcessor.ParseAndSerialize(request, false) != expected) return 1;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[-1]}")) return 2;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[2147483648]}")) return 3;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[1073741824]}")) return 4;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[1,]}")) return 5;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[1]} trailing")) return 6;
+    if (!JsonRequestProcessor.Rejects("{\"values\":[1073741823,1073741823]}")) return 7;
+    if (!JsonRequestProcessor.RejectsInArena("{\"values\":[0]}")) return 8;
+
+    // Warm both paths before collecting matched batch timings.
+    for (uint index = 0u; index < 100u; index += 1u) {
+        JsonRequestProcessor.ProcessOnHeap(request);
+        JsonRequestProcessor.ProcessInArena(request);
+    }
+
+    for (uint sample = 0u; sample < samples; sample += 1u) {
+        if (sample % 2u == 0u) {
+            GC.Collect();
+            MeasureHeapBatch(request, iterations, heapSamples, sample);
+            GC.Collect();
+            MeasureArenaBatch(request, iterations, arenaSamples, sample);
+        } else {
+            GC.Collect();
+            MeasureArenaBatch(request, iterations, arenaSamples, sample);
+            GC.Collect();
+            MeasureHeapBatch(request, iterations, heapSamples, sample);
+        }
+    }
+
+    for (uint index = 0u; index < samples; index += 1u) {
+        for (uint next = index + 1u; next < samples; next += 1u) {
+            if (heapSamples[next] < heapSamples[index]) {
+                ulong value = heapSamples[index];
+                heapSamples[index] = heapSamples[next];
+                heapSamples[next] = value;
+            }
+            if (arenaSamples[next] < arenaSamples[index]) {
+                ulong value = arenaSamples[index];
+                arenaSamples[index] = arenaSamples[next];
+                arenaSamples[next] = value;
+            }
+        }
+    }
+
+    if (RequestCache.Response != expected) return 9;
+    Console.WriteLine("compiled CX JSON request benchmark pass");
+    StringBuilder report = new StringBuilder(64u);
+    report.Append("heap median us/request=").Append(heapSamples[samples / 2u] / iterations)
+        .Append(" range=").Append(heapSamples[0] / iterations).Append('-')
+        .Append(heapSamples[samples - 1u] / iterations);
+    Console.WriteLine(report.ToString());
+    report.Clear();
+    report.Append("arena median us/request=").Append(arenaSamples[samples / 2u] / iterations)
+        .Append(" range=").Append(arenaSamples[0] / iterations).Append('-')
+        .Append(arenaSamples[samples - 1u] / iterations);
+    Console.WriteLine(report.ToString());
+    return 0;
+}

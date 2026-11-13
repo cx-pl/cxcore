@@ -1,8 +1,122 @@
+import System.Interop;
+import System.Threading.Tasks;
+
 namespace System;
 
 public static class Memory {
     public extern static ptr Alloc(uint size);
-    public extern static ptr Realloc(ptr block, uint size);
-    public extern static void Free(ptr block);
-    public extern static void Copy(ptr dest, ptr src, uint size);
+    public static unsafe extern ptr Realloc(ptr block, uint size);
+    public static unsafe extern void Free(ptr block);
+    @NoEscape public static unsafe extern void Copy(ptr dest, ptr src, uint size);
+    // Copies one reflected value through the reference lifetime barriers. This
+    // intrinsic requires raw pointers, so call it only from unsafe code. Both
+    // pointers must cover sizeof(T) bytes; partially overlapping regions and
+    // types without a supported runtime layout are invalid. Use it when raw
+    // byte scanning is unsuitable.
+    public static unsafe extern void CopyValue<T>(ptr dest, ptr src) where T : struct;
+    public extern static bool SetProcessMemoryBudget(ulong maximumBytes);
+
+    // A synchronous scope. Arena-allocated references are valid only until the
+    // callback returns. The fixed-capacity overload throws if its preallocated
+    // arena cannot satisfy an allocation.
+    public extern static void WithArena(delegate() => void action);
+    public extern static void WithArena(uint capacity, delegate() => void action);
+    // Retains the arena across suspensions and completes after the returned
+    // task. A multicast action is rejected.
+    public extern static System.Threading.Tasks.Task WithArenaAsync(
+        delegate() => System.Threading.Tasks.Task action);
+    public extern static System.Threading.Tasks.Task WithArenaAsync(
+        uint capacity, delegate() => System.Threading.Tasks.Task action);
+    // Generic results complete only after the retained arena has closed. The
+    // The erased object callback is checked against the closed Task<T> runtime
+    // type before casting. The typed result store rejects references into the
+    // closing arena.
+    public static Task<T> WithArenaAsync<T>(delegate() => object action) {
+        Task<T> result;
+        WithDurable(() => { result = new Task<T>(); });
+        delegate() => Task joinedAction = () => {
+            object pendingOperation = action();
+            if (pendingOperation == null ||
+                pendingOperation.Type.Hash != typeof(Task<T>).Hash) {
+                Exception mismatch;
+                delegate() => void createMismatch = () => {
+                    mismatch = new Exception();
+                };
+                WithDurable(createMismatch);
+                return TaskHandle.Faulted(mismatch);
+            }
+            Task<T> operation = (Task<T>)pendingOperation;
+            TaskCompletionSourceVoid joined = new TaskCompletionSourceVoid();
+            operation.OnCompleted(() => {
+                try {
+                    result.StoreResultValue(operation.GetResult());
+                    joined.SetResult();
+                } catch (OperationCanceledException) {
+                    joined.SetCanceled();
+                } catch (Exception exception) {
+                    joined.SetException(exception);
+                }
+            });
+            return joined.Task;
+        };
+        TaskHandle arenaTask = WithArenaAsync(joinedAction);
+        arenaTask.OnCompleted(() => {
+            try {
+                arenaTask.GetResult();
+                result.CompleteStoredResult();
+            } catch (OperationCanceledException) {
+                result.SetCanceled();
+            } catch (Exception exception) {
+                result.SetFault(exception);
+            }
+        });
+        return result;
+    }
+    public static Task<T> WithArenaAsync<T>(
+        uint capacity, delegate() => object action) {
+        Task<T> result;
+        WithDurable(() => { result = new Task<T>(); });
+        delegate() => Task joinedAction = () => {
+            object pendingOperation = action();
+            if (pendingOperation == null ||
+                pendingOperation.Type.Hash != typeof(Task<T>).Hash) {
+                Exception mismatch;
+                delegate() => void createMismatch = () => {
+                    mismatch = new Exception();
+                };
+                WithDurable(createMismatch);
+                return TaskHandle.Faulted(mismatch);
+            }
+            Task<T> operation = (Task<T>)pendingOperation;
+            TaskCompletionSourceVoid joined = new TaskCompletionSourceVoid();
+            operation.OnCompleted(() => {
+                try {
+                    result.StoreResultValue(operation.GetResult());
+                    joined.SetResult();
+                } catch (OperationCanceledException) {
+                    joined.SetCanceled();
+                } catch (Exception exception) {
+                    joined.SetException(exception);
+                }
+            });
+            return joined.Task;
+        };
+        TaskHandle arenaTask = WithArenaAsync(capacity, joinedAction);
+        arenaTask.OnCompleted(() => {
+            try {
+                arenaTask.GetResult();
+                result.CompleteStoredResult();
+            } catch (OperationCanceledException) {
+                result.SetCanceled();
+            } catch (Exception exception) {
+                result.SetFault(exception);
+            }
+        });
+        return result;
+    }
+    // Temporarily route new managed allocations to the normal GC heap.
+    public extern static void WithDurable(delegate() => void action);
+
+    internal extern static ptr AddObjectRoot(object value);
+    internal extern static void RemoveObjectRoot(ptr handle);
 }

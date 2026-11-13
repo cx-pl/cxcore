@@ -11,8 +11,8 @@
 #define CX_UNIX_EPOCH_MILLISECONDS INT64_C(62135596800000)
 #define CX_MILLISECONDS_PER_HOUR INT64_C(3600000)
 
-typedef struct CX_ID_3(cxcore, System, DateTime) datetime;
-typedef struct CX_ID_3(cxcore, System, String) cx_string;
+typedef struct cxcore_System_DateTime datetime;
+typedef struct cxcore_System_String cx_string;
 
 static int64_t milliseconds_from_timespec(const struct timespec *time) {
     return (int64_t)time->tv_sec * INT64_C(1000) +
@@ -26,8 +26,8 @@ static void assert_local_offset(cx_short expected_offset) {
     setenv("TZ", expected_offset > 0 ? "UTC-5" : "UTC+3", 1);
     tzset();
 
-    utc = CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(NULL);
-    local = CX_ID_4(cxcore, System, SystemDateTimeProvider, GetLocalNow)(NULL);
+    utc = cxcore_System_SystemDateTimeProvider_GetUtcNow(NULL);
+    local = cxcore_System_SystemDateTimeProvider_GetLocalNow(NULL);
     assert(local._offset == expected_offset);
     difference = local._milliseconds - utc._milliseconds;
     assert(llabs(difference - (int64_t)expected_offset * CX_MILLISECONDS_PER_HOUR) < 2000);
@@ -35,8 +35,8 @@ static void assert_local_offset(cx_short expected_offset) {
 
 int main(void) {
     const cx_string *system_name =
-        CX_ID_5(cxcore, System, Environment, SystemName, __const_get)();
-    const cx_string *newline = CX_ID_5(cxcore, System, Environment, NewLine, __const_get)();
+        cxcore_System_Environment_SystemName___const_get();
+    const cx_string *newline = cxcore_System_Environment_NewLine___const_get();
     datetime utc;
     struct timespec before;
     struct timespec after;
@@ -49,7 +49,7 @@ int main(void) {
     assert(memcmp(newline->_data, "\n", 1) == 0);
 
     assert(clock_gettime(CLOCK_REALTIME, &before) == 0);
-    utc = CX_ID_4(cxcore, System, SystemDateTimeProvider, GetUtcNow)(NULL);
+    utc = cxcore_System_SystemDateTimeProvider_GetUtcNow(NULL);
     assert(clock_gettime(CLOCK_REALTIME, &after) == 0);
     earliest = CX_UNIX_EPOCH_MILLISECONDS + milliseconds_from_timespec(&before);
     latest = CX_UNIX_EPOCH_MILLISECONDS + milliseconds_from_timespec(&after);

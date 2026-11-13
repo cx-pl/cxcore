@@ -7,6 +7,22 @@ public struct Uuid {
     private uint _d;
 
     public static extern Uuid Zero;
+    public static extern const Uuid NamespaceDns;
+    public static extern const Uuid NamespaceUrl;
+    public static extern const Uuid NamespaceOid;
+    public static extern const Uuid NamespaceX500;
+
+    public static extern Uuid NewUuidV1();
+    public static extern Uuid NewUuidV2(byte localDomain, uint localIdentifier);
+    public static extern Uuid NewUuidV3(Uuid namespaceId, string name);
+    public static extern Uuid NewUuidV4();
+    public static extern Uuid NewUuidV5(Uuid namespaceId, string name);
+    public static extern Uuid NewUuidV6();
+    public static extern Uuid NewUuidV7();
+    public static extern Uuid NewUuidV8();
+    public static extern Uuid NewUuidV8(ulong customA, ushort customB, ulong customC);
+    public uint Version { extern const get; }
+    public extern string ToString() const;
 
     public constructor(uint a, uint b, uint c, uint d) {
         _a = a;

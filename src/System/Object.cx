@@ -7,6 +7,8 @@ public class Object {
     public virtual extern string ToString() const;
     public virtual extern bool Equals(object other) const;
     public virtual extern int GetHashCode() const;
+    public static extern bool ReferenceEquals(object left, object right);
+    public static extern int IdentityHashCode(object value);
 
     public extern constructor();
 }

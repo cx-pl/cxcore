@@ -1,3 +1,5 @@
+import System;
+
 namespace System.Collections;
 
 public struct KeyValuePair<TKey, TValue> {
@@ -172,15 +174,15 @@ public final class Dictionary<TKey, TValue> where TKey : class
             capacity *= 2u;
             bucketMask = (bucketMask * 2) + 1;
         }
-        Array<TKey> expandedKeys = new Array<TKey>(capacity);
-        Array<TValue> expandedValues = new Array<TValue>(capacity);
+        Array<TKey> expandedKeys = _keys.CreateForOwner(capacity);
+        Array<TValue> expandedValues = _values.CreateForOwner(capacity);
         for (uint index = 0u; index < _count; index += 1u) {
             expandedKeys.Set(index, _keys.Get(index));
             expandedValues.Set(index, _values.Get(index));
         }
         _keys = expandedKeys;
         _values = expandedValues;
-        _buckets = new uint[capacity * 2u];
+        _buckets = _buckets.CreateForOwner(capacity * 2u);
         _bucketMask = bucketMask;
         RebuildBuckets();
     }
@@ -212,5 +214,11 @@ public final class DictionaryEnumerator<TKey, TValue> : IEnumerator<KeyValuePair
         }
         _nextIndex += 1u;
         return true;
+    }
+
+    public void Dispose() {
+        _keys = default;
+        _values = default;
+        _nextIndex = _count;
     }
 }

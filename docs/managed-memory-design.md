@@ -1,16 +1,12 @@
 # Managed memory design
 
-Status: first implementation in place; ABI 1 remains experimental. Windows
-x86/x64 and Linux x64 implementations have been built and validated. Linux
-static and shared builds pass the native runtime test suite. Milestone 16 now
-adds explicit native thread attachment and cooperative stop-the-world collection;
-see [threading-gc-design.md](threading-gc-design.md). Generated CX workers and
-public threading/synchronization APIs are implemented and verified across
-the supported platform/link-mode matrix.
+The runtime uses a non-moving conservative collector with cooperative
+stop-the-world coordination. The generated-code ABI remains experimental;
+see [runtime-abi.md](runtime-abi.md) for compatibility requirements.
 
 ## Collector
 
-Use a non-moving, conservative mark-and-sweep collector for blocks obtained from
+The non-moving conservative mark-and-sweep collector manages blocks obtained from
 `Memory.Alloc`. Centralizing allocation in `Memory` lets the runtime track
 objects, arrays, array backing stores, strings and their buffers, and nullable
 value storage without changing their layouts. The collector stores allocation
@@ -37,7 +33,7 @@ native call must be kept in a registered static root or another managed block.
 All CX modules in one process must use the same `cxcore` heap. Project-reference
 static linking already links one runtime into an executable; dynamic modules
 must share one `cxcore` DLL. Dynamically unloading a module that registered roots
-is unsupported in the first collector. Generated code registers roots before
+is unsupported. Generated code registers roots before
 executing CX functions, including in library-only modules.
 
 ## Threading and collection points
@@ -53,8 +49,10 @@ The callback must return normally and must not access managed data or enter CX.
 Application data sharing still requires synchronization. Generated CX workers
 poll at function entry and supported loops. Module initialization, pending TLS
 exceptions, and Console blocking waits are coordinated with collection.
-Native callback scopes and removable root handles establish retention ownership;
-callback reentry from a parked native-only call requires a Milestone 17 adapter.
+Native callback scopes and removable root handles establish retention ownership.
+Reentrant imports use `cx_gc_run_native_call`, which allows guarded callbacks to
+resume managed execution. The native-only `cx_gc_run_blocking` wrapper still
+forbids CX reentry; see [native-interop-design.md](native-interop-design.md).
 
 Collection occurs under allocation pressure and can be requested explicitly
 through the C runtime API for embedding and native diagnostics. The initial
@@ -67,27 +65,51 @@ Every successful `Memory.Alloc` block is tracked and collectible. `Memory.Free`
 removes a tracked block and releases it immediately; freeing a block while any
 live reference can be used is invalid. `Memory.Realloc` preserves the block's
 tracking record but, as with C `realloc`, any pointer invalidated by a move must
-not be used. Runtime-owned allocations continue to use `Memory.Alloc`; callers
-must not add per-type disposal requirements. `Memory.Free` remains available
-for deterministic cleanup and unmanaged interop, with its use on live managed
-objects subject to the invalid-use rule above.
+not be used. `Memory.Free` rejects arena storage. `Memory.Realloc` accepts an
+exact live allocation in the active owning arena, allocates and copies within
+that arena, and invalidates the old extent; its bytes remain reserved until
+reset. `Memory.Free` preserves its native-free behavior for untracked non-arena
+pointers; callers must pass a pointer compatible with the process C allocator.
+Runtime-owned allocations
+continue to use `Memory.Alloc`; callers must not add per-type disposal
+requirements. Native resources and unmanaged buffers use their dedicated APIs
+or native allocator.
 
 Allocation metadata uses the process C allocator directly and is never traced.
 If metadata or collection work cannot be allocated, the runtime retains all
 managed blocks and reports out-of-memory if the requested allocation still
 cannot be satisfied. The collector never moves or finalizes blocks.
 
-## Validation
+## Arena allocation
 
-The native test suite covers stack and registered static roots, object graphs,
-arrays and backing stores, nullable payloads, interface references, cycles,
-allocation pressure, references retained across the cxcore DLL boundary, and
-rejection of an unregistered second thread. Milestone 16 native tests cover four
-attached workers, parked stack/interior roots, static roots, concurrent
-allocation/reallocation/free/collection, native joins, attach/detach lifecycle,
-and forbidden managed entry from a blocking callback. The earlier suite and Gradebook integration example have
-been built and run for Windows x86/x64; the full suite also passes for Linux
-static and shared builds. Manual `Free` and `Realloc` tracking are exercised
-through runtime API checks. The implementation remains experimental:
-conservative scanning can retain unreachable blocks, native static roots must
-be registered, and modules with registered roots cannot be unloaded.
+`Memory.Alloc` routes to the active arena context when one exists. An explicit
+durable context keeps new allocations on the ordinary GC heap. Owner-aware
+buffers continue to follow their existing owner's allocation destination.
+
+The collector scans initialized ranges in active and logically retained arenas,
+keeping reachable ordinary-heap objects alive. Arena storage is reclaimed by
+scope closure or reset, rather than by tracing individual arena objects.
+
+`Memory.WithArena(action)` creates a synchronous growable scope;
+`Memory.WithArena(capacity, action)` creates a fixed-capacity scope.
+`Memory.WithDurable(action)` temporarily selects the GC heap. Each restores
+the previous allocation context on normal and exceptional exit. Reusable and
+asynchronous arenas have separate lifetime rules.
+
+Runtime-once initialization uses durable storage for process-lifetime metadata.
+Compiler provenance checks and runtime store barriers reject supported escape
+paths, but do not prove every unsafe aggregate or indirect store safe. Raw
+copies scan candidate references conservatively; typed copies use reflected
+layout checks. See [scoped allocation arenas](scoped-allocation-arenas-design.md)
+for allocation routing, reference lifetimes, process budgets, and copy limits.
+
+## Limits
+
+Conservative scanning can retain unreachable blocks. Native static storage
+holding managed references must be registered, and modules with registered
+roots cannot be unloaded. Native workers must follow the attachment,
+safepoint, and blocking-call contracts in
+[threading and GC coordination](threading-gc-design.md).
+
+The collector does not move or finalize blocks. Dispose native resources
+explicitly; collecting their managed wrappers is not a cleanup protocol.

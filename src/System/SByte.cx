@@ -1,6 +1,8 @@
 namespace System;
 
 public struct SByte {
+    public static extern sbyte? TryParse(string text);
+
     private sbyte _value;
 
     public static extern const sbyte MinValue;

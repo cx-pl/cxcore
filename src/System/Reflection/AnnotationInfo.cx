@@ -1,0 +1,20 @@
+namespace System.Reflection;
+
+/// An annotation application; reading metadata does not construct annotation objects.
+public struct AnnotationInfo {
+    public const TypeInfo DeclaringType;
+    public const int FunctionIndex;
+    public const int ParameterIndex;
+    public const string Target;
+    public const string MemberName;
+    public const string TypeName;
+    public const string[] ArgumentNames;
+    /// Bound constant expressions, including constructor defaults.
+    public const string[] ArgumentExpressions;
+    /// Typed, boxed constant values. Null for legacy format-2 descriptors.
+    public const object[] ArgumentValues;
+    /// Location of the annotation application, or an empty file/zero coordinates.
+    public const string SourceFile;
+    public const uint SourceLine;
+    public const uint SourceColumn;
+}

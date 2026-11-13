@@ -1,4 +1,5 @@
-#include "../platform.h"
+#include "../../platform.h"
+#ifdef CX_PLATFORM_WIN
 
 CX_NORETURN void cx_platform_exception_jump(jmp_buf environment) {
 #if defined(_MSC_VER) && defined(_M_X64)
@@ -9,3 +10,5 @@ CX_NORETURN void cx_platform_exception_jump(jmp_buf environment) {
 #endif
     longjmp(environment, 1);
 }
+
+#endif // CX_PLATFORM_WIN

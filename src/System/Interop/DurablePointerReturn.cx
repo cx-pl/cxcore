@@ -1,0 +1,10 @@
+import System;
+
+namespace System.Interop;
+
+// Marks a pointer-returning boundary whose result remains valid independently
+// of the current CX allocation arena and all borrowed call arguments.
+@AnnotationUsage(targets = "function")
+public final class DurablePointerReturn : System.Annotation {
+    public constructor() {}
+}

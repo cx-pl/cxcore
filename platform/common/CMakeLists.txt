@@ -1,6 +1,10 @@
 target_sources(cxcore PRIVATE
+    cxarena.c
+    cxarena.h
     cxabi.c
-    cxexceptions.c
+    cxmodule.c
+    cxnumeric.c
+    cxnumeric.h
     cxgc.h
     cxinterop.c
     cxtext.c

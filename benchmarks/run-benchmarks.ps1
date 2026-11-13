@@ -59,14 +59,14 @@ $gitHead = git -c "safe.directory=$cxcoreRoot" -C $cxcoreRoot rev-parse HEAD
     "CMake: $(& $cmake --version | Select-Object -First 1)"
 ) | Set-Content -Encoding utf8 $report
 
-'typeinfo_position,linkage,arch,benchmark,sample,iterations,elapsed_ms,ns_per_operation,checksum' |
+'typeinfo_position,linkage,arch,benchmark,sample,iterations,elapsed_ms,ns_per_operation,checksum,arena_peak_used_bytes,arena_capacity_bytes,arena_growth_count,arena_reset_count,durable_copy_bytes,gc_collection_count_delta,gc_collected_bytes_delta,gc_pause_ns_delta,heap_live_bytes_after,request_latency_p50_ns,request_latency_p95_ns,request_latency_p99_ns,request_latency_max_ns' |
     Set-Content -Encoding utf8 $resultCsv
 
 foreach ($arch in $architectures) {
     foreach ($link in $linkages) {
         $platform = if ($arch -eq 'x86') { 'Win32' } else { 'x64' }
         $static = if ($link -eq 'Static') { 'ON' } else { 'OFF' }
-        $buildRoot = Join-Path $benchmarkRoot "out\$arch-$($link.ToLowerInvariant())"
+        $buildRoot = Join-Path $benchmarkRoot ".build\$arch-$($link.ToLowerInvariant())"
         & $cmake -S $benchmarkRoot -B $buildRoot -G 'Visual Studio 18 2026' -A $platform `
             "-DCXCORE_SOURCE_DIR=$cxcoreRoot" "-DCX_BENCH_STATIC=$static"
         if ($LASTEXITCODE -ne 0) { throw "CMake configure failed for $arch $link" }
@@ -81,8 +81,17 @@ foreach ($arch in $architectures) {
             Sort-Object Name -Descending
         $compilerArch = if ($arch -eq 'x86') { 'x86' } else { 'x64' }
         $cl = Join-Path $toolsets[0].FullName "bin\Hostx64\$compilerArch\cl.exe"
-        $compilerVersion = (& $cl /Bv 2>&1 | Select-String 'Compiler Version' |
-            Select-Object -First 1).Line
+        $savedM22ErrorActionPreference = $ErrorActionPreference
+        try {
+            # cl /Bv writes its version banner to stderr; do not let the
+            # runner's Stop preference turn that diagnostic stream into a
+            # terminating error before the benchmark executable is launched.
+            $ErrorActionPreference = 'Continue'
+            $compilerVersion = (& $cl /Bv 2>&1 | Select-String 'Compiler Version' |
+                Select-Object -First 1).Line
+        } finally {
+            $ErrorActionPreference = $savedM22ErrorActionPreference
+        }
         $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\Include'
         $sdkVersions = Get-ChildItem $sdkRoot -Directory | Sort-Object Name -Descending
         Add-Content -Encoding utf8 $report "$arch $link toolchain: $compilerVersion; Windows SDK $($sdkVersions[0].Name)"

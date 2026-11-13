@@ -1,6 +1,6 @@
 string(REPEAT "a" 300 input_line)
 set(input_path "${CMAKE_CURRENT_BINARY_DIR}/cxcore_console_input.txt")
-file(WRITE "${input_path}" "${input_line}\nxyz")
+file(WRITE "${input_path}" "${input_line}\n\nxyzRAW")
 
 execute_process(
     COMMAND "${TEST_EXECUTABLE}"
@@ -14,6 +14,6 @@ if(NOT result EQUAL 0)
     message(FATAL_ERROR "Console read test failed (${result}): ${output}${error}")
 endif()
 
-if(NOT output STREQUAL "xyz")
+if(NOT output STREQUAL "RAWxyz")
     message(FATAL_ERROR "Console write test produced unexpected output: '${output}'")
 endif()

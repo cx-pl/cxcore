@@ -1,6 +1,8 @@
 namespace System;
 
 public struct UShort {
+    public static extern ushort? TryParse(string text);
+
     private ushort _value;
 
     public static extern ushort MinValue;

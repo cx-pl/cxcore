@@ -46,8 +46,7 @@ static cx_long cx_datetime_checked_milliseconds(cx_long days, cx_long timeOfDay)
     return days * CX_MILLISECONDS_PER_DAY + timeOfDay;
 }
 
-void CX_ID_5(cxcore, System, DateTime, __constructor,
-             _2)(struct CX_ID_3(cxcore, System, DateTime) * __this, cx_int year, cx_int month,
+void cxcore_System_DateTime___constructor__2(struct cxcore_System_DateTime * __this, cx_int year, cx_int month,
                  cx_int day, cx_int hour, cx_int minute, cx_int second, cx_int millisecond,
                  cx_short offset) {
     cx_long dayNumber;
@@ -69,10 +68,9 @@ void CX_ID_5(cxcore, System, DateTime, __constructor,
     __this->_offset = offset;
 }
 
-struct CX_ID_3(cxcore, System, DateTime)
-    CX_ID_4(cxcore, System, DateTime,
-            AddMonths)(const struct CX_ID_3(cxcore, System, DateTime) * __this, cx_long months) {
-    struct CX_ID_3(cxcore, System, DateTime) result;
+struct cxcore_System_DateTime
+    cxcore_System_DateTime_AddMonths(const struct cxcore_System_DateTime * __this, cx_long months) {
+    struct cxcore_System_DateTime result;
     cx_long days = __this->_milliseconds / CX_MILLISECONDS_PER_DAY;
     cx_long timeOfDay = __this->_milliseconds % CX_MILLISECONDS_PER_DAY;
     cx_long cycle = days / CX_DAYS_PER_GREGORIAN_CYCLE;

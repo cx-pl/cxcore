@@ -1,0 +1,4 @@
+name: ArenaScopes
+type: Executable
+project_references:
+- ../../src/cxcore.cxproj

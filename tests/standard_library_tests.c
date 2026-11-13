@@ -3,82 +3,82 @@
 #include "../src/cxcore.h"
 
 static void test_char_utf8_lengths(void) {
-    struct CX_ID_3(cxcore, System, Char) value;
+    struct cxcore_System_Char value;
     value._value = 'A';
-    assert(CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(&value) == 1);
+    assert(cxcore_System_Char_NumBytes___const_get(&value) == 1);
     value._value = 0x00A2;
-    assert(CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(&value) == 2);
+    assert(cxcore_System_Char_NumBytes___const_get(&value) == 2);
     value._value = 0x20AC;
-    assert(CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(&value) == 3);
+    assert(cxcore_System_Char_NumBytes___const_get(&value) == 3);
     value._value = 0x1F600;
-    assert(CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(&value) == 4);
+    assert(cxcore_System_Char_NumBytes___const_get(&value) == 4);
     value._value = 0xD800;
-    assert(CX_ID_5(cxcore, System, Char, NumBytes, __const_get)(&value) == -1);
+    assert(cxcore_System_Char_NumBytes___const_get(&value) == -1);
 
     value._value = '7';
-    assert(CX_ID_5(cxcore, System, Char, IsDigit, __const_get)(&value));
-    assert(!CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(&value));
-    assert(!CX_ID_5(cxcore, System, Char, IsLower, __const_get)(&value));
-    assert(!CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(&value));
-    assert(CX_ID_4(cxcore, System, Char, ToLower)(&value) == '7');
-    assert(CX_ID_4(cxcore, System, Char, ToUpper)(&value) == '7');
+    assert(cxcore_System_Char_IsDigit___const_get(&value));
+    assert(!cxcore_System_Char_IsLetter___const_get(&value));
+    assert(!cxcore_System_Char_IsLower___const_get(&value));
+    assert(!cxcore_System_Char_IsUpper___const_get(&value));
+    assert(cxcore_System_Char_ToLower(&value) == '7');
+    assert(cxcore_System_Char_ToUpper(&value) == '7');
     value._value = 'z';
-    assert(CX_ID_5(cxcore, System, Char, IsLower, __const_get)(&value));
-    assert(!CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(&value));
-    assert(CX_ID_4(cxcore, System, Char, ToUpper)(&value) == 'Z');
-    assert(CX_ID_4(cxcore, System, Char, ToLower)(&value) == 'z');
+    assert(cxcore_System_Char_IsLower___const_get(&value));
+    assert(!cxcore_System_Char_IsUpper___const_get(&value));
+    assert(cxcore_System_Char_ToUpper(&value) == 'Z');
+    assert(cxcore_System_Char_ToLower(&value) == 'z');
     value._value = 'Q';
-    assert(CX_ID_5(cxcore, System, Char, IsUpper, __const_get)(&value));
-    assert(CX_ID_4(cxcore, System, Char, ToLower)(&value) == 'q');
-    assert(CX_ID_4(cxcore, System, Char, ToUpper)(&value) == 'Q');
+    assert(cxcore_System_Char_IsUpper___const_get(&value));
+    assert(cxcore_System_Char_ToLower(&value) == 'q');
+    assert(cxcore_System_Char_ToUpper(&value) == 'Q');
     value._value = ' ';
-    assert(CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(&value));
+    assert(cxcore_System_Char_IsWhiteSpace___const_get(&value));
     value._value = '\t';
-    assert(CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(&value));
+    assert(cxcore_System_Char_IsWhiteSpace___const_get(&value));
     value._value = '\r';
-    assert(CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(&value));
+    assert(cxcore_System_Char_IsWhiteSpace___const_get(&value));
     value._value = '\n';
-    assert(CX_ID_5(cxcore, System, Char, IsWhiteSpace, __const_get)(&value));
+    assert(cxcore_System_Char_IsWhiteSpace___const_get(&value));
     value._value = 0x00E9;
-    assert(!CX_ID_5(cxcore, System, Char, IsLetter, __const_get)(&value));
-    assert(CX_ID_4(cxcore, System, Char, ToUpper)(&value) == 0x00E9);
-    assert(CX_ID_4(cxcore, System, Char, ToLower)(&value) == 0x00E9);
+    assert(!cxcore_System_Char_IsLetter___const_get(&value));
+    assert(cxcore_System_Char_ToUpper(&value) == 0x00E9);
+    assert(cxcore_System_Char_ToLower(&value) == 0x00E9);
 }
 
 static void test_string_utf8_indexing(void) {
     static const cx_byte utf8[] = {'A', 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0xF0, 0x9F, 0x98, 0x80};
-    struct CX_ID_3(cxcore, System, String) value;
-    CX_ID_5(cxcore, System, String, __constructor, _2)(&value, (cx_uint)sizeof(utf8), (cx_ptr)utf8);
-    assert(CX_ID_5(cxcore, System, String, Length, __const_get)(&value) == 4);
-    assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 0) == 'A');
-    assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 1) == 0xA2);
-    assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 2) == 0x20AC);
-    assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 3) == 0x1F600);
-    assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&value, 4) == -1);
+    struct cxcore_System_String value;
+    cxcore_System_String___constructor__2(&value, (cx_uint)sizeof(utf8), (cx_ptr)utf8);
+    assert(cxcore_System_String_Length___const_get(&value) == 4);
+    assert(cxcore_System_String_Item___const_get(&value, 0) == 'A');
+    assert(cxcore_System_String_Item___const_get(&value, 1) == 0xA2);
+    assert(cxcore_System_String_Item___const_get(&value, 2) == 0x20AC);
+    assert(cxcore_System_String_Item___const_get(&value, 3) == 0x1F600);
+    assert(cxcore_System_String_Item___const_get(&value, 4) == -1);
 
     {
         static const cx_byte same_left[] = {'c', 'x'};
         static const cx_byte same_right[] = {'c', 'x'};
         static const cx_byte different[] = {'c', 'y'};
-        struct CX_ID_3(cxcore, System, String) left;
-        struct CX_ID_3(cxcore, System, String) right;
-        struct CX_ID_3(cxcore, System, String) other;
-        CX_ID_5(cxcore, System, String, __constructor, _2)(
+        struct cxcore_System_String left;
+        struct cxcore_System_String right;
+        struct cxcore_System_String other;
+        cxcore_System_String___constructor__2(
             &left, (cx_uint)sizeof(same_left), (cx_ptr)same_left);
-        CX_ID_5(cxcore, System, String, __constructor, _2)(
+        cxcore_System_String___constructor__2(
             &right, (cx_uint)sizeof(same_right), (cx_ptr)same_right);
-        CX_ID_5(cxcore, System, String, __constructor, _2)(
+        cxcore_System_String___constructor__2(
             &other, (cx_uint)sizeof(different), (cx_ptr)different);
 
-        assert(CX_ID_4(cxcore, System, String, __cx_operator_equal)(&left, &right));
-        assert(CX_ID_4(cxcore, System, String, __cx_operator_not_equal)(&left, &other));
-        assert(CX_ID_4(cxcore, System, String, Equals)(
-            &left, (struct CX_ID_3(cxcore, System, Object) *)&right));
-        assert(!CX_ID_4(cxcore, System, String, Equals)(
-            &left, (struct CX_ID_3(cxcore, System, Object) *)&other));
-        assert(CX_ID_4(cxcore, System, String, GetHashCode)(&left) ==
-               CX_ID_4(cxcore, System, String, GetHashCode)(&right));
-        assert(CX_ID_4(cxcore, System, String, ToString)(&left) == &left);
+        assert(cxcore_System_String___cx_operator_equal(&left, &right));
+        assert(cxcore_System_String___cx_operator_not_equal(&left, &other));
+        assert(cxcore_System_String_Equals(
+            &left, (struct cxcore_System_Object *)&right));
+        assert(!cxcore_System_String_Equals(
+            &left, (struct cxcore_System_Object *)&other));
+        assert(cxcore_System_String_GetHashCode(&left) ==
+               cxcore_System_String_GetHashCode(&right));
+        assert(cxcore_System_String_ToString(&left) == &left);
         assert(CX_GET_TYPEINFO(&left).Hash == 0x39E2CB3A11136EA4ULL);
     }
 
@@ -87,51 +87,51 @@ static void test_string_utf8_indexing(void) {
         static const cx_byte right_bytes[] = {0xF0, 0x9F, 0x98, 0x80};
         static const cx_byte expected_bytes[] = {'A', 0xE2, 0x82, 0xAC,
                                                  0xF0, 0x9F, 0x98, 0x80};
-        struct CX_ID_3(cxcore, System, String) left;
-        struct CX_ID_3(cxcore, System, String) right;
-        struct CX_ID_3(cxcore, System, String) *joined;
+        struct cxcore_System_String left;
+        struct cxcore_System_String right;
+        struct cxcore_System_String *joined;
 
-        CX_ID_5(cxcore, System, String, __constructor, _2)(
+        cxcore_System_String___constructor__2(
             &left, (cx_uint)sizeof(left_bytes), (cx_ptr)left_bytes);
-        CX_ID_5(cxcore, System, String, __constructor, _2)(
+        cxcore_System_String___constructor__2(
             &right, (cx_uint)sizeof(right_bytes), (cx_ptr)right_bytes);
-        joined = CX_ID_4(cxcore, System, String, __cx_operator_plus)(&left, &right);
+        joined = cxcore_System_String___cx_operator_plus(&left, &right);
         assert(joined->_length == (cx_uint)sizeof(expected_bytes));
         assert(memcmp(joined->_data, expected_bytes, sizeof(expected_bytes)) == 0);
-        assert(CX_ID_5(cxcore, System, String, Length, __const_get)(joined) == 3);
-        CX_ID_4(cxcore, System, Memory, Free)(joined->_data);
-        CX_ID_4(cxcore, System, Memory, Free)(joined);
+        assert(cxcore_System_String_Length___const_get(joined) == 3);
+        cxcore_System_Memory_Free(joined->_data);
+        cxcore_System_Memory_Free(joined);
     }
 
     {
-        struct CX_ID_3(cxcore, System, String) *joined;
-        joined = CX_ID_4(cxcore, System, String, __cx_operator_plus)(CX_NULL, CX_NULL);
+        struct cxcore_System_String *joined;
+        joined = cxcore_System_String___cx_operator_plus(CX_NULL, CX_NULL);
         assert(joined->_length == 0);
         assert(joined->_data == CX_NULL);
-        CX_ID_4(cxcore, System, Memory, Free)(joined);
+        cxcore_System_Memory_Free(joined);
     }
 
     {
-        struct CX_ID_3(cxcore, System, String) repeated;
-        CX_ID_5(cxcore, System, String, __constructor, _3)(&repeated, 3, 0x20AC);
+        struct cxcore_System_String repeated;
+        cxcore_System_String___constructor__3(&repeated, 3, 0x20AC);
         assert(repeated._length == 9);
-        assert(CX_ID_5(cxcore, System, String, Length, __const_get)(&repeated) == 3);
-        assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&repeated, 2) == 0x20AC);
-        CX_ID_4(cxcore, System, Memory, Free)(repeated._data);
+        assert(cxcore_System_String_Length___const_get(&repeated) == 3);
+        assert(cxcore_System_String_Item___const_get(&repeated, 2) == 0x20AC);
+        cxcore_System_Memory_Free(repeated._data);
     }
 
     {
         static const cx_byte invalid[] = {0xF0, 0x80, 0x80, 0x80};
-        struct CX_ID_3(cxcore, System, String) malformed;
-        CX_ID_5(cxcore, System, String, __constructor, _2)(&malformed, (cx_uint)sizeof(invalid),
+        struct cxcore_System_String malformed;
+        cxcore_System_String___constructor__2(&malformed, (cx_uint)sizeof(invalid),
                                                            (cx_ptr)invalid);
-        assert(CX_ID_5(cxcore, System, String, Length, __const_get)(&malformed) == 4);
-        assert(CX_ID_5(cxcore, System, String, Item, __const_get)(&malformed, 0) == -1);
+        assert(cxcore_System_String_Length___const_get(&malformed) == 4);
+        assert(cxcore_System_String_Item___const_get(&malformed, 0) == -1);
     }
 }
 
 static void test_array(void) {
-    struct CX_ID_4(cxcore, System, Collections, Array) *array = cx_array_new(3, (cx_uint)sizeof(cx_int));
+    struct cxcore_System_Collections_Array *array = cx_array_new(3, (cx_uint)sizeof(cx_int));
     cx_int *first = (cx_int *)cx_array_at(array, 0, (cx_uint)sizeof(cx_int));
     cx_int *last = (cx_int *)cx_array_at(array, 2, (cx_uint)sizeof(cx_int));
     assert(array->_length == 3);
@@ -142,33 +142,32 @@ static void test_array(void) {
     assert(cx_array_at(array, 2, 0) == CX_NULL);
     assert(cx_array_at(CX_NULL, 0, (cx_uint)sizeof(cx_int)) == CX_NULL);
     {
-        struct CX_ID_4(cxcore, System, Collections, Array) *empty = cx_array_new(0, 0);
+        struct cxcore_System_Collections_Array *empty = cx_array_new(0, 0);
         assert(empty->_data == CX_NULL);
         assert(cx_array_at(empty, 0, 0) == CX_NULL);
-        CX_ID_4(cxcore, System, Memory, Free)(empty);
+        cxcore_System_Memory_Free(empty);
     }
 
-    CX_ID_4(cxcore, System, Memory, Free)(array->_data);
-    CX_ID_4(cxcore, System, Memory, Free)(array);
+    cxcore_System_Memory_Free(array->_data);
+    cxcore_System_Memory_Free(array);
 }
 
 static void test_nullable(void) {
-    struct CX_ID_3(cxcore, System, Nullable) nullable;
+    struct cxcore_System_Nullable nullable;
     cx_int value = 42;
-    CX_ID_4(cxcore, System, Nullable, __constructor)(&nullable, CX_NULL);
-    assert(!CX_ID_5(cxcore, System, Nullable, HasValue, __const_get)(&nullable));
-    CX_ID_5(cxcore, System, Nullable, Value, __set)(&nullable, &value);
-    assert(CX_ID_5(cxcore, System, Nullable, HasValue, __const_get)(&nullable));
+    cxcore_System_Nullable___constructor(&nullable, CX_NULL);
+    assert(!cxcore_System_Nullable_HasValue___const_get(&nullable));
+    cxcore_System_Nullable_Value___set(&nullable, &value);
+    assert(cxcore_System_Nullable_HasValue___const_get(&nullable));
     assert(nullable._obj == &value);
     {
-        struct CX_ID_3(cxcore, System, Nullable) copied;
+        struct cxcore_System_Nullable copied;
         cx_int *storage;
-        CX_ID_5(cxcore, System, Nullable, Value, __const_get)(&nullable, &copied);
+        cxcore_System_Nullable_Value___const_get(&nullable, &copied);
         assert(copied._obj == &value);
-        storage = (cx_int *)CX_ID_4(cxcore, System, Nullable,
-                                    CreateValueStorage)(&value, (cx_uint)sizeof(value));
+        storage = (cx_int *)cxcore_System_Nullable_CreateValueStorage(&value, (cx_uint)sizeof(value));
         assert(storage != &value && *storage == value);
-        CX_ID_4(cxcore, System, Memory, Free)(storage);
+        cxcore_System_Memory_Free(storage);
     }
 }
 
@@ -176,61 +175,61 @@ static void test_memory_helpers(void) {
     cx_byte source[3] = {1, 2, 3};
     cx_byte destination[3] = {0, 0, 0};
     cx_int nullableValue = 17;
-    cx_byte *block = (cx_byte *)CX_ID_4(cxcore, System, Memory, Alloc)(0);
+    cx_byte *block = (cx_byte *)cxcore_System_Memory_Alloc(0);
     assert(block != CX_NULL);
-    CX_ID_4(cxcore, System, Memory, Free)(block);
-    CX_ID_4(cxcore, System, Memory, Copy)(NULL, NULL, 0);
-    CX_ID_4(cxcore, System, Memory, Copy)(destination, source, 3);
+    cxcore_System_Memory_Free(block);
+    cxcore_System_Memory_Copy(NULL, NULL, 0);
+    cxcore_System_Memory_Copy(destination, source, 3);
     assert(memcmp(destination, source, sizeof(source)) == 0);
     {
-        block = (cx_byte *)CX_ID_4(cxcore, System, Nullable, CreateValueStorage)(
+        block = (cx_byte *)cxcore_System_Nullable_CreateValueStorage(
             &nullableValue, (cx_uint)sizeof(nullableValue));
         assert(*(cx_int *)block == nullableValue);
-        CX_ID_4(cxcore, System, Memory, Free)(block);
+        cxcore_System_Memory_Free(block);
     }
-    block = (cx_byte *)CX_ID_4(cxcore, System, Memory, Alloc)(3);
+    block = (cx_byte *)cxcore_System_Memory_Alloc(3);
     block[0] = 9;
-    block = (cx_byte *)CX_ID_4(cxcore, System, Memory, Realloc)(block, 8);
+    block = (cx_byte *)cxcore_System_Memory_Realloc(block, 8);
     assert(block[0] == 9);
-    assert(CX_ID_4(cxcore, System, Memory, Realloc)(block, 0) == CX_NULL);
+    assert(cxcore_System_Memory_Realloc(block, 0) == CX_NULL);
 }
 
 static void test_object_constructor(void) {
-    struct CX_ID_3(cxcore, System, Object) value;
+    struct cxcore_System_Object value;
     cx_uint fieldCount = 0;
     const struct cx_reflection_field *fields;
-    CX_ID_4(cxcore, System, Object, __constructor)(&value);
+    cxcore_System_Object___constructor(&value);
     assert(value.__vtable != CX_NULL);
     assert(value._box == CX_NULL);
     assert(CX_GET_TYPEINFO(&value).Size == sizeof(value));
     fields = cx_reflection_fields(
-        &CX_ID_4(cxcore, System, Object, __typeinfo), &fieldCount);
+        &cxcore_System_Object___typeinfo, &fieldCount);
     assert(fieldCount == 1 && strcmp(fields[0].name, "_box") == 0);
 }
 
 static void test_public_runtime_constants(void) {
-    assert(CX_ID_4(cxcore, System, Int, MinValue) < 0);
-    assert(CX_ID_4(cxcore, System, Int, MaxValue) > 0);
-    assert(CX_ID_4(cxcore, System, Bool, FalseString) != CX_NULL);
-    assert(CX_ID_4(cxcore, System, Bool, TrueString) != CX_NULL);
+    assert(cxcore_System_Int_MinValue < 0);
+    assert(cxcore_System_Int_MaxValue > 0);
+    assert(cxcore_System_Bool_FalseString != CX_NULL);
+    assert(cxcore_System_Bool_TrueString != CX_NULL);
 }
 
 static void test_reflection_function_info(void) {
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *stringType =
-        &CX_ID_4(cxcore, System, String, __typeinfo);
-    const struct CX_ID_4(cxcore, System, Reflection, TypeInfo) *equalsParameterTypes[] = {
-        &CX_ID_4(cxcore, System, String, __typeinfo),
+    const struct cxcore_System_Reflection_TypeInfo *stringType =
+        &cxcore_System_String___typeinfo;
+    const struct cxcore_System_Reflection_TypeInfo *equalsParameterTypes[] = {
+        &cxcore_System_String___typeinfo,
     };
     const struct cx_reflection_function *toString = cx_reflection_find_function(
         stringType, "ToString", 0, CX_NULL);
     const struct cx_reflection_function *equalOperator = cx_reflection_find_function(
         stringType, "__cx_operator_equal", 1, equalsParameterTypes);
-    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) info =
+    struct cxcore_System_Reflection_FunctionInfo info =
         cx_reflection_get_function_info(toString);
-    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) equalsInfo =
+    struct cxcore_System_Reflection_FunctionInfo equalsInfo =
         cx_reflection_get_function_info(equalOperator);
-    struct CX_ID_4(cxcore, System, Reflection, FunctionParamInfo) *parameter;
-    struct CX_ID_4(cxcore, System, Reflection, FunctionInfo) empty =
+    struct cxcore_System_Reflection_FunctionParamInfo *parameter;
+    struct cxcore_System_Reflection_FunctionInfo empty =
         cx_reflection_get_function_info(CX_NULL);
 
     assert(toString != CX_NULL);
@@ -243,8 +242,8 @@ static void test_reflection_function_info(void) {
     assert(info.Params == CX_NULL);
 
     assert(equalsInfo.Params != CX_NULL && equalsInfo.Params->_length == 1);
-    parameter = (struct CX_ID_4(cxcore, System, Reflection, FunctionParamInfo) *)
-        cx_array_at((struct CX_ID_4(cxcore, System, Collections, Array) *)equalsInfo.Params,
+    parameter = (struct cxcore_System_Reflection_FunctionParamInfo *)
+        cx_array_at((struct cxcore_System_Collections_Array *)equalsInfo.Params,
                     0, (cx_uint)sizeof(*parameter));
     assert(parameter->Type.Hash == stringType->Hash);
     assert(parameter->Name != CX_NULL && parameter->Name->_length == strlen("other"));
@@ -252,6 +251,121 @@ static void test_reflection_function_info(void) {
 
     assert(empty.Flags == 0 && empty.Offset == 0 && empty.Name == CX_NULL &&
            empty.Params == CX_NULL && empty.ReturnType.Hash == 0);
+
+    {
+        const struct cx_reflection_function *builder_to_string =
+            cx_reflection_find_function(
+                &cxcore_System_StringBuilder___typeinfo, "ToString", 0, CX_NULL);
+        struct cxcore_System_Reflection_FunctionInfo builder_info =
+            cx_reflection_get_function_info(builder_to_string);
+        assert(builder_to_string != CX_NULL);
+        assert((builder_info.Flags & CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE) != 0u);
+    }
+
+    {
+        const struct cxcore_System_Reflection_TypeInfo *convert_parameters[] = {
+            &cxcore_System_Object___typeinfo,
+        };
+        const struct cx_reflection_function *convert_value =
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_TypeInfo___typeinfo,
+                "ConvertValue", 1, convert_parameters);
+        assert(convert_value != CX_NULL);
+        assert((convert_value->flags & CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE) != 0u);
+    }
+
+    {
+        const struct cxcore_System_Reflection_TypeInfo *read_array_parameters[] = {
+            &cxcore_System_Reflection_TypeInfo___typeinfo,
+            &cxcore_System_UInt___typeinfo,
+            &cxcore_System_Object___typeinfo,
+            &cxcore_System_UInt___typeinfo,
+        };
+        const struct cx_reflection_function *read_function_array =
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "ReadFunctionArray", 4, read_array_parameters);
+        assert(read_function_array != CX_NULL);
+        assert((read_function_array->flags &
+                CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE) != 0u);
+    }
+
+    {
+        const struct cxcore_System_Reflection_TypeInfo *uint_parameters[] = {
+            &cxcore_System_UInt___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *type_parameters[] = {
+            &cxcore_System_Reflection_TypeInfo___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *type_uint_parameters[] = {
+            &cxcore_System_Reflection_TypeInfo___typeinfo,
+            &cxcore_System_UInt___typeinfo,
+        };
+        const struct cx_reflection_function *functions[] = {
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "GetReference", 1, uint_parameters),
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "GetAnnotation", 1, uint_parameters),
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "GetGenericArguments", 1, type_parameters),
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "CanReadFunctionArray", 2, type_uint_parameters),
+            cx_reflection_find_function(
+                &cxcore_System_Reflection_ModuleInfo___typeinfo,
+                "GetFunctionArrayElementType", 2, type_uint_parameters),
+        };
+        size_t index;
+        for (index = 0; index < sizeof(functions) / sizeof(functions[0]); ++index) {
+            assert(functions[index] != CX_NULL);
+            assert((functions[index]->flags &
+                    CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE) != 0u);
+        }
+    }
+
+    {
+        const struct cxcore_System_Reflection_TypeInfo *type_parameters[] = {
+            &cxcore_System_Reflection_TypeInfo___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *ulong_parameters[] = {
+            &cxcore_System_ULong___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *uint_parameters[] = {
+            &cxcore_System_UInt___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *two_uint_parameters[] = {
+            &cxcore_System_UInt___typeinfo,
+            &cxcore_System_UInt___typeinfo,
+        };
+        const struct cxcore_System_Reflection_TypeInfo *object_parameters[] = {
+            &cxcore_System_Object___typeinfo,
+        };
+#define ASSERT_TYPEINFO_NO_ESCAPE(name, count, parameters) do { \
+        const struct cx_reflection_function *function = cx_reflection_find_function( \
+            &cxcore_System_Reflection_TypeInfo___typeinfo, name, count, parameters); \
+        assert(function != CX_NULL); \
+        assert((function->flags & CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE) != 0u); \
+    } while (0)
+        ASSERT_TYPEINFO_NO_ESCAPE("GetModule", 0, CX_NULL);
+        ASSERT_TYPEINFO_NO_ESCAPE("IsAssignableFrom", 1, type_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("IsSameType", 1, type_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("IsInBaseTypeChain", 1, type_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("HasRuntimeInterface", 1, ulong_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("CreateInstance", 0, CX_NULL);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetFunction", 1, uint_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("CanInvokeFunction", 1, uint_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetFunctionCount", 0, CX_NULL);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetInterfaces", 0, CX_NULL);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetFunctionFlags", 1, uint_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetFunctionParameterCount", 1, uint_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetFunctionParameterType", 2, two_uint_parameters);
+        ASSERT_TYPEINFO_NO_ESCAPE("GetEnumerableElementType", 0, CX_NULL);
+        ASSERT_TYPEINFO_NO_ESCAPE("IsServiceSequence", 1, object_parameters);
+#undef ASSERT_TYPEINFO_NO_ESCAPE
+    }
 }
 
 int main(int argc, char **argv) {

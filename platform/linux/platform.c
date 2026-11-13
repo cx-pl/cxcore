@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #include "../platform.h"
+#ifdef CX_PLATFORM_LINUX
 
 #include <pthread.h>
 #include <stdatomic.h>
@@ -8,6 +9,10 @@
 
 static _Atomic cx_platform_thread_id cx_next_thread_id = 1;
 static _Thread_local cx_platform_thread_id cx_local_thread_id;
+
+__attribute__((noinline)) uintptr_t cx_platform_current_stack_position(void) {
+    return (uintptr_t)__builtin_frame_address(0);
+}
 
 cx_platform_thread_id cx_platform_current_thread_id(void) {
     if (cx_local_thread_id == 0) {
@@ -50,3 +55,5 @@ int cx_platform_current_stack_bounds(uintptr_t *low, uintptr_t *high) {
     *high = *low + stack_size;
     return 1;
 }
+
+#endif // CX_PLATFORM_LINUX

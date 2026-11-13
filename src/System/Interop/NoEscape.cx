@@ -1,0 +1,8 @@
+import System;
+
+namespace System.Interop;
+
+@AnnotationUsage(targets = "function")
+public final class NoEscape : System.Annotation {
+    public constructor() {}
+}

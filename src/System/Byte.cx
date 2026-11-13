@@ -1,6 +1,8 @@
 namespace System;
 
 public struct Byte {
+    public static extern byte? TryParse(string text);
+
     private byte _value;
 
     public static extern const byte MinValue;

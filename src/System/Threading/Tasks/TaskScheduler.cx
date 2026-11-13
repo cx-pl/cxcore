@@ -1,0 +1,20 @@
+namespace System.Threading.Tasks;
+
+// The executor is a cooperative, single-thread ready queue with one-shot timers.
+// Its owner is the first thread to access the scheduler. All later scheduler
+// access must use that thread. Callbacks may post work, but may not call Run or
+// RunOne recursively; nested loop entry raises System.Exception.
+public static class TaskScheduler {
+    public static extern void Post(delegate() => void continuation);
+    public static extern void PostAfter(uint milliseconds, delegate() => void continuation);
+    public static extern bool RunOne();
+    public static extern uint Run();
+    // Cancel pending external waits, discard future timers, drain ready callbacks,
+    // then report the first task fault whose result was never observed.
+    public static extern void Shutdown();
+
+    // Retain and drive one explicitly owned task on the scheduler owner thread.
+    // A pending task with no queued/timer/I/O completion path raises an exception.
+    public static extern void RunUntil(object task);
+
+}

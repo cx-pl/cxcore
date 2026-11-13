@@ -1,0 +1,4 @@
+name: ArenaJsonRequest
+type: Executable
+project_references:
+- ../../src/cxcore.cxproj

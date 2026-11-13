@@ -40,7 +40,7 @@ __declspec(noinline)
 __attribute__((noinline))
 #endif
 static void throw_managed_value(void) {
-    cx_uint *value = (cx_uint *)CX_ID_4(cxcore, System, Memory, Alloc)(sizeof(cx_uint));
+    cx_uint *value = (cx_uint *)cxcore_System_Memory_Alloc(sizeof(cx_uint));
     *value = 0xabcdef;
     cx_exception_throw(value, __FILE__, __LINE__);
 }
@@ -95,7 +95,7 @@ int main(void) {
     while (!read_flag(&worker_waiting)) { cx_gc_safepoint(); native_yield(); }
     while (cx_runtime_once_test_waiter_count(&initialized) != 1) native_yield();
     // The initializer must be able to collect while another thread waits on it.
-    (void)CX_ID_4(cxcore, System, Memory, Alloc)(32);
+    (void)cxcore_System_Memory_Alloc(32);
     cx_gc_collect();
     initialized_value = 42;
     cx_runtime_once_complete(&initialized);

@@ -1,0 +1,24 @@
+namespace System;
+
+// A reusable, synchronous allocation scope. The initial chunk is reserved by
+// the constructor and retained between Run calls until Dispose. References
+// allocated during Run are valid only until that call returns, even though the
+// backing memory is kept for reuse. Dispose this object when it is no longer
+// needed.
+public final class MemoryArena : IDisposable {
+    private ptr _nativeArena;
+    private bool _disposed;
+    private bool _running;
+
+    public extern constructor(uint initialCapacity);
+    // Adds a per-arena capacity ceiling. When maximumCapacity equals
+    // initialCapacity, the full fixed-capacity chunk is committed up front.
+    // A larger maximum allows growth up to that bound.
+    public extern constructor(uint initialCapacity, uint maximumCapacity);
+    // Runs one non-reentrant callback, clears its allocations for reuse on
+    // normal or exceptional exit, and rethrows any callback exception.
+    public extern void Run(delegate() => void action);
+    // Idempotently releases the retained chunks. A running arena cannot be
+    // disposed, and disposed arenas cannot be run again.
+    public extern void Dispose();
+}

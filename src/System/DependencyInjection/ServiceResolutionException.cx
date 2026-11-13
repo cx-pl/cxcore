@@ -1,0 +1,7 @@
+import System;
+
+namespace System.DependencyInjection;
+
+public class ServiceResolutionException : Exception {
+    public constructor(const string message) : base(message) { }
+}

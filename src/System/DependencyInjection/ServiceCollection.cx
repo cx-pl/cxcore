@@ -1,0 +1,37 @@
+import System.Collections;
+
+namespace System.DependencyInjection;
+
+public final class ServiceCollection : IServiceCollection {
+    private List<ServiceDescriptor> _descriptors;
+
+    public uint Count { const get { return _descriptors.Count; } }
+
+    public constructor() {
+        _descriptors = new List<ServiceDescriptor>();
+    }
+
+    public void Add(ServiceDescriptor descriptor) {
+        if (descriptor == null) {
+            throw new Exception("A service descriptor cannot be null.");
+        }
+        descriptor.Validate();
+        _descriptors.Add(descriptor);
+    }
+
+    public ServiceDescriptor Get(uint index) const {
+        return _descriptors.Get(index);
+    }
+
+    public IEnumerator<ServiceDescriptor> GetEnumerator() const {
+        return _descriptors.GetEnumerator();
+    }
+
+    public void RemoveAt(uint index) {
+        _descriptors.RemoveAt(index);
+    }
+
+    public void Clear() {
+        _descriptors.Clear();
+    }
+}

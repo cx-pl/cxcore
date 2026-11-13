@@ -1,0 +1,7 @@
+import System.Reflection;
+
+namespace System;
+
+public interface IServiceProvider {
+    object GetService(TypeInfo serviceType);
+}

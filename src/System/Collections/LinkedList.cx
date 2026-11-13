@@ -10,6 +10,7 @@ internal class LinkedListNode<T> {
         Previous = null;
         Next = null;
     }
+
 }
 
 public final class LinkedList<T> : ICollection<T> {
@@ -95,5 +96,10 @@ public final class LinkedListEnumerator<T> : IEnumerator<T> {
         _current = _next.Value;
         _next = _next.Next;
         return true;
+    }
+
+    public void Dispose() {
+        _next = default;
+        _current = default;
     }
 }

@@ -1,10 +1,10 @@
 # Native C interoperability contract
 
-Supported ABIs are MSVC Windows x86/x64 and GCC/Clang Linux x64. Generated CMake selects target OS, architecture and compiler, including cross compilation. It does not use the compiler host to infer C integer sizes. Other combinations fail native dependency configuration. Acceptance evidence is in CX_ROADMAP.md and the conformance/integration runners.
+Supported ABIs are MSVC Windows x86/x64 and GCC/Clang Linux x64. Generated CMake selects target OS, architecture and compiler, including cross compilation. It does not use the compiler host to infer C integer sizes. Other combinations fail native dependency configuration.
 
 ## Annotations and imports
 
-Annotations resolve exact names through namespace imports, without suffix elision. Positional constant arguments precede named `name = value` arguments; ordinary calls retain `name: value`. Unknown, duplicate, missing, nonconstant and out-of-range arguments fail binding. User annotations derive from System.Annotation. AnnotationUsage controls targets and repeatability; parameter annotations and explicit `@return:Tag` are supported. Arguments are metadata, and constructors do not run during compilation. Runtime annotation discovery/construction as annotation metadata is a later feature.
+Annotations resolve exact names through namespace imports, without suffix elision. Positional constant arguments precede named `name = value` arguments; ordinary calls retain `name: value`. Unknown, duplicate, missing, nonconstant and out-of-range arguments fail binding. User annotations derive from System.Annotation. AnnotationUsage controls targets and repeatability; parameter annotations and explicit `@return:Tag` are supported. Arguments are metadata, and constructors do not run during compilation. `ModuleInfo.AnnotationCount` and `GetAnnotation(index)` expose runtime annotation metadata, including typed constant arguments and source locations when the descriptor supplies them. Metadata access does not construct annotation objects; see [runtime-abi.md](runtime-abi.md) for descriptor formats.
 
 NativeImport applies to nongeneric extern top-level functions/static methods with native signatures. Logical library ID, exact case-sensitive symbol, convention and error policy survive project and restored source-package references. Plain extern retains the CX ABI. Raw imports need no CX forwarding export. Conflicting signatures, managed arguments, instance receivers, virtual and generic imports are rejected.
 
@@ -14,7 +14,7 @@ captureError takes an immediate TLS snapshot of errno/GetLastError before manage
 
 ## Types, layouts and memory
 
-ptr is void*. ptr<T> preserves its pointee; ptr<const T> and const ptr<T> have separate meanings. Null, address-of native locals, dereference/indexing, pointer-to-pointer parameters and explicit conversions are supported. const void borrows cannot be dereferenced. Managed objects are not addressable native records. Known stack borrows cannot be returned or passed into a parked blocking native call. Other unsafe pointer validity remains the author's responsibility.
+ptr is void*. ptr<T> preserves its pointee; ptr<const T> and const ptr<T> have separate meanings. Null, address-of native locals, dereference/indexing, pointer-to-pointer parameters and explicit conversions are supported. const void borrows cannot be dereferenced. Managed objects are not addressable native records. Known stack borrows cannot be returned or passed into a parked blocking native call. Passing one to a nonblocking native import requires `noEscape = true`, a trusted promise that the native function will not retain pointer arguments after it returns. Other unsafe pointer validity remains the author's responsibility.
 
 CLong/CULong, SizeT, PtrDiffT, IntPtr/UIntPtr, CBool and CChar use target C types. CX long remains 64-bit. Windows BOOL is an integer, CBool is _Bool, and GLboolean uses its SDK scalar mapping. NativeType scalar/handle declarations preserve SDK identity, particularly for pointer parameters. Explicit enum underlying types provide fixed native representations and checked constant ranges.
 
@@ -51,7 +51,7 @@ Noncapturing static CX functions convert explicitly to guarded ABI entry points.
 
 NativeCallback.Register<T>(closure, owner) supports captured callbacks for APIs with a void* context parameter. Registrations root closure, optional owner and failure until native unregistration succeeds and in-flight callbacks finish. Use Function<T>() and Context together. Unregister(action) stops new entries, runs the SDK unregister action, waits cooperatively, then releases roots. Failure retains roots for retry; self-unregistration is diagnosed; repeated successful unregistration is harmless. LastException survives closing. Small native context tombstones remain until process exit to make late callbacks/stale addresses fail safely; closure payloads are freed on close. APIs without context data require separately designed retained thunks.
 
-NativeImport(blocking = true) parks a native-only context; same-thread reentry and foreign callbacks use Milestone 16's GC protocol. Stack output borrows are rejected at this boundary; use NativeBuffer. Finite nonblocking imports/indirect calls run on the registered caller. An unannotated blocking indirect call must not wait for allocating foreign CX callbacks: express it as a blocking import or supported wrapper. Pure cx_gc_run_blocking still forbids CX reentry; cx_gc_run_native_call permits callbacks.
+NativeImport(blocking = true) parks a native-only context; same-thread reentry and foreign callbacks use the runtime's GC coordination protocol. Stack output borrows are rejected at this boundary; use NativeBuffer. Finite nonblocking imports/indirect calls run on the registered caller. An unannotated blocking indirect call must not wait for allocating foreign CX callbacks: express it as a blocking import or supported wrapper. Pure cx_gc_run_blocking still forbids CX reentry; cx_gc_run_native_call permits callbacks.
 
 ## Dependencies, packages and deployment
 
@@ -65,16 +65,15 @@ requirements resolve archives and include private transitive libraries; missing
 archives fail configuration. CMake SDK imports must name the matching static or
 shared targets supplied by that SDK.
 
-The independent Windows/OpenGL/MongoDB/X11 packages and package-consuming runners are in examples/native-bindings. C varargs, C++ ABI/COM, automatic marshaling, automatic header-to-CX generation, unloading and runtime annotation reflection remain later extensions.
+The independent Windows/OpenGL/MongoDB/X11 packages and package-consuming runners are in the workspace's `native-bindings/` directory. C varargs, C++ ABI/COM, automatic marshaling, automatic header-to-CX generation, and unloading are not supported.
 
-ABI policy: these features extend experimental ABI version 1. Apps check the runtime version. Before a stable release, publish architecture/SDK/toolchain constraints and increment the ABI version for incompatible layouts, representations or calling conventions. Regenerate text metadata with tools/update-text-metadata.ps1 whenever core CX declarations change.
+ABI policy: these features use experimental ABI version 1. Apps check the runtime version. Before a stable release, publish architecture/SDK/toolchain constraints and increment the ABI version for incompatible layouts, representations or calling conventions. Regenerate text metadata with tools/update-text-metadata.ps1 whenever core CX declarations change.
 
 MSVC x64 CRT longjmp normally adds SEH unwinding. CX implements its own catch/finally
 transfers and clears the target CRT jump buffer's optional SEH frame before a CX
 jump. The shared exception state and handler stack live in
-`platform/common/cxexceptions.c`; `platform/win/cxexceptions.c` owns this CRT
-adjustment, and `platform/linux/cxexceptions.c` uses ordinary `longjmp`.
+`platform/common/System/Exception.c`; `platform/win/System/Exception.c` owns this CRT
+adjustment, and `platform/linux/System/Exception.c` uses ordinary `longjmp`.
 This avoids MSVC's invalid-stack unwind failure for functions realigned for
-SDK records, while preserving CX cleanup. The ABI fixture exercises 64-byte aligned
-record arguments/returns and subsequent exceptions in static and DLL modes.
+SDK records, while preserving CX cleanup.
 See [Microsoft's x64 setjmp/longjmp convention](https://learn.microsoft.com/en-us/cpp/build/x64-calling-convention?view=msvc-170#setjmplongjmp).

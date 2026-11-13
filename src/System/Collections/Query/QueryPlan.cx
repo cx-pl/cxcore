@@ -1,0 +1,569 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+
+/// <summary>A typed, inspectable query expression node.</summary>
+/// <remarks>
+/// Provider lambda block locals use a Let node whose Name is the local name,
+/// Left is its initializer, and Right is the body that can reference it through
+/// a Variable node. Providers that support Let evaluate its initializer once
+/// and bind that value only while evaluating the body.
+/// A Conditional node stores its bool condition in ConstantValue and its true
+/// and false branches in Left and Right, respectively.
+/// </remarks>
+public final class QueryExpression<T> {
+    private string _kind;
+    private string _name;
+    private object _constantValue;
+    private object _left;
+    private object _right;
+
+    public string Kind { const get { return _kind; } }
+    public string Name { const get { return _name; } }
+    public object ConstantValue { const get { return _constantValue; } }
+    public object Left { const get { return _left; } }
+    public object Right { const get { return _right; } }
+
+    public constructor(
+        string kind,
+        string name,
+        object constantValue,
+        object left,
+        object right) {
+        _kind = kind;
+        _name = name;
+        _constantValue = constantValue;
+        _left = left;
+        _right = right;
+    }
+
+    public QueryExpression<bool> Equal(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "Equal", null, null, this, right);
+    }
+
+    public QueryExpression<bool> NotEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "NotEqual", null, null, this, right);
+    }
+
+    public QueryExpression<bool> GreaterThan(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "GreaterThan", null, null, this, right);
+    }
+
+    public QueryExpression<bool> GreaterThanOrEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "GreaterThanOrEqual", null, null, this, right);
+    }
+
+    public QueryExpression<bool> LessThan(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "LessThan", null, null, this, right);
+    }
+
+    public QueryExpression<bool> LessThanOrEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "LessThanOrEqual", null, null, this, right);
+    }
+
+    public QueryExpression<T> Add(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Add", null, null, this, right);
+    }
+
+    public QueryExpression<T> Subtract(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Subtract", null, null, this, right);
+    }
+
+    public QueryExpression<T> Multiply(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Multiply", null, null, this, right);
+    }
+
+    public QueryExpression<T> Divide(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Divide", null, null, this, right);
+    }
+
+    public QueryExpression<T> Modulo(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Modulo", null, null, this, right);
+    }
+
+    public QueryExpression<TResult> Member<TResult>(string name) const {
+        if (name == null) {
+            throw new System.ArgumentNullException("name");
+        }
+        return new QueryExpression<TResult>(
+            "MemberAccess", name, null, this, null);
+    }
+}
+
+/// <summary>Typed storage for a constant expression value.</summary>
+public final class QueryConstant<T> {
+    private T _value;
+
+    public T Value { const get { return _value; } }
+
+    public constructor(T value) {
+        _value = value;
+    }
+}
+
+/// <summary>
+/// A typed captured-value cell. Providers snapshot Value once at the start of
+/// each execution and bind that snapshot as a parameter.
+/// </summary>
+public final class QueryCapture<T> {
+    public T Value;
+
+    public constructor(T value) {
+        Value = value;
+    }
+
+    /// <summary>Creates a typed expression that refers to this live capture cell.</summary>
+    public QueryExpression<T> AsExpression(string name) const {
+        if (name == null) {
+            throw new System.ArgumentNullException("name");
+        }
+        return new QueryExpression<T>(
+            "CapturedValue", name, this, null, null);
+    }
+}
+
+/// <summary>Boolean expression composition with statically typed operands.</summary>
+public static class QueryExpressions {
+    public static QueryExpression<bool> AndAlso(
+        QueryExpression<bool> left,
+        QueryExpression<bool> right) {
+        return new QueryExpression<bool>(
+            "AndAlso", null, null, left, right);
+    }
+
+    public static QueryExpression<bool> OrElse(
+        QueryExpression<bool> left,
+        QueryExpression<bool> right) {
+        return new QueryExpression<bool>(
+            "OrElse", null, null, left, right);
+    }
+
+    public static QueryExpression<bool> Not(QueryExpression<bool> operand) {
+        return new QueryExpression<bool>(
+            "Not", null, null, operand, null);
+    }
+}
+
+/// <summary>A typed expression with one explicitly bound parameter.</summary>
+public final class QueryLambda<TParameter, TResult> {
+    private QueryExpression<TParameter> _parameter;
+    private QueryExpression<TResult> _body;
+
+    public QueryExpression<TParameter> Parameter { const get { return _parameter; } }
+    public QueryExpression<TResult> Body { const get { return _body; } }
+    public constructor(
+        QueryExpression<TParameter> parameter,
+        QueryExpression<TResult> body) {
+        _parameter = parameter;
+        _body = body;
+    }
+}
+
+/// <summary>Non-generic view used to inspect plan ancestry across projections.</summary>
+public interface IQueryPlanNode {
+    public string Kind { const get; }
+    public string SourceName { const get; }
+    public object Source { const get; }
+    public object Expression { const get; }
+}
+
+/// <summary>Validation helpers for provider plans built through public constructors.</summary>
+/// <remarks>A source node may carry an opaque provider payload; only operator nodes link to parent plans.</remarks>
+public static class QueryPlanValidator {
+    /// <summary>
+    /// Validates plan structure before provider execution. Each primary
+    /// ordering may use at most eight keys total: one primary and seven secondary.
+    /// </summary>
+    public static void Validate(IQueryPlanNode plan) {
+        if (plan == null) {
+            throw new System.ArgumentNullException("plan");
+        }
+        IQueryPlanNode current = plan;
+        uint secondaryOrderingCount = 0u;
+        while (current != null) {
+            if (current.Kind != "Source" && current.Kind != "Filter" &&
+                current.Kind != "Select" && current.Kind != "OrderBy" &&
+                current.Kind != "OrderByDescending" &&
+                current.Kind != "ThenOrderBy" &&
+                current.Kind != "ThenOrderByDescending" &&
+                current.Kind != "Skip" && current.Kind != "Take" &&
+                current.Kind != "Page") {
+                throw new System.InvalidOperationException(
+                    "Unsupported query-plan node '" + current.Kind + "'.");
+            }
+            if (current.Kind != "Source" &&
+                (current.Source as IQueryPlanNode) == null) {
+                throw new System.InvalidOperationException(
+                    "Query-plan node '" + current.Kind +
+                    "' requires a preceding query-plan source.");
+            }
+            if (current.Kind == "Source" &&
+                current.Source as IQueryPlanNode != null) {
+                throw new System.InvalidOperationException(
+                    "A query-plan source node cannot have a preceding node.");
+            }
+            if (current.Kind == "Source" &&
+                (current.SourceName == null || current.SourceName.Length == 0u)) {
+                throw new System.InvalidOperationException(
+                    "A query-plan source node requires a source name.");
+            }
+            if ((current.Kind == "Filter" || current.Kind == "Select" ||
+                current.Kind == "OrderBy" ||
+                current.Kind == "OrderByDescending" ||
+                current.Kind == "ThenOrderBy" ||
+                current.Kind == "ThenOrderByDescending") &&
+                current.Expression == null) {
+                throw new System.InvalidOperationException(
+                    "Query-plan node '" + current.Kind +
+                    "' requires a typed expression.");
+            }
+            if (current.Kind == "ThenOrderBy" ||
+                current.Kind == "ThenOrderByDescending") {
+                secondaryOrderingCount++;
+                if (secondaryOrderingCount > 7u) {
+                    throw new System.InvalidOperationException(
+                        "A query plan supports at most eight ordering keys.");
+                }
+                if (!HasPrimaryOrdering(current.Source as IQueryPlanNode)) {
+                    throw new System.InvalidOperationException(
+                        "A secondary ordering requires a preceding primary ordering.");
+                }
+            } else if (current.Kind == "OrderBy" ||
+                current.Kind == "OrderByDescending") {
+                secondaryOrderingCount = 0u;
+            }
+            current = current.Source as IQueryPlanNode;
+        }
+    }
+
+    public static bool HasPrimaryOrdering(IQueryPlanNode source) {
+        IQueryPlanNode current = source;
+        while (current != null) {
+            if (current.Kind == "OrderBy" || current.Kind == "OrderByDescending") {
+                return true;
+            }
+            current = current.Source as IQueryPlanNode;
+        }
+        return false;
+    }
+
+}
+
+/// <summary>Non-generic view of a scalar provider terminal.</summary>
+public interface IQueryScalarPlanNode {
+    public string Kind { const get; }
+    public IQueryPlanNode Source { const get; }
+    public uint Index { const get; }
+}
+
+/// <summary>A typed scalar terminal over a provider query plan.</summary>
+public final class QueryScalarPlan<TResult> : IQueryScalarPlanNode {
+    private string _kind;
+    private object _source;
+    private uint _index;
+
+    public string Kind { const get { return _kind; } }
+    public IQueryPlanNode Source { const get { return _source as IQueryPlanNode; } }
+    public uint Index { const get { return _index; } }
+
+    public constructor(string kind, object source, uint index) {
+        _kind = kind;
+        _source = source;
+        _index = index;
+    }
+}
+
+/// <summary>Validates provider scalar terminals before execution.</summary>
+public static class QueryScalarPlanValidator {
+    public static void Validate(IQueryScalarPlanNode plan) {
+        if (plan == null) {
+            throw new System.ArgumentNullException("plan");
+        }
+        if (plan.Kind != "Any" && plan.Kind != "Count" &&
+            plan.Kind != "First" && plan.Kind != "FirstOrDefault" &&
+            plan.Kind != "Last" && plan.Kind != "LastOrDefault" &&
+            plan.Kind != "Single" && plan.Kind != "SingleOrDefault" &&
+            plan.Kind != "ElementAt" &&
+            plan.Kind != "ElementAtOrDefault") {
+            throw new System.InvalidOperationException(
+                "Unsupported query scalar terminal '" + plan.Kind + "'.");
+        }
+        if (plan.Source == null) {
+            throw new System.InvalidOperationException(
+                "Query scalar terminal '" + plan.Kind +
+                "' requires a preceding query plan.");
+        }
+        QueryPlanValidator.Validate(plan.Source);
+        if ((plan.Kind == "First" || plan.Kind == "FirstOrDefault" ||
+            plan.Kind == "Last" || plan.Kind == "LastOrDefault" ||
+            plan.Kind == "ElementAt" ||
+            plan.Kind == "ElementAtOrDefault") &&
+            !QueryPlanValidator.HasPrimaryOrdering(plan.Source)) {
+            throw new System.InvalidOperationException(
+                "Query scalar terminal '" + plan.Kind +
+                "' requires an explicit ordering.");
+        }
+    }
+}
+
+/// <summary>
+/// A provider query plan. It is deliberately not IEnumerable; executing it or
+/// converting it to a local sequence must be an explicit provider operation.
+/// Source contains the provider-owned input payload on a source node and the
+/// preceding plan node on an operator node.
+/// </summary>
+public final class QueryPlan<T> : IQueryPlanNode {
+    private string _kind;
+    private string _sourceName;
+    private object _source;
+    private object _expression;
+    private uint _count;
+    private uint _secondCount;
+
+    public string Kind { const get { return _kind; } }
+    public string SourceName { const get { return _sourceName; } }
+    public object Source { const get { return _source; } }
+    public object Expression { const get { return _expression; } }
+    public uint Count { const get { return _count; } }
+    public uint SecondCount { const get { return _secondCount; } }
+
+    public constructor(
+        string kind,
+        string sourceName,
+        object source,
+        object expression,
+        uint count,
+        uint secondCount) {
+        _kind = kind;
+        _sourceName = sourceName;
+        _source = source;
+        _expression = expression;
+        _count = count;
+        _secondCount = secondCount;
+    }
+
+    public QueryPlan<T> Filter(QueryLambda<T, bool> predicate) {
+        return new QueryPlan<T>(
+            "Filter", null, this, predicate, 0u, 0u);
+    }
+
+    public QueryPlan<TResult> Select<TResult>(
+        QueryLambda<T, TResult> selector) {
+        return new QueryPlan<TResult>(
+            "Select", null, this, selector, 0u, 0u);
+    }
+
+    public QueryPlan<T> OrderBy<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "OrderBy", null, this, keySelector, 0u, 0u);
+    }
+
+    public QueryPlan<T> OrderByDescending<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "OrderByDescending", null, this, keySelector, 0u, 0u);
+    }
+
+    public QueryPlan<T> ThenOrderBy<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "ThenOrderBy", null, this, keySelector, 0u, 0u);
+    }
+
+    public QueryPlan<T> ThenOrderByDescending<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "ThenOrderByDescending", null, this, keySelector, 0u, 0u);
+    }
+
+    /// <summary>Provider-expression counterpart to local Map.</summary>
+    public QueryPlan<TResult> Map<TResult>(
+        QueryLambda<T, TResult> selector) {
+        return new QueryPlan<TResult>(
+            "Select", null, this, selector, 0u, 0u);
+    }
+
+    /// <summary>Provider-expression counterpart to local Sort.</summary>
+    public QueryPlan<T> Sort<TKey>(QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "OrderBy", null, this, keySelector, 0u, 0u);
+    }
+
+    /// <summary>Provider-expression counterpart to local SortDescending.</summary>
+    public QueryPlan<T> SortDescending<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "OrderByDescending", null, this, keySelector, 0u, 0u);
+    }
+
+    /// <summary>Provider-expression counterpart to local ThenSort.</summary>
+    public QueryPlan<T> ThenSort<TKey>(QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "ThenOrderBy", null, this, keySelector, 0u, 0u);
+    }
+
+    /// <summary>Provider-expression counterpart to local ThenSortDescending.</summary>
+    public QueryPlan<T> ThenSortDescending<TKey>(
+        QueryLambda<T, TKey> keySelector) {
+        return new QueryPlan<T>(
+            "ThenOrderByDescending", null, this, keySelector, 0u, 0u);
+    }
+
+    public QueryPlan<T> Skip(uint count) {
+        return new QueryPlan<T>(
+            "Skip", null, this, null, count, 0u);
+    }
+
+    public QueryPlan<T> Take(uint count) {
+        return new QueryPlan<T>(
+            "Take", null, this, null, count, 0u);
+    }
+
+    public QueryPlan<T> Page(uint pageIndex, uint pageSize) {
+        if (pageSize != 0u && pageIndex > 4294967295u / pageSize) {
+            throw new System.ArgumentOutOfRangeException("pageIndex");
+        }
+        uint offset = pageIndex * pageSize;
+        return new QueryPlan<T>(
+            "Page", null, this, null, offset, pageSize);
+    }
+
+    /// <summary>Creates an external-provider scalar terminal.</summary>
+    public QueryScalarPlan<bool> Any() {
+        return new QueryScalarPlan<bool>("Any", this, 0u);
+    }
+
+    /// <summary>Creates an external-provider scalar terminal with a predicate.</summary>
+    public QueryScalarPlan<bool> Any(QueryLambda<T, bool> predicate) {
+        if (predicate == null) {
+            throw new System.ArgumentNullException("predicate");
+        }
+        return Filter(predicate).Any();
+    }
+
+    /// <summary>Creates an external-provider scalar terminal.</summary>
+    public QueryScalarPlan<uint> Count() {
+        return new QueryScalarPlan<uint>("Count", this, 0u);
+    }
+
+    /// <summary>Creates an external-provider scalar terminal with a predicate.</summary>
+    public QueryScalarPlan<uint> Count(QueryLambda<T, bool> predicate) {
+        if (predicate == null) {
+            throw new System.ArgumentNullException("predicate");
+        }
+        return Filter(predicate).Count();
+    }
+
+    public QueryScalarPlan<T> First() {
+        return new QueryScalarPlan<T>("First", this, 0u);
+    }
+
+    public QueryScalarPlan<T> FirstOrDefault() {
+        return new QueryScalarPlan<T>("FirstOrDefault", this, 0u);
+    }
+
+    public QueryScalarPlan<T> Last() {
+        return new QueryScalarPlan<T>("Last", this, 0u);
+    }
+
+    public QueryScalarPlan<T> LastOrDefault() {
+        return new QueryScalarPlan<T>("LastOrDefault", this, 0u);
+    }
+
+    public QueryScalarPlan<T> Single() {
+        return new QueryScalarPlan<T>("Single", this, 0u);
+    }
+
+    public QueryScalarPlan<T> SingleOrDefault() {
+        return new QueryScalarPlan<T>("SingleOrDefault", this, 0u);
+    }
+
+    public QueryScalarPlan<T> ElementAt(uint index) {
+        return new QueryScalarPlan<T>("ElementAt", this, index);
+    }
+
+    public QueryScalarPlan<T> ElementAtOrDefault(uint index) {
+        return new QueryScalarPlan<T>("ElementAtOrDefault", this, index);
+    }
+}
+
+/// <summary>
+/// Provider execution is explicit and may perform I/O. Implementations can
+/// live in external libraries and own translation, parameter binding, and
+/// provider-specific execution behavior.
+/// </summary>
+public interface IQueryProvider {
+    public List<T> Execute<T>(QueryPlan<T> plan);
+}
+
+/// <summary>Optional synchronous boundary for provider scalar terminals.</summary>
+public interface IQueryScalarProvider {
+    public bool ExecuteAny(IQueryScalarPlanNode plan);
+    public uint ExecuteCount(IQueryScalarPlanNode plan);
+}
+
+/// <summary>Optional task-based provider execution for Any and Count terminals.</summary>
+/// <remarks>
+/// Implementations observe cancellation until the operation settles, and
+/// complete the returned task only after releasing provider resources.
+/// </remarks>
+public interface IAsyncQueryScalarProvider {
+    public Task<bool> ExecuteAnyAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+    public Task<uint> ExecuteCountAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>Optional provider-owned execution for value-returning scalar terminals.</summary>
+/// <remarks>
+/// Providers validate the scalar plan before execution and define their own
+/// source and expression semantics. First, Last, and ElementAt plans require
+/// explicit ordering; Single must detect zero and multiple results according
+/// to its default or non-default form.
+/// </remarks>
+public interface IQueryPositionScalarProvider<T> {
+    public T ExecutePosition(IQueryScalarPlanNode plan);
+}
+
+/// <summary>Optional task-based execution for value-returning scalar terminals.</summary>
+/// <remarks>
+/// Implementations observe cancellation until the operation settles and
+/// validate terminal-specific empty, bounds, and cardinality behavior.
+/// </remarks>
+public interface IAsyncQueryPositionScalarProvider<T> {
+    public Task<T> ExecutePositionAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>
+/// Nonblocking provider execution. Providers may be supplied by external
+/// libraries. ExecuteAsync observes cancellation through completion and settles
+/// its task only after releasing resources. Stream defers opening work until the
+/// consumer advances its async enumerator; providers observe the token passed to
+/// GetAsyncEnumerator and release resources on completion, faults, cancellation,
+/// and partial-consumer disposal. Implementations must not block on async work.
+/// </summary>
+public interface IAsyncQueryProvider {
+    public Task<List<T>> ExecuteAsync<T>(
+        QueryPlan<T> plan,
+        CancellationToken cancellationToken);
+
+    public IAsyncEnumerable<T> Stream<T>(QueryPlan<T> plan);
+}
+

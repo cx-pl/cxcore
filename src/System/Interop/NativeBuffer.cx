@@ -1,3 +1,5 @@
+import System.Interop;
+
 namespace System.Interop;
 
 // Owns malloc storage. Dispose is explicit and idempotent; GC timing does not
@@ -10,10 +12,16 @@ public final class NativeBuffer {
     public ulong ByteLength { extern const get; }
     public static extern NativeBuffer Allocate(ulong byteLength);
     public static extern NativeBuffer AllocateAligned(ulong byteLength, uint alignment);
-    public static extern NativeBuffer FromUtf8(string value, bool terminated = true);
-    public static extern NativeBuffer FromUtf16(System.WideString value, bool terminated = true);
-    public extern string ToUtf8String(uint byteLength) const;
-    public extern System.WideString ToWideString(uint codeUnitLength) const;
-    public extern void Dispose();
-    public static unsafe extern void Copy(ptr destination, ptr source, ulong byteLength);
+    @NoEscape public static extern NativeBuffer FromUtf8(string value, bool terminated = true);
+    @NoEscape public static extern NativeBuffer FromUtf16(System.WideString value, bool terminated = true);
+    public extern byte ReadByte(ulong byteOffset) const;
+    @NoEscape public extern void WriteByte(ulong byteOffset, byte value);
+    public extern uint ReadFromStandardInput(ulong byteOffset, uint length);
+    public extern uint WriteToStandardOutput(ulong byteOffset, uint length);
+    public extern void CopyTo(NativeBuffer destination, ulong sourceOffset,
+        ulong destinationOffset, ulong byteLength) const;
+    @NoEscape public extern string ToUtf8String(uint byteLength) const;
+    @NoEscape public extern System.WideString ToWideString(uint codeUnitLength) const;
+    @NoEscape public extern void Dispose();
+    @NoEscape public static unsafe extern void Copy(ptr destination, ptr source, ulong byteLength);
 }

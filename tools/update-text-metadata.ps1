@@ -1,4 +1,4 @@
-param([string] $CompilerDll = (Join-Path $PSScriptRoot '../../cxc/src/bin/Debug/net10.0/CxCompiler.dll'))
+param([string] $CompilerDll = (Join-Path $PSScriptRoot '../../cxc/src/CxCompiler/bin/Debug/net10.0/CxCompiler.dll'))
 $ErrorActionPreference = 'Stop'
 $runtimeRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $workspaceRoot = (Resolve-Path (Join-Path $runtimeRoot '..')).Path
@@ -13,11 +13,18 @@ foreach ($source in @('System/WChar.cx','System/WideString.cx','System/EncodingE
 & dotnet $CompilerDll -o $output (Join-Path $sources 'api.cxproj')
 if ($LASTEXITCODE -ne 0) { throw 'Text metadata generation failed' }
 $metadata = [IO.File]::ReadAllText((Join-Path $output 'cxcore.c'))
+. (Join-Path $PSScriptRoot 'ConvertTo-CoreMetadataFragment.ps1')
+$metadata = ConvertTo-CoreMetadataFragment $metadata
 $metadata = $metadata.Replace('#include "cxcore.internal.h"', '#include "cxcore.h"').Replace('CX_CXCORE_API', 'CX_API')
 $metadata = $metadata.Replace('#if !defined(CX_STATIC_LINK)', '#if defined(CX_DYNAMIC_MODULE)')
 $metadata = $metadata.Replace('__cx_module_init_CXCORE', '__cx_text_init_CXCORE').Replace('__namespace', '__text_namespace')
+$metadata = $metadata.Replace('struct void* cxcore_System_Interop_NativeCallbackRegistration_LastException___const_get', 'struct cxcore_System_Exception* cxcore_System_Interop_NativeCallbackRegistration_LastException___const_get')
+$metadata = $metadata.Replace('CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, CX_NULL, "LastException"', 'CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Exception___typeinfo, "LastException"')
 [IO.File]::WriteAllText((Join-Path $runtimeRoot 'src/cxtext.metadata.c'), $metadata, [Text.UTF8Encoding]::new($false))
 $header = [IO.File]::ReadAllText((Join-Path $output 'cxcore.internal.h'))
-$header = $header.Replace('_CXCORE_INTERNAL_H_', '_CXTEXT_API_H_').Replace('__cx_module_init_CXCORE', '__cx_text_init_CXCORE')
+$header = $header.Replace('__CXCORE_INTERNAL_H__', '__CXTEXT_API_H__').Replace('__cx_module_init_CXCORE', '__cx_text_init_CXCORE')
+$header = $header.Replace('struct void* _lastException;', 'struct cxcore_System_Exception* _lastException;')
+$header = $header.Replace('struct void* cxcore_System_Interop_NativeCallbackRegistration_LastException___const_get', 'struct cxcore_System_Exception* cxcore_System_Interop_NativeCallbackRegistration_LastException___const_get')
+$header = [regex]::Replace($header, '(?m)[ \t]+(?=\r?$)', '')
 [IO.File]::WriteAllText((Join-Path $runtimeRoot 'src/cxtext.api.h'), $header, [Text.UTF8Encoding]::new($false))
 Write-Output "Updated text metadata from CX declarations. Scratch files: $scratch"

@@ -1,3 +1,5 @@
+import System.Interop;
+
 namespace System;
 
 public final class String : Object {
@@ -11,7 +13,7 @@ public final class String : Object {
     }
 
     public override extern string ToString() const;
-    public extern WideString ToWideString() const;
+    @NoEscape public extern WideString ToWideString() const;
     public override extern bool Equals(object other) const;
     public override extern int GetHashCode() const;
     public extern bool operator ==(string other) const;

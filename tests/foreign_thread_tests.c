@@ -18,14 +18,14 @@ static struct {
 
 static void foreign_worker(void) {
     cx_bool attached = cx_gc_enter_thread();
-    cx_ulong id = CX_ID_6(cxcore, System, Threading, Thread, CurrentId, __const_get)();
+    cx_ulong id = cxcore_System_Threading_Thread_CurrentId___const_get();
     cx_bool nested = cx_gc_enter_thread();
     if (!attached || nested) context.failed = 1;
-    context.retained = CX_ID_4(cxcore, System, Memory, Alloc)(sizeof(cx_uint));
+    context.retained = cxcore_System_Memory_Alloc(sizeof(cx_uint));
     *(cx_uint *)context.retained = 0xabc123;
     context.root = cx_gc_add_root(&context.retained, (cx_uint)sizeof(context.retained));
     cx_gc_leave_thread(nested);
-    if (CX_ID_6(cxcore, System, Threading, Thread, CurrentId, __const_get)() != id) context.failed = 2;
+    if (cxcore_System_Threading_Thread_CurrentId___const_get() != id) context.failed = 2;
     cx_gc_leave_thread(attached);
 }
 #ifdef _WIN32

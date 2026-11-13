@@ -1,0 +1,343 @@
+import System;
+import System.Interop;
+import System.Collections;
+
+public static class CleanupState {
+    public static int NativeBufferDisposeCalls;
+}
+
+public class PartiallyConstructedResource {
+    public Payload Value;
+
+    public constructor() {
+        NativeBuffer temporary = NativeBuffer.Allocate(1ul);
+        Value = new Payload(53);
+        GC.Collect();
+        try {
+            Exception failure = null;
+            Memory.WithDurable(() => {
+                failure = new Exception("partial construction failure");
+            });
+            throw failure;
+        } finally {
+            GC.Collect();
+            temporary.Dispose();
+            CleanupState.NativeBufferDisposeCalls += 1;
+        }
+    }
+}
+
+public static class RequestCache {
+    public static int[] LatestResult;
+    public static string LatestResponse;
+    public static Payload LatestPayload;
+}
+
+public static class BackgroundWorkQueue {
+    // The queue may outlive the request that produced this payload. Enqueue
+    // only a durable copy; never retain the request arena's original object.
+    public static Queue<Payload> PendingPayloads;
+}
+
+public class Payload {
+    public int Value;
+    public Payload Next;
+    public Payload Alias;
+
+    public constructor(int value) {
+        Value = value;
+    }
+
+    public Payload Clone(CloneContext context) {
+        object existing = context.Find(this);
+        if (existing != null) return (Payload)existing;
+
+        Payload copy = new Payload(Value);
+        context.Register(this, copy);
+        if (Next != null) copy.Next = Next.Clone(context);
+        if (Alias != null) copy.Alias = Alias.Clone(context);
+        return copy;
+    }
+}
+
+public int BuildDurableRequestResult(int[] requestFields) {
+    Memory.WithArena(() => {
+        int[] parsedFields = new int[requestFields.Length];
+        for (uint index = 0u; index < requestFields.Length; index += 1u) {
+            parsedFields[index] = requestFields[index];
+        }
+
+        // Copy the selected response data before publishing it beyond the scope.
+        Memory.WithDurable(() => {
+            int[] durableFields = new int[parsedFields.Length];
+            for (uint index = 0u; index < parsedFields.Length; index += 1u) {
+                durableFields[index] = parsedFields[index];
+            }
+            RequestCache.LatestResult = durableFields;
+        });
+    });
+
+    int total = 0;
+    foreach (int field in RequestCache.LatestResult) {
+        total += field;
+    }
+    return total;
+}
+
+public int ParseAndSerializeRequest(string requestText) {
+    uint selectedCount = 0u;
+    int selectedSum = 0;
+    Memory.WithArena(() => {
+        // This small request fixture accepts positive decimal values separated
+        // by any non-digit character, as in "values=7,11,13".
+        WideString wideRequest = requestText.ToWideString();
+        int[] parsedValues = new int[requestText.Length];
+        int[] validatedValues = new int[requestText.Length];
+        int[] selectedValues = new int[requestText.Length];
+        uint parsedCount = 0u;
+        int currentValue = 0;
+        bool hasDigits = false;
+
+        // The sample is ASCII, so its UTF-8 byte length is also an upper bound
+        // for the number of scalar positions. ScalarAt returns -1 past the end.
+        for (uint index = 0u; index < requestText.Length; index += 1u) {
+            char character = wideRequest.ScalarAt(index);
+            if (character >= '0' && character <= '9') {
+                currentValue = currentValue * 10 + (int)character - (int)'0';
+                hasDigits = true;
+            } else if (hasDigits) {
+                parsedValues[parsedCount] = currentValue;
+                parsedCount += 1u;
+                currentValue = 0;
+                hasDigits = false;
+            }
+        }
+        if (hasDigits) {
+            parsedValues[parsedCount] = currentValue;
+            parsedCount += 1u;
+        }
+
+        for (uint index = 0u; index < parsedCount; index += 1u) {
+            int value = parsedValues[index];
+            if (value > 0) validatedValues[index] = value * 2;
+        }
+        for (uint index = 0u; index < parsedCount; index += 1u) {
+            int value = validatedValues[index];
+            if (value > 0) {
+                selectedValues[selectedCount] = value;
+                selectedCount += 1u;
+                selectedSum += value;
+            }
+        }
+
+        // Build a durable response while the request arrays remain available.
+        Memory.WithDurable(() => {
+            StringBuilder response = new StringBuilder(32u);
+            response.Append("count=").Append(selectedCount)
+                .Append(";sum=").Append(selectedSum);
+            RequestCache.LatestResponse = response.ToString();
+        });
+    });
+    return selectedSum;
+}
+
+public void ExerciseArenaResourceCleanup(bool throwAfterWrite) {
+    Memory.WithArena(() => {
+        NativeBuffer scratch = NativeBuffer.Allocate(1ul);
+        try {
+            scratch.WriteByte(0ul, (byte)42);
+            if (throwAfterWrite) {
+                Exception durableException = null;
+                Memory.WithDurable(() => {
+                    durableException = new Exception("request cleanup probe");
+                });
+                throw durableException;
+            }
+        } finally {
+            GC.Collect();
+            scratch.Dispose();
+            CleanupState.NativeBufferDisposeCalls += 1;
+        }
+    });
+}
+
+public void ExerciseEarlyReturnCleanup() {
+    Memory.WithArena(() => {
+        NativeBuffer scratch = NativeBuffer.Allocate(1ul);
+        try {
+            return;
+        } finally {
+            GC.Collect();
+            scratch.Dispose();
+            CleanupState.NativeBufferDisposeCalls += 1;
+        }
+    });
+}
+
+public void ExerciseLoopControlCleanup() {
+    Memory.WithArena(() => {
+        for (uint index = 0u; index < 4u; index += 1u) {
+            NativeBuffer scratch = NativeBuffer.Allocate(1ul);
+            try {
+                if (index == 0u) continue;
+                if (index == 2u) break;
+            } finally {
+                GC.Collect();
+                scratch.Dispose();
+                CleanupState.NativeBufferDisposeCalls += 1;
+            }
+        }
+    });
+}
+
+public void ExerciseCleanupFailure() {
+    Memory.WithArena(() => {
+        NativeBuffer primary = NativeBuffer.Allocate(1ul);
+        NativeBuffer secondary = NativeBuffer.Allocate(1ul);
+        try {
+            try {
+                Exception originalException = null;
+                Memory.WithDurable(() => {
+                    originalException = new Exception("request failure");
+                });
+                throw originalException;
+            } finally {
+                GC.Collect();
+                primary.Dispose();
+                CleanupState.NativeBufferDisposeCalls += 1;
+                Exception cleanupException = null;
+                Memory.WithDurable(() => {
+                    cleanupException = new Exception("cleanup failure");
+                });
+                throw cleanupException;
+            }
+        } finally {
+            GC.Collect();
+            secondary.Dispose();
+            CleanupState.NativeBufferDisposeCalls += 1;
+        }
+    });
+}
+
+public bool ExercisePartialConstructionCleanup() {
+    bool exceptionCaught = false;
+    try {
+        Memory.WithArena(() => {
+            PartiallyConstructedResource incomplete =
+                new PartiallyConstructedResource();
+        });
+    } catch (Exception) {
+        exceptionCaught = true;
+    }
+    return exceptionCaught;
+}
+
+public int SumFrameSamples(MemoryArena arena, int[] samples) {
+    int total = 0;
+    arena.Run(() => {
+        int[] scratch = new int[samples.Length];
+        for (uint index = 0u; index < samples.Length; index += 1u) {
+            scratch[index] = samples[index];
+        }
+        foreach (int sample in scratch) {
+            total += sample;
+        }
+    });
+    return total;
+}
+
+public int Main() {
+    Payload durableGraph = null;
+    bool copyIsDistinct = false;
+    Memory.WithArena(() => {
+        Payload first = new Payload(17);
+        Payload second = new Payload(29);
+        first.Next = second;
+        first.Alias = second;
+        second.Next = first;
+        second.Alias = first;
+
+        // Keep the source-to-copy map temporary; copied nodes use the GC heap.
+        CloneContext context = new CloneContext();
+        Memory.WithDurable(() => {
+            durableGraph = first.Clone(context);
+            copyIsDistinct = !Object.ReferenceEquals(durableGraph, first) &&
+                !Object.ReferenceEquals(durableGraph.Next, second);
+            Queue<Payload> pendingPayloads = new Queue<Payload>();
+            pendingPayloads.Enqueue(durableGraph);
+            RequestCache.LatestPayload = durableGraph;
+            BackgroundWorkQueue.PendingPayloads = pendingPayloads;
+        });
+    });
+    GC.Collect();
+    Queue<Payload> queuedPayloads = BackgroundWorkQueue.PendingPayloads;
+    if (!copyIsDistinct || durableGraph == null || durableGraph.Value != 17 ||
+        durableGraph.Next == null || durableGraph.Next.Value != 29 ||
+        !Object.ReferenceEquals(durableGraph.Next, durableGraph.Alias) ||
+        !Object.ReferenceEquals(durableGraph.Next.Next, durableGraph) ||
+        !Object.ReferenceEquals(RequestCache.LatestPayload, durableGraph) ||
+        queuedPayloads == null ||
+        !Object.ReferenceEquals(queuedPayloads.Peek(), durableGraph)) return 3;
+
+    int[] requestFields = new int[3];
+    requestFields[0] = 7;
+    requestFields[1] = 11;
+    requestFields[2] = 13;
+    if (BuildDurableRequestResult(requestFields) != 31) return 1;
+    if (ParseAndSerializeRequest("values=7,11,13") != 62 ||
+        RequestCache.LatestResponse != "count=3;sum=62") return 5;
+    CleanupState.NativeBufferDisposeCalls = 0;
+    ExerciseArenaResourceCleanup(false);
+    if (CleanupState.NativeBufferDisposeCalls != 1) return 6;
+    ExerciseEarlyReturnCleanup();
+    if (CleanupState.NativeBufferDisposeCalls != 2) return 8;
+    ExerciseLoopControlCleanup();
+    if (CleanupState.NativeBufferDisposeCalls != 5) return 13;
+    bool cleanupExceptionCaught = false;
+    try {
+        ExerciseArenaResourceCleanup(true);
+    } catch (Exception) {
+        cleanupExceptionCaught = true;
+    }
+    if (!cleanupExceptionCaught || CleanupState.NativeBufferDisposeCalls != 6) return 7;
+    cleanupExceptionCaught = false;
+    try {
+        ExerciseCleanupFailure();
+    } catch (Exception) {
+        cleanupExceptionCaught = true;
+    }
+    if (!cleanupExceptionCaught || CleanupState.NativeBufferDisposeCalls != 8) return 9;
+    if (!ExercisePartialConstructionCleanup() ||
+        CleanupState.NativeBufferDisposeCalls != 9) return 10;
+
+    int[] frameSamples = new int[4];
+    frameSamples[0] = 2;
+    frameSamples[1] = 3;
+    frameSamples[2] = 5;
+    frameSamples[3] = 7;
+    MemoryArena frameArena = new MemoryArena(4096u);
+    try {
+        if (SumFrameSamples(frameArena, frameSamples) != 17) return 4;
+        GC.Collect();
+
+        int[] nextFrameSamples = new int[4];
+        nextFrameSamples[0] = 11;
+        nextFrameSamples[1] = 13;
+        nextFrameSamples[2] = 17;
+        nextFrameSamples[3] = 19;
+        if (SumFrameSamples(frameArena, nextFrameSamples) != 60) return 11;
+        GC.Collect();
+
+        int[] finalFrameSamples = new int[4];
+        finalFrameSamples[0] = 23;
+        finalFrameSamples[1] = 29;
+        finalFrameSamples[2] = 31;
+        finalFrameSamples[3] = 37;
+        if (SumFrameSamples(frameArena, finalFrameSamples) != 120) return 12;
+    } finally {
+        frameArena.Dispose();
+    }
+
+    Console.WriteLine("arena scopes pass");
+    return 0;
+}

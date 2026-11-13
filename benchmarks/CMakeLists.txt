@@ -13,13 +13,15 @@ else()
 endif()
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory("${CXCORE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/cxcore")
+target_compile_definitions(cxcore PRIVATE CXCORE_ARENA_BENCHMARK)
 
 add_executable(cxcore_benchmarks cxcore_benchmarks.c)
 target_link_libraries(cxcore_benchmarks PRIVATE cxcore)
 target_include_directories(cxcore_benchmarks PRIVATE
-    "${CXCORE_SOURCE_DIR}/inc"
+    "${CXCORE_SOURCE_DIR}/includelude"
     "${CXCORE_SOURCE_DIR}/src")
 target_compile_features(cxcore_benchmarks PRIVATE c_std_11)
+target_compile_definitions(cxcore_benchmarks PRIVATE CXCORE_ARENA_BENCHMARK)
 if(MSVC)
     target_compile_options(cxcore_benchmarks PRIVATE /W4 /WX /wd4100)
 endif()

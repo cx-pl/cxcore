@@ -4,3 +4,5 @@ target_sources(cxcore PRIVATE
     Thread.c
     Thread.internal.h
     Threading.internal.h)
+
+add_subdirectory(Tasks)

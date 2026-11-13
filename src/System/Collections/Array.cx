@@ -1,10 +1,17 @@
 namespace System.Collections;
 
 public final class Array<T> : ICollection<T> {
-    public uint Length { const get { return this.Length; } }
+    private uint _length;
+    private ptr _data;
+
+    public uint Length { const get { return _length; } }
     public uint Count { const get { return Length; } }
 
     public constructor(uint length) {}
+
+    internal Array<T> CreateForOwner(uint length) {
+        return new Array<T>(length);
+    }
 
     public T Get(uint index) const {
         return this[index];
@@ -92,4 +99,6 @@ public final class ArrayEnumerator<T> : IEnumerator<T> {
         _nextIndex += 1u;
         return true;
     }
+
+    public void Dispose() {}
 }

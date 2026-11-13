@@ -1,0 +1,120 @@
+import System.Reflection;
+import System;
+
+namespace System.DependencyInjection;
+
+public final class ServiceDescriptor {
+    private TypeInfoHolder _serviceType;
+    private ServiceLifetime _lifetime;
+    private TypeInfoHolder _implementationType;
+    private uint _activationKind;
+    private delegate(IServiceProvider) => object _factory;
+    private object _instance;
+
+    public TypeInfo ServiceType { const get { return _serviceType.GetValue(); } }
+    public ServiceLifetime Lifetime { const get { return _lifetime; } }
+    public TypeInfo ImplementationType { const get { return _implementationType.GetValue(); } }
+    public bool HasImplementationType { const get { return _activationKind == 1u; } }
+    public delegate(IServiceProvider) => object Factory { const get { return _factory; } }
+    public object Instance { const get { return _instance; } }
+
+    public constructor(
+        TypeInfo serviceType,
+        ServiceLifetime lifetime,
+        TypeInfo implementationType) {
+        _serviceType = new TypeInfoHolder(serviceType);
+        _lifetime = lifetime;
+        _implementationType = new TypeInfoHolder(implementationType);
+        _activationKind = 1u;
+        Validate();
+    }
+
+    public constructor(
+        TypeInfo serviceType,
+        ServiceLifetime lifetime,
+        delegate(IServiceProvider) => object factory) {
+        _serviceType = new TypeInfoHolder(serviceType);
+        _lifetime = lifetime;
+        _factory = factory;
+        _activationKind = 2u;
+        Validate();
+    }
+
+    public constructor(TypeInfo serviceType, object instance) {
+        _serviceType = new TypeInfoHolder(serviceType);
+        _lifetime = ServiceLifetime.Singleton;
+        _instance = instance;
+        _activationKind = 3u;
+        Validate();
+    }
+
+    public void Validate() const {
+        TypeInfo serviceType = ServiceType;
+        if (!IsServiceType(serviceType)) {
+            throw new Exception("A service key must be a class or interface type.");
+        }
+        if (IsOpenGeneric(serviceType)) {
+            throw new Exception("Open generic service registrations are not supported.");
+        }
+        if (serviceType.IsSameType(typeof(IServiceProvider)) ||
+            serviceType.IsSameType(typeof(IServiceScopeFactory))) {
+            throw new Exception("The IServiceProvider and IServiceScopeFactory service keys are reserved.");
+        }
+        if (_lifetime != ServiceLifetime.Transient &&
+            _lifetime != ServiceLifetime.Scoped &&
+            _lifetime != ServiceLifetime.Singleton) {
+            throw new Exception("A service descriptor has an invalid lifetime.");
+        }
+
+        if (_activationKind < 1u || _activationKind > 3u) {
+            throw new Exception("A service descriptor must have exactly one activation form.");
+        }
+
+        if (_activationKind == 3u) {
+            if (_lifetime != ServiceLifetime.Singleton) {
+                throw new Exception("A supplied service instance must use singleton lifetime.");
+            }
+            if (_instance == null) {
+                throw new Exception("A supplied service instance cannot be null.");
+            }
+            if (!serviceType.IsAssignableFrom(_instance.Type)) {
+                throw new Exception("The supplied instance is not assignable to the service type.");
+            }
+            return;
+        }
+
+        if (_activationKind == 1u) {
+            TypeInfo implementationType = ImplementationType;
+            if ((implementationType.Flags & 0x00010000u) == 0u ||
+                (implementationType.Flags & 0x00000010u) != 0u ||
+                (implementationType.Flags & 0x00020000u) != 0u ||
+                (implementationType.Flags & 0x00080000u) != 0u ||
+                IsOpenGeneric(implementationType)) {
+                throw new Exception("An implementation type must be a concrete class.");
+            }
+            if (!serviceType.IsAssignableFrom(implementationType)) {
+                throw new Exception("The implementation type is not assignable to the service type.");
+            }
+        }
+
+        if (_activationKind == 2u && _factory == null) {
+            throw new Exception("A service factory cannot be null.");
+        }
+    }
+
+    private static bool IsServiceType(TypeInfo typeInfo) {
+        return (typeInfo.Flags & (0x00010000u | 0x00040000u)) != 0u;
+    }
+
+    private static bool IsOpenGeneric(TypeInfo typeInfo) {
+        if (typeInfo.GenericArity == 0u || typeInfo.GenericParams == null) {
+            return false;
+        }
+        for (uint index = 0u; index < typeInfo.GenericParams.Length; index += 1u) {
+            if ((typeInfo.GenericParams.Get(index).Flags & 0x00000080u) != 0u) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

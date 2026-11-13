@@ -9,3 +9,9 @@ build/
 .vscode/
 /.obj/
 /.bin/
+
+**/.obj/
+**/.bin/
+**/.dist/
+**/.packages/
+**/.build-*/

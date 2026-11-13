@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #endif
 
-typedef struct CX_ID_4(cxcore, System, Reflection, TypeInfo) type_info;
+typedef struct cxcore_System_Reflection_TypeInfo type_info;
 
 struct test_object {
     cx_ptr vtable;

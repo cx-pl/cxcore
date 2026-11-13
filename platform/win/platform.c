@@ -1,6 +1,13 @@
 #include "../platform.h"
+#ifdef CX_PLATFORM_WIN
 
 #include <windows.h>
+#include <intrin.h>
+
+// A separate call captures below the caller's complete frame, including saved registers.
+__declspec(noinline) uintptr_t cx_platform_current_stack_position(void) {
+    return (uintptr_t)_AddressOfReturnAddress();
+}
 
 cx_platform_thread_id cx_platform_current_thread_id(void) {
     return (cx_platform_thread_id)GetCurrentThreadId();
@@ -27,3 +34,5 @@ int cx_platform_current_stack_bounds(uintptr_t *low, uintptr_t *high) {
     *high = (uintptr_t)stack_high;
     return 1;
 }
+
+#endif // CX_PLATFORM_WIN

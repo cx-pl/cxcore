@@ -1,3 +1,5 @@
+import System.Interop;
+
 namespace System.Reflection;
 
 public struct TypeInfo {
@@ -12,12 +14,39 @@ public struct TypeInfo {
     public const uint GenericArity;
     public const FieldInfo[] Fields;
     public const FunctionInfo[] Functions;
-    private const ptr RuntimeTypeInfo;
+    private ptr RuntimeTypeInfo;
+    private ptr _module;
 
-    public extern bool IsAssignableFrom(const TypeInfo source) const;
-    public extern bool IsInBaseTypeChain(const TypeInfo source) const;
-    public extern bool HasRuntimeInterface(ulong typeHash) const;
-    public extern object CreateInstance() const;
+    /// Module defining this type, including the definition of a constructed generic type.
+    @NoEscape public extern ModuleInfo GetModule() const;
+
+    @NoEscape public extern bool IsAssignableFrom(const TypeInfo source) const;
+    @NoEscape public extern bool IsSameType(const TypeInfo other) const;
+    @NoEscape public extern bool IsInBaseTypeChain(const TypeInfo source) const;
+    @NoEscape public extern bool HasRuntimeInterface(ulong typeHash) const;
+    @NoEscape public extern object CreateInstance() const;
     public extern object CreateInstance(const object[] arguments) const;
     public extern object Invoke(object target, const string name, const object[] arguments) const;
+    @NoEscape public extern FunctionInfo GetFunction(uint index) const;
+    @NoEscape public extern bool CanInvokeFunction(uint index) const;
+    public extern object InvokeFunction(object target, uint index, const object[] arguments) const;
+    /// Converts compatible references or numeric constants, checking target ranges.
+    @NoEscape
+    public extern object ConvertValue(object value) const;
+    @NoEscape public extern uint GetFunctionCount() const;
+    @NoEscape public extern TypeInfo[] GetInterfaces() const;
+    @NoEscape public extern uint GetFunctionFlags(uint functionIndex) const;
+    @NoEscape public extern uint GetFunctionParameterCount(uint functionIndex) const;
+    @NoEscape public extern TypeInfo GetFunctionParameterType(uint functionIndex, uint parameterIndex) const;
+    @NoEscape public extern TypeInfo GetEnumerableElementType() const;
+    @NoEscape public extern bool IsServiceSequence(object value) const;
+    public extern object CreateCollectionFromSequence(object value) const;
+    public extern object InvokeConstructor(uint functionIndex, const object[] arguments) const;
+}
+
+internal final class TypeInfoHolder {
+    private TypeInfo _value;
+
+    public extern constructor(TypeInfo value);
+    public extern TypeInfo GetValue() const;
 }

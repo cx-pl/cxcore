@@ -1,6 +1,8 @@
 namespace System;
 
 public struct UInt {
+    public static extern uint? TryParse(string text);
+
     private uint _value;
 
     public static extern uint MinValue;

@@ -1,0 +1,7 @@
+namespace System.Diagnostics;
+
+/// Elapsed-time clock with an unspecified origin, independent of wall-clock changes.
+public static class MonotonicClock {
+    /// Returns monotonic microseconds. Consecutive readings may be equal.
+    public static extern ulong GetMicroseconds();
+}

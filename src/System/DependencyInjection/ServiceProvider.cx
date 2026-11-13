@@ -1,0 +1,838 @@
+import System.Collections;
+import System.Reflection;
+import System;
+
+namespace System.DependencyInjection;
+
+internal final class ServiceSequence {
+    private List<object> _values;
+
+    public constructor(List<object> values) {
+        _values = values;
+    }
+
+    public uint GetCount() const {
+        return _values.Count;
+    }
+
+    public object Get(uint index) const {
+        return _values.Get(index);
+    }
+}
+
+internal final class ResolutionContext {
+    public List<uint> Slots;
+    public List<TypeInfo> Keys;
+    public uint SingletonDepth;
+    public string CyclePath;
+
+    public constructor() {
+        Slots = new List<uint>();
+        Keys = new List<TypeInfo>();
+        SingletonDepth = 0u;
+        CyclePath = null;
+    }
+}
+
+internal final class ConstructorSelection {
+    public uint FunctionIndex;
+    public bool HasFunction;
+
+    public constructor(uint functionIndex, bool hasFunction) {
+        FunctionIndex = functionIndex;
+        HasFunction = hasFunction;
+    }
+}
+
+internal final class ActivationPlan {
+    public uint RegistrationSlot;
+    public ServiceLifetime Lifetime;
+    private TypeInfoHolder _implementationType;
+    public TypeInfo ImplementationType { const get { return _implementationType.GetValue(); } }
+    public uint FunctionIndex;
+    public bool HasFunction;
+    public Array<TypeInfoHolder> ParameterTypes;
+
+    public constructor(
+        uint registrationSlot,
+        ServiceLifetime lifetime,
+        TypeInfo implementationType,
+        ConstructorSelection selection) {
+        RegistrationSlot = registrationSlot;
+        Lifetime = lifetime;
+        _implementationType = new TypeInfoHolder(implementationType);
+        FunctionIndex = selection.FunctionIndex;
+        HasFunction = selection.HasFunction;
+        uint parameterCount = HasFunction
+            ? implementationType.GetFunctionParameterCount(FunctionIndex)
+            : 0u;
+        ParameterTypes = new Array<TypeInfoHolder>(parameterCount);
+        for (uint index = 0u; index < parameterCount; index += 1u) {
+            ParameterTypes.Set(index, new TypeInfoHolder(
+                implementationType.GetFunctionParameterType(FunctionIndex, index)));
+        }
+    }
+}
+
+public final class ServiceProvider : IServiceProvider, IServiceScopeFactory, IDisposable {
+    private List<ServiceDescriptor> _descriptors;
+    private ptr _providerRoot;
+    private ServiceProviderOptions _options;
+    private ServiceProvider _root;
+    private bool _isRoot;
+    private bool _disposed;
+    private bool _disposing;
+    private Array<object> _scopedInstances;
+    private Array<bool> _scopedCreated;
+    private Array<object> _singletonInstances;
+    private Array<bool> _singletonCreated;
+    private Array<ActivationPlan> _activationPlans;
+    private Array<bool> _activationPlanCreated;
+    private List<object> _owned;
+    private List<ServiceProvider> _activeScopes;
+    private ResolutionContext _activeContext;
+
+    public constructor(IServiceCollection services)
+        : this(services, new ServiceProviderOptions()) { }
+
+    public constructor(IServiceCollection services, ServiceProviderOptions options) {
+        if (services == null) {
+            throw new ServiceResolutionException("The service collection cannot be null.");
+        }
+        if (options == null) {
+            throw new ServiceResolutionException("Service provider options cannot be null.");
+        }
+
+        _descriptors = new List<ServiceDescriptor>();
+        for (uint index = 0u; index < services.Count; index += 1u) {
+            ServiceDescriptor descriptor = services.Get(index);
+            if (descriptor == null) {
+                throw new ServiceResolutionException("The service collection contains a null descriptor.");
+            }
+            descriptor.Validate();
+            ValidateReservedServiceType(descriptor.ServiceType);
+            _descriptors.Add(descriptor);
+        }
+
+        _options = new ServiceProviderOptions();
+        _options.ValidateScopes = options.ValidateScopes;
+        _options.ValidateOnBuild = options.ValidateOnBuild;
+        _root = this;
+        _isRoot = true;
+        _scopedInstances = new Array<object>(_descriptors.Count);
+        _scopedCreated = new Array<bool>(_descriptors.Count);
+        _singletonInstances = new Array<object>(_descriptors.Count);
+        _singletonCreated = new Array<bool>(_descriptors.Count);
+        _activationPlans = new Array<ActivationPlan>(_descriptors.Count);
+        _activationPlanCreated = new Array<bool>(_descriptors.Count);
+        _owned = new List<object>();
+        _activeScopes = new List<ServiceProvider>();
+        if (_options.ValidateOnBuild) {
+            ValidateOnBuild();
+        }
+        RootProvider();
+    }
+
+    private constructor(ServiceProvider root) {
+        _descriptors = root._descriptors;
+        _options = root._options;
+        _root = root;
+        _isRoot = false;
+        _scopedInstances = new Array<object>(_descriptors.Count);
+        _scopedCreated = new Array<bool>(_descriptors.Count);
+        _activationPlans = root._activationPlans;
+        _activationPlanCreated = root._activationPlanCreated;
+        _owned = new List<object>();
+        RootProvider();
+    }
+
+    public object GetService(TypeInfo serviceType) {
+        EnsureUsable();
+        ResolutionContext context = _root._activeContext;
+        bool isTopLevel = context == null;
+        if (isTopLevel) {
+            context = CreateResolutionContext();
+            _root._activeContext = context;
+        }
+
+        try {
+            return Resolve(serviceType, context);
+        } finally {
+            if (isTopLevel) {
+                _root._activeContext = null;
+            }
+        }
+    }
+
+    public TService GetService<TService>() where TService : class {
+        return (TService)GetService(typeof(TService));
+    }
+
+    public TService GetRequiredService<TService>() where TService : class {
+        return (TService)GetRequiredService(typeof(TService));
+    }
+
+    public IEnumerable<TService> GetServices<TService>() where TService : class {
+        List<object> services = GetServices(typeof(TService));
+        List<TService> result = new List<TService>();
+        for (uint index = 0u; index < services.Count; index += 1u) {
+            result.Add((TService)services.Get(index));
+        }
+        return result;
+    }
+
+    public object GetRequiredService(TypeInfo serviceType) {
+        object service = GetService(serviceType);
+        if (service == null) {
+            StringBuilder message = new StringBuilder();
+            message.Append("No service is registered for '");
+            message.Append(TypeName(serviceType));
+            message.Append("'.");
+            throw new ServiceResolutionException(message.ToString());
+        }
+        return service;
+    }
+
+    public List<object> GetServices(TypeInfo serviceType) {
+        EnsureUsable();
+        ResolutionContext context = _root._activeContext;
+        bool isTopLevel = context == null;
+        if (isTopLevel) {
+            context = CreateResolutionContext();
+            _root._activeContext = context;
+        }
+
+        try {
+            List<object> result = new List<object>();
+            for (uint index = 0u; index < _descriptors.Count; index += 1u) {
+                ServiceDescriptor descriptor = _descriptors.Get(index);
+                if (descriptor.ServiceType.IsSameType(serviceType)) {
+                    result.Add(ResolveSlot(index, context));
+                }
+            }
+            return result;
+        } finally {
+            if (isTopLevel) {
+                _root._activeContext = null;
+            }
+        }
+    }
+
+    public IServiceScope CreateScope() {
+        EnsureUsable();
+        ServiceProvider scopeProvider = new ServiceProvider(_root);
+        _root._activeScopes.Add(scopeProvider);
+        return new ServiceScope(scopeProvider);
+    }
+
+    public void Dispose() {
+        if (_disposed || _disposing) {
+            return;
+        }
+        _disposing = true;
+        List<Exception> errors = new List<Exception>();
+
+        if (_isRoot) {
+            while (_activeScopes.Count > 0u) {
+                ServiceProvider scope = _activeScopes.Get(_activeScopes.Count - 1u);
+                try {
+                    scope.Dispose();
+                } catch (Exception error) {
+                    errors.Add(error);
+                }
+            }
+        } else {
+            RemoveActiveScope();
+        }
+
+        DisposeOwned(errors);
+        ClearCaches();
+        _disposed = true;
+        _disposing = false;
+        if (_providerRoot != null) {
+            Memory.RemoveObjectRoot(_providerRoot);
+            _providerRoot = null;
+        }
+        ClearProviderState();
+        if (errors.Count > 0u) {
+            throw new ServiceProviderDisposalException(errors);
+        }
+    }
+
+    private object Resolve(TypeInfo serviceType, ResolutionContext context) {
+        if (!IsServiceType(serviceType)) {
+            throw new ServiceResolutionException("A requested service key must be a class or interface type.");
+        }
+
+        if (serviceType.IsSameType(typeof(IServiceProvider))) {
+            return _isRoot ? _root : this;
+        }
+        if (serviceType.IsSameType(typeof(IServiceScopeFactory))) {
+            return _root;
+        }
+
+        int slot = FindLastRegistration(serviceType);
+        return slot < 0 ? null : ResolveSlot((uint)slot, context);
+    }
+
+    private void RootProvider() {
+        _providerRoot = Memory.AddObjectRoot(this);
+    }
+
+    private ResolutionContext CreateResolutionContext() {
+        ResolutionContext context = null;
+        Memory.WithDurable(() => {
+            context = new ResolutionContext();
+        });
+        return context;
+    }
+
+    private object ResolveSlot(uint slot, ResolutionContext context) {
+        ServiceDescriptor descriptor = _descriptors.Get(slot);
+        if (descriptor.HasImplementationType == false && descriptor.Instance != null) {
+            return descriptor.Instance;
+        }
+
+        ServiceProvider owner;
+        ServiceProvider activationProvider;
+        if (descriptor.Lifetime == ServiceLifetime.Singleton) {
+            owner = _root;
+            activationProvider = _root;
+            if (_root._singletonCreated.Get(slot)) {
+                return _root._singletonInstances.Get(slot);
+            }
+        } else if (descriptor.Lifetime == ServiceLifetime.Scoped) {
+            if (_isRoot && _options.ValidateScopes) {
+                StringBuilder message = new StringBuilder();
+                message.Append("Scoped service '");
+                message.Append(TypeName(descriptor.ServiceType));
+                message.Append("' cannot be resolved from the root provider.");
+                throw new ServiceResolutionException(message.ToString());
+            }
+            if (_isRoot && context.SingletonDepth > 0u && _options.ValidateScopes) {
+                StringBuilder message = new StringBuilder();
+                message.Append("Singleton activation cannot depend on scoped service '");
+                message.Append(TypeName(descriptor.ServiceType));
+                message.Append("'.");
+                throw new ServiceResolutionException(message.ToString());
+            }
+            owner = _isRoot ? _root : this;
+            activationProvider = owner;
+            if (owner._scopedCreated.Get(slot)) {
+                return owner._scopedInstances.Get(slot);
+            }
+        } else {
+            owner = context.SingletonDepth > 0u ? _root : this;
+            activationProvider = context.SingletonDepth > 0u ? _root : this;
+        }
+
+        int cycleIndex = FindActiveSlot(context, slot);
+        if (cycleIndex >= 0) {
+            throw new ServiceResolutionException(BuildCycleMessage(context, cycleIndex, descriptor.ServiceType));
+        }
+
+        context.Slots.Add(slot);
+        context.Keys.Add(descriptor.ServiceType);
+        bool singletonActivation = descriptor.Lifetime == ServiceLifetime.Singleton;
+        if (singletonActivation) {
+            context.SingletonDepth += 1u;
+        }
+
+        object instance = null;
+        ServiceProvider currentProvider = this;
+        Memory.WithDurable(() => {
+            try {
+                if (descriptor.Factory != null) {
+                    delegate(IServiceProvider) => object factory = descriptor.Factory;
+                    instance = factory(activationProvider);
+                } else {
+                    instance = currentProvider.ActivateImplementation(
+                        slot, descriptor.ImplementationType, activationProvider, context);
+                }
+            } finally {
+                if (singletonActivation) {
+                    context.SingletonDepth -= 1u;
+                }
+                context.Slots.RemoveAt(context.Slots.Count - 1u);
+                context.Keys.RemoveAt(context.Keys.Count - 1u);
+            }
+
+            currentProvider.ValidateActivationResult(descriptor, instance);
+            owner.TrackOwned(instance);
+        });
+
+        if (descriptor.Lifetime == ServiceLifetime.Singleton) {
+            _root._singletonInstances.Set(slot, instance);
+            _root._singletonCreated.Set(slot, true);
+        } else if (descriptor.Lifetime == ServiceLifetime.Scoped) {
+            owner._scopedInstances.Set(slot, instance);
+            owner._scopedCreated.Set(slot, true);
+        }
+        return instance;
+    }
+
+    private object ActivateImplementation(
+        uint slot,
+        TypeInfo implementationType,
+        ServiceProvider activationProvider,
+        ResolutionContext context) {
+        ActivationPlan plan = _root.GetActivationPlan(slot);
+        if (!plan.HasFunction) {
+            if (HasDeclaredConstructor(implementationType)) {
+                StringBuilder message = new StringBuilder();
+                message.Append("No public constructor on '");
+                message.Append(TypeName(implementationType));
+                message.Append("' has resolvable parameters.");
+                throw new ServiceResolutionException(message.ToString());
+            }
+            object defaultInstance = implementationType.CreateInstance();
+            if (defaultInstance == null) {
+                StringBuilder message = new StringBuilder();
+                message.Append("Type '");
+                message.Append(TypeName(implementationType));
+                message.Append("' has no usable public constructor.");
+                throw new ServiceResolutionException(message.ToString());
+            }
+            return defaultInstance;
+        }
+
+        uint parameterCount = plan.ParameterTypes.Length;
+        Array<object> arguments = new Array<object>(parameterCount);
+        for (uint index = 0u; index < parameterCount; index += 1u) {
+            TypeInfo parameterType = plan.ParameterTypes.Get(index).GetValue();
+            TypeInfo enumerableElementType = GetEnumerableElementType(
+                parameterType, plan.ImplementationType.GetModule());
+            object dependency = enumerableElementType.Hash != 0uL
+                ? (object)new ServiceSequence(activationProvider.GetServices(enumerableElementType))
+                : activationProvider.Resolve(parameterType, context);
+            if (dependency == null) {
+                StringBuilder message = new StringBuilder();
+                message.Append("No service is registered for constructor parameter '");
+                message.Append(TypeName(parameterType));
+                message.Append("' of '");
+                message.Append(TypeName(implementationType));
+                message.Append("'.");
+                throw new ServiceResolutionException(message.ToString());
+            }
+            arguments.Set(index, dependency);
+        }
+
+        object instance = plan.ImplementationType.InvokeConstructor(plan.FunctionIndex, arguments);
+        if (instance == null) {
+            StringBuilder message = new StringBuilder();
+            message.Append("Constructor invocation failed for '");
+            message.Append(TypeName(implementationType));
+            message.Append("'.");
+            throw new ServiceResolutionException(message.ToString());
+        }
+        return instance;
+    }
+
+    private ActivationPlan GetActivationPlan(uint slot) {
+        if (_activationPlanCreated.Get(slot)) {
+            return _activationPlans.Get(slot);
+        }
+
+        ServiceDescriptor descriptor = _descriptors.Get(slot);
+        ResolutionContext context = new ResolutionContext();
+        context.Slots.Add(slot);
+        context.Keys.Add(descriptor.ServiceType);
+        bool singletonPath = descriptor.Lifetime == ServiceLifetime.Singleton;
+        if (singletonPath) {
+            context.SingletonDepth = 1u;
+        }
+        ConstructorSelection selection = SelectConstructor(
+            descriptor.ImplementationType, context, singletonPath);
+        if (!selection.HasFunction && context.CyclePath != null) {
+            throw new ServiceResolutionException(context.CyclePath);
+        }
+        ActivationPlan plan = new ActivationPlan(
+            slot, descriptor.Lifetime, descriptor.ImplementationType, selection);
+        _activationPlans.Set(slot, plan);
+        _activationPlanCreated.Set(slot, true);
+        return plan;
+    }
+
+    private ConstructorSelection SelectConstructor(
+        TypeInfo implementationType,
+        ResolutionContext context,
+        bool fromSingleton = false) {
+        ModuleInfo module = implementationType.GetModule();
+        List<uint> candidates = new List<uint>();
+        for (uint functionIndex = 0u; functionIndex < implementationType.GetFunctionCount(); functionIndex += 1u) {
+            uint functionFlags = implementationType.GetFunctionFlags(functionIndex);
+            if (!IsPublicConstructor(functionFlags)) {
+                continue;
+            }
+            bool resolvable = true;
+            uint parameterCount = implementationType.GetFunctionParameterCount(functionIndex);
+            for (uint parameterIndex = 0u; parameterIndex < parameterCount; parameterIndex += 1u) {
+                if (!CanResolve(implementationType.GetFunctionParameterType(
+                    functionIndex, parameterIndex), context, fromSingleton, module)) {
+                    resolvable = false;
+                    break;
+                }
+            }
+            if (!resolvable) {
+                continue;
+            }
+
+            candidates.Add(functionIndex);
+        }
+
+        if (candidates.Count == 0u) {
+            return new ConstructorSelection(0u, false);
+        }
+        uint selectedCount = 0u;
+        for (uint index = 0u; index < candidates.Count; index += 1u) {
+            uint count = implementationType.GetFunctionParameterCount(candidates.Get(index));
+            if (count > selectedCount) {
+                selectedCount = count;
+            }
+        }
+        uint selectedIndex = 0u;
+        bool hasSelected = false;
+        bool ambiguous = false;
+        for (uint index = 0u; index < candidates.Count; index += 1u) {
+            uint candidateIndex = candidates.Get(index);
+            uint count = implementationType.GetFunctionParameterCount(candidateIndex);
+            if (count == selectedCount) {
+                if (hasSelected) {
+                    ambiguous = true;
+                } else {
+                    selectedIndex = candidateIndex;
+                    hasSelected = true;
+                }
+            }
+        }
+        for (uint index = 0u; index < candidates.Count; index += 1u) {
+            uint candidateIndex = candidates.Get(index);
+            if (implementationType.GetFunctionParameterCount(candidateIndex) < selectedCount &&
+                !ParameterSetContained(implementationType, candidateIndex, selectedIndex)) {
+                ambiguous = true;
+            }
+        }
+        if (ambiguous) {
+            throw new ServiceResolutionException(
+                BuildAmbiguousConstructorMessage(implementationType, candidates));
+        }
+        return new ConstructorSelection(selectedIndex, hasSelected);
+    }
+
+    private bool CanResolve(
+        TypeInfo serviceType,
+        ResolutionContext context,
+        bool fromSingleton,
+        ModuleInfo module) {
+        if (!IsServiceType(serviceType)) {
+            return false;
+        }
+        if (serviceType.IsSameType(typeof(IServiceProvider)) ||
+            serviceType.IsSameType(typeof(IServiceScopeFactory))) {
+            return true;
+        }
+        TypeInfo enumerableElementType = GetEnumerableElementType(serviceType, module);
+        if (enumerableElementType.Hash != 0uL) {
+            for (uint slot = 0u; slot < _descriptors.Count; slot += 1u) {
+                if (_descriptors.Get(slot).ServiceType.IsSameType(enumerableElementType) &&
+                    !CanResolveSlot(slot, context, fromSingleton)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        int found = FindLastRegistration(serviceType);
+        if (found < 0) {
+            return false;
+        }
+        return CanResolveSlot((uint)found, context, fromSingleton);
+    }
+
+    private static TypeInfo GetEnumerableElementType(
+        TypeInfo serviceType, ModuleInfo module) {
+        TypeInfo elementType = serviceType.GetEnumerableElementType();
+        if (elementType.Hash != 0uL) return elementType;
+
+        Array<TypeInfo> genericArguments = module.GetGenericArguments(serviceType);
+        return genericArguments.Length == 1u
+            ? genericArguments.Get(0u)
+            : elementType;
+    }
+
+    private bool CanResolveSlot(uint slot, ResolutionContext context, bool fromSingleton) {
+        ServiceDescriptor descriptor = _descriptors.Get(slot);
+        bool singletonPath = fromSingleton || context.SingletonDepth > 0u;
+        if (singletonPath && descriptor.Lifetime == ServiceLifetime.Scoped && _options.ValidateScopes) {
+            return false;
+        }
+        if (descriptor.Factory != null || descriptor.Instance != null) {
+            return true;
+        }
+        int cycleIndex = FindActiveSlot(context, slot);
+        if (cycleIndex >= 0) {
+            if (context.CyclePath == null) {
+                context.CyclePath = BuildCycleMessage(
+                    context, cycleIndex, descriptor.ServiceType);
+            }
+            return false;
+        }
+        context.Slots.Add(slot);
+        context.Keys.Add(descriptor.ServiceType);
+        singletonPath = singletonPath || descriptor.Lifetime == ServiceLifetime.Singleton;
+        uint priorSingletonDepth = context.SingletonDepth;
+        if (singletonPath) {
+            context.SingletonDepth = 1u;
+        }
+        try {
+            ConstructorSelection selection = SelectConstructor(
+                descriptor.ImplementationType, context, singletonPath);
+            if (selection.HasFunction) {
+                return true;
+            }
+            return !HasDeclaredConstructor(descriptor.ImplementationType);
+        } finally {
+            context.SingletonDepth = priorSingletonDepth;
+            context.Slots.RemoveAt(context.Slots.Count - 1u);
+            context.Keys.RemoveAt(context.Keys.Count - 1u);
+        }
+    }
+
+    private void ValidateOnBuild() {
+        for (uint slot = 0u; slot < _descriptors.Count; slot += 1u) {
+            ServiceDescriptor descriptor = _descriptors.Get(slot);
+            descriptor.Validate();
+            if (descriptor.HasImplementationType && descriptor.Factory == null && descriptor.Instance == null) {
+                ActivationPlan plan = GetActivationPlan(slot);
+                if (!plan.HasFunction && HasDeclaredConstructor(descriptor.ImplementationType)) {
+                    StringBuilder message = new StringBuilder();
+                    message.Append("Service '");
+                    message.Append(TypeName(descriptor.ServiceType));
+                    message.Append("' has no resolvable public constructor.");
+                    throw new ServiceResolutionException(message.ToString());
+                }
+            }
+        }
+    }
+
+    private void ValidateActivationResult(ServiceDescriptor descriptor, object instance) {
+        if (instance == null) {
+            StringBuilder message = new StringBuilder();
+            message.Append("Activation for '");
+            message.Append(TypeName(descriptor.ServiceType));
+            message.Append("' returned null.");
+            throw new ServiceResolutionException(message.ToString());
+        }
+        if (!descriptor.ServiceType.IsAssignableFrom(instance.Type)) {
+            StringBuilder message = new StringBuilder();
+            message.Append("Activation result is not assignable to service '");
+            message.Append(TypeName(descriptor.ServiceType));
+            message.Append("'.");
+            throw new ServiceResolutionException(message.ToString());
+        }
+    }
+
+    private void TrackOwned(object instance) {
+        if (!typeof(IDisposable).IsAssignableFrom(instance.Type)) {
+            return;
+        }
+        for (uint index = 0u; index < _owned.Count; index += 1u) {
+            if (Object.ReferenceEquals(_owned.Get(index), instance)) {
+                return;
+            }
+        }
+        _owned.Add(instance);
+    }
+
+    private void DisposeOwned(List<Exception> errors) {
+        for (uint index = _owned.Count; index > 0u; index -= 1u) {
+            object instance = _owned.Get(index - 1u);
+            try {
+                ((IDisposable)instance).Dispose();
+            } catch (Exception error) {
+                errors.Add(error);
+            }
+        }
+        _owned.Clear();
+    }
+
+    private void ClearCaches() {
+        if (_scopedInstances != null) {
+            for (uint index = 0u; index < _scopedInstances.Length; index += 1u) {
+                _scopedInstances.Set(index, null);
+                _scopedCreated.Set(index, false);
+            }
+        }
+        if (_isRoot) {
+            for (uint index = 0u; index < _singletonInstances.Length; index += 1u) {
+                _singletonInstances.Set(index, null);
+                _singletonCreated.Set(index, false);
+            }
+        }
+    }
+
+    private void ClearProviderState() {
+        if (_isRoot) {
+            for (uint index = 0u; index < _activationPlans.Length; index += 1u) {
+                _activationPlans.Set(index, null);
+                _activationPlanCreated.Set(index, false);
+            }
+            _descriptors.Clear();
+            _activeScopes.Clear();
+            _activeContext = null;
+        }
+
+        _descriptors = null;
+        _options = null;
+        _root = null;
+        _scopedInstances = null;
+        _scopedCreated = null;
+        _singletonInstances = null;
+        _singletonCreated = null;
+        _activationPlans = null;
+        _activationPlanCreated = null;
+        _owned = null;
+        _activeScopes = null;
+        _activeContext = null;
+    }
+
+    private void RemoveActiveScope() {
+        for (uint index = 0u; index < _root._activeScopes.Count; index += 1u) {
+            if (Object.ReferenceEquals(_root._activeScopes.Get(index), this)) {
+                _root._activeScopes.RemoveAt(index);
+                return;
+            }
+        }
+    }
+
+    private void EnsureUsable() {
+        if (_disposed || _disposing || _root._disposed || _root._disposing) {
+            throw new ServiceResolutionException("The service provider or scope has been disposed.");
+        }
+    }
+
+    private int FindLastRegistration(TypeInfo serviceType) {
+        for (int index = (int)_descriptors.Count - 1; index >= 0; index -= 1) {
+            if (_descriptors.Get((uint)index).ServiceType.IsSameType(serviceType)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    private static bool IsServiceType(TypeInfo typeInfo) {
+        return (typeInfo.Flags & (0x00010000u | 0x00040000u)) != 0u;
+    }
+
+    private static bool IsPublicConstructor(uint flags) {
+        return (flags & 0x01000000u) != 0u &&
+            (flags & 0x00000100u) != 0u &&
+            (flags & 0x00000004u) == 0u;
+    }
+
+    private static bool HasDeclaredConstructor(TypeInfo typeInfo) {
+        for (uint index = 0u; index < typeInfo.GetFunctionCount(); index += 1u) {
+            if ((typeInfo.GetFunctionFlags(index) & 0x01000000u) != 0u) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static bool ParameterSetContained(
+        TypeInfo implementationType, uint subsetIndex, uint supersetIndex) {
+        uint subsetCount = implementationType.GetFunctionParameterCount(subsetIndex);
+        uint supersetCount = implementationType.GetFunctionParameterCount(supersetIndex);
+        for (uint parameterIndex = 0u; parameterIndex < subsetCount; parameterIndex += 1u) {
+            bool found = false;
+            TypeInfo subsetType = implementationType.GetFunctionParameterType(
+                subsetIndex, parameterIndex);
+            for (uint superIndex = 0u; superIndex < supersetCount; superIndex += 1u) {
+                if (implementationType.GetFunctionParameterType(
+                    supersetIndex, superIndex).IsSameType(subsetType)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static string BuildAmbiguousConstructorMessage(
+        TypeInfo implementationType,
+        List<uint> candidates) {
+        StringBuilder message = new StringBuilder();
+        message.Append("Constructor selection for '").Append(TypeName(implementationType))
+            .Append("' is ambiguous between ");
+        bool first = true;
+        for (uint index = 0u; index < candidates.Count; index += 1u) {
+            uint candidateIndex = candidates.Get(index);
+            if (!first) {
+                message.Append("; ");
+            }
+            first = false;
+            message.Append(TypeName(implementationType)).Append("(");
+            uint parameterCount = implementationType.GetFunctionParameterCount(candidateIndex);
+            for (uint parameterIndex = 0u; parameterIndex < parameterCount; parameterIndex += 1u) {
+                if (parameterIndex > 0u) {
+                    message.Append(", ");
+                }
+                message.Append(TypeName(implementationType.GetFunctionParameterType(
+                    candidateIndex, parameterIndex)));
+            }
+            message.Append(")");
+        }
+        message.Append(".");
+        return message.ToString();
+    }
+
+    private static int FindActiveSlot(ResolutionContext context, uint slot) {
+        for (uint index = 0u; index < context.Slots.Count; index += 1u) {
+            if (context.Slots.Get(index) == slot) {
+                return (int)index;
+            }
+        }
+        return -1;
+    }
+
+    private static string BuildCycleMessage(
+        ResolutionContext context,
+        int cycleIndex,
+        TypeInfo serviceType) {
+        StringBuilder message = new StringBuilder();
+        message.Append("Circular service dependency: ");
+        for (uint index = (uint)cycleIndex; index < context.Keys.Count; index += 1u) {
+            if (index > (uint)cycleIndex) {
+                message.Append(" -> ");
+            }
+            message.Append(TypeName(context.Keys.Get(index)));
+        }
+        message.Append(" -> ").Append(TypeName(serviceType)).Append(".");
+        return message.ToString();
+    }
+
+    private static string TypeName(TypeInfo typeInfo) {
+        if (typeInfo.Namespace == null || typeInfo.Namespace.Length == 0u) {
+            return typeInfo.Name;
+        }
+        StringBuilder name = new StringBuilder();
+        name.Append(typeInfo.Namespace);
+        name.Append(".");
+        name.Append(typeInfo.Name);
+        return name.ToString();
+    }
+
+    private static void ValidateReservedServiceType(TypeInfo serviceType) {
+        if (serviceType.IsSameType(typeof(IServiceProvider)) ||
+            serviceType.IsSameType(typeof(IServiceScopeFactory))) {
+            throw new ServiceResolutionException(
+                "The IServiceProvider and IServiceScopeFactory service keys are reserved.");
+        }
+    }
+}
+
+
+
+

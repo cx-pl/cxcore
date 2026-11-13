@@ -1,0 +1,79 @@
+import System.Collections;
+
+namespace System;
+
+// Per-operation source-to-copy map. Keys use object identity, independent of
+// user-defined Equals and GetHashCode implementations.
+public final class CloneContext {
+    private Dictionary<object, object> _copies;
+    private Dictionary<object, bool> _constructing;
+    private uint _depth;
+    private uint _objectLimit;
+    private uint _depthLimit;
+
+    public constructor() {
+        _copies = new Dictionary<object, object>(new ReferenceIdentityComparer());
+        this._constructing = new Dictionary<object, bool>(new ReferenceIdentityComparer());
+        _depth = 0u;
+        _objectLimit = 65536u;
+        _depthLimit = 1024u;
+    }
+
+    public constructor(uint objectLimit, uint depthLimit) {
+        if (objectLimit == 0u || depthLimit == 0u)
+            throw new Exception("Clone context limits must be greater than zero.");
+        _copies = new Dictionary<object, object>(new ReferenceIdentityComparer());
+        this._constructing = new Dictionary<object, bool>(new ReferenceIdentityComparer());
+        _depth = 0u;
+        _objectLimit = objectLimit;
+        _depthLimit = depthLimit;
+    }
+
+    public object Find(object source) {
+        if (source == null) return null;
+        return _copies.GetValueOrDefault(source);
+    }
+
+    public object RequireNonNull(object? value) {
+        if (value == null) throw new Exception("A non-null clone value was required.");
+        return value ?? new ReferenceIdentityComparer();
+    }
+
+    public void Register(object source, object copy) {
+        if (source == null || copy == null) throw new Exception("Clone context entries cannot be null.");
+        if (!_copies.ContainsKey(source) && _copies.Count >= _objectLimit)
+            throw new Exception(CreateLimitError(_objectLimit, "object limit."));
+        _copies.Set(source, copy);
+        this._constructing.Remove(source);
+    }
+
+    public void BeginConstruction(object source) {
+        if (source == null) throw new Exception("Cannot construct a clone for a null value.");
+        if (_copies.ContainsKey(source)) return;
+        if (this._constructing.ContainsKey(source))
+            throw new Exception("Clone graph contains a constructor-bound cycle.");
+        this._constructing.Set(source, true);
+    }
+
+    public void CancelConstruction(object source) {
+        if (source != null) this._constructing.Remove(source);
+    }
+
+    public void Enter() {
+        if (_depth >= _depthLimit)
+            throw new Exception(CreateLimitError(_depthLimit, "object depth limit."));
+        _depth += 1u;
+    }
+
+    public void Exit() {
+        if (_depth == 0u) throw new Exception("Clone context depth is unbalanced.");
+        _depth -= 1u;
+    }
+
+    private string CreateLimitError(uint limit, string description) {
+        var message = new StringBuilder();
+        message.Append("Clone graph exceeds the ").Append(limit).Append(" ")
+            .Append(description);
+        return message.ToString();
+    }
+}

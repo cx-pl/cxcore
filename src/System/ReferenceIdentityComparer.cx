@@ -1,0 +1,11 @@
+namespace System;
+
+public final class ReferenceIdentityComparer : IEqualityComparer<object> {
+    public int GetHashCode(object value) const {
+        return Object.IdentityHashCode(value);
+    }
+
+    public bool Equals(object first, object second) const {
+        return Object.ReferenceEquals(first, second);
+    }
+}

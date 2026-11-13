@@ -6,6 +6,10 @@ public final class List<T> : ICollection<T> {
 
     public uint Count { const get { return _count; } }
 
+    internal Array<T> GetQueryStorage() const {
+        return _items;
+    }
+
     public constructor() {
         _items = new Array<T>(4u);
         _count = 0u;
@@ -33,7 +37,7 @@ public final class List<T> : ICollection<T> {
     }
 
     public Array<T> ToArray() const {
-        Array<T> result = new Array<T>(_count);
+        Array<T> result = _items.CreateForOwner(_count);
         for (uint index = 0u; index < _count; index += 1u) {
             result.Set(index, _items.Get(index));
         }
@@ -147,7 +151,7 @@ public final class List<T> : ICollection<T> {
             capacity *= 2u;
         }
 
-        Array<T> expanded = new Array<T>(capacity);
+        Array<T> expanded = _items.CreateForOwner(capacity);
         for (uint index = 0u; index < _count; index += 1u) {
             expanded.Set(index, _items.Get(index));
         }

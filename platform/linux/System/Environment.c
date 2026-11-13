@@ -7,13 +7,13 @@
 CX_STRING_DEF(SystemName, "Linux");
 CX_STRING_DEF(NewLine, "\n");
 
-const struct CX_ID_3(cxcore, System, String) *
-    CX_ID_5(cxcore, System, Environment, SystemName, __const_get)() {
+const struct cxcore_System_String *
+    cxcore_System_Environment_SystemName___const_get() {
     return &SystemName;
 }
 
-const struct CX_ID_3(cxcore, System, String) *
-    CX_ID_5(cxcore, System, Environment, NewLine, __const_get)() {
+const struct cxcore_System_String *
+    cxcore_System_Environment_NewLine___const_get() {
     return &NewLine;
 }
 

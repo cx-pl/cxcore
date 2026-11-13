@@ -1,12 +1,12 @@
-#ifndef CXCORE_SYSTEM_UTF8_H
-#define CXCORE_SYSTEM_UTF8_H
+#ifndef __CXCORE_SYSTEM_UTF8_H__
+#define __CXCORE_SYSTEM_UTF8_H__
 
 #include <stddef.h>
-#include "../../../inc/cxtypes.h"
+#include "../../../include/cxtypes.h"
 
 /* Decode one Unicode scalar from a bounded UTF-8 byte sequence. */
-static int cx_utf8_decode(const cx_byte *bytes, size_t remaining, cx_uint *scalar,
-                          size_t *byteCount) {
+static inline int cx_utf8_decode(const cx_byte *bytes, size_t remaining, cx_uint *scalar,
+                                 size_t *byteCount) {
     cx_uint value;
     cx_byte first;
     size_t count;
@@ -56,7 +56,7 @@ static int cx_utf8_decode(const cx_byte *bytes, size_t remaining, cx_uint *scala
     return 1;
 }
 
-static size_t cx_utf8_encode(cx_uint scalar, cx_byte output[4]) {
+static inline size_t cx_utf8_encode(cx_uint scalar, cx_byte output[4]) {
     if (scalar <= 0x7F) {
         output[0] = (cx_byte)scalar;
         return 1;
@@ -85,4 +85,4 @@ static size_t cx_utf8_encode(cx_uint scalar, cx_byte output[4]) {
     return 0;
 }
 
-#endif
+#endif // __CXCORE_SYSTEM_UTF8_H__

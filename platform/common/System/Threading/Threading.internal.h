@@ -1,15 +1,14 @@
-#ifndef CX_THREADING_INTERNAL_H
-#define CX_THREADING_INTERNAL_H
+#ifndef __CX_THREADING_INTERNAL_H__
+#define __CX_THREADING_INTERNAL_H__
 
 #include "cxcore.h"
 #include "cxgc.h"
+#include "../../cxarena.h"
 
-static inline void cx_threading_raise(const struct CX_ID_3(cxcore, System, String) *message) {
-    struct CX_ID_3(cxcore, System, Exception) *exception =
-        (struct CX_ID_3(cxcore, System, Exception) *)CX_ID_4(cxcore, System, Memory, Alloc)(
-            (cx_uint)sizeof(*exception));
-    CX_ID_4(cxcore, System, Exception, __constructor)(exception, message);
-    cx_exception_throw(exception, __FILE__, __LINE__);
+static inline void cx_threading_raise(const struct cxcore_System_String *message) {
+    cx_exception_raise_message(message, __FILE__, __LINE__);
 }
 
-#endif
+void cx_task_report_unobserved_faults(void);
+
+#endif // __CX_THREADING_INTERNAL_H__

@@ -1,5 +1,5 @@
-#ifndef _PLATFORM_H_
-#define _PLATFORM_H_
+#ifndef __CX_PLATFORM_H__
+#define __CX_PLATFORM_H__
 
 #include <setjmp.h>
 #include <stddef.h>
@@ -32,6 +32,7 @@ cx_platform_thread_id cx_platform_owner_thread_claim(
     cx_platform_atomic_thread_id *owner,
     cx_platform_thread_id current_thread);
 int cx_platform_current_stack_bounds(uintptr_t *low, uintptr_t *high);
+uintptr_t cx_platform_current_stack_position(void);
 CX_NORETURN void cx_platform_exception_jump(jmp_buf environment);
 
 uint32_t cx_platform_last_error(void);
@@ -41,4 +42,4 @@ void *cx_platform_native_library_open(const void *path);
 int cx_platform_native_library_resolve(void *handle, const char *name,
     void *result, size_t result_size);
 
-#endif // _PLATFORM_H_
+#endif // __CX_PLATFORM_H__

@@ -1,5 +1,5 @@
 execute_process(
-    COMMAND "${TEST_EXECUTABLE}"
+    COMMAND "${TEST_EXECUTABLE}" ${TEST_ARGUMENT}
     RESULT_VARIABLE result
     OUTPUT_VARIABLE output
     ERROR_VARIABLE error)

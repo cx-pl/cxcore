@@ -1,0 +1,12 @@
+import System.Collections;
+
+namespace System.DependencyInjection;
+
+public interface IServiceCollection : IEnumerable<ServiceDescriptor> {
+    IEnumerator<ServiceDescriptor> GetEnumerator() const;
+    uint Count { const get; }
+    void Add(ServiceDescriptor descriptor);
+    ServiceDescriptor Get(uint index) const;
+    void RemoveAt(uint index);
+    void Clear();
+}

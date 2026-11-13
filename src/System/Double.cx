@@ -1,6 +1,8 @@
 namespace System;
 
 public struct Double {
+    public static extern double? TryParse(string text);
+
     private double _value;
 
     public static extern const double MinValue;

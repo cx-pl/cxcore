@@ -1,0 +1,8 @@
+import System.Interop;
+
+namespace System;
+
+public interface IEqualityComparer<T> {
+    @NoEscape int GetHashCode(T value) const;
+    @NoEscape bool Equals(T first, T second) const;
+}

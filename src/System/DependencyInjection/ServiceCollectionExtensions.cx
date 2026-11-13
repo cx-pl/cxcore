@@ -1,0 +1,185 @@
+import System.Reflection;
+import System;
+import System.Collections;
+
+namespace System.DependencyInjection;
+
+public extension ServiceCollectionExtensions : IServiceCollection {
+    public IServiceCollection AddTransient<TService, TImplementation>()
+        where TService : class
+        where TImplementation : TService {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddTransient(typeof(TService), typeof(TImplementation));
+    }
+
+    public IServiceCollection AddTransient<TService>() where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddTransient(typeof(TService), typeof(TService));
+    }
+
+    public IServiceCollection AddTransient<TService>(
+        delegate(IServiceProvider) => TService factory) where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(typeof(TService), ServiceLifetime.Transient,
+            (IServiceProvider provider) => (object)factory(provider)));
+        return this;
+    }
+
+    public IServiceCollection AddTransient(
+        TypeInfo serviceType, TypeInfo implementationType) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Transient, implementationType));
+        return this;
+    }
+
+    public IServiceCollection AddTransient(
+        TypeInfo serviceType,
+        delegate(IServiceProvider) => object factory) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Transient, factory));
+        return this;
+    }
+
+    public IServiceCollection AddScoped<TService, TImplementation>()
+        where TService : class
+        where TImplementation : TService {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddScoped(typeof(TService), typeof(TImplementation));
+    }
+
+    public IServiceCollection AddScoped<TService>() where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddScoped(typeof(TService), typeof(TService));
+    }
+
+    public IServiceCollection AddScoped<TService>(
+        delegate(IServiceProvider) => TService factory) where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(typeof(TService), ServiceLifetime.Scoped,
+            (IServiceProvider provider) => (object)factory(provider)));
+        return this;
+    }
+
+    public IServiceCollection AddScoped(
+        TypeInfo serviceType, TypeInfo implementationType) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Scoped, implementationType));
+        return this;
+    }
+
+    public IServiceCollection AddScoped(
+        TypeInfo serviceType,
+        delegate(IServiceProvider) => object factory) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Scoped, factory));
+        return this;
+    }
+
+    public IServiceCollection AddSingleton<TService, TImplementation>()
+        where TService : class
+        where TImplementation : TService {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddSingleton(typeof(TService), typeof(TImplementation));
+    }
+
+    public IServiceCollection AddSingleton<TService>() where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        return collection.AddSingleton(typeof(TService), typeof(TService));
+    }
+
+    public IServiceCollection AddSingleton<TService>(
+        delegate(IServiceProvider) => TService factory) where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(typeof(TService), ServiceLifetime.Singleton,
+            (IServiceProvider provider) => (object)factory(provider)));
+        return this;
+    }
+
+    public IServiceCollection AddSingleton<TService>(TService instance)
+        where TService : class {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(typeof(TService), (object)instance));
+        return this;
+    }
+
+    public IServiceCollection AddSingleton(
+        TypeInfo serviceType, TypeInfo implementationType) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Singleton, implementationType));
+        return this;
+    }
+
+    public IServiceCollection AddSingleton(
+        TypeInfo serviceType,
+        delegate(IServiceProvider) => object factory) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, ServiceLifetime.Singleton, factory));
+        return this;
+    }
+
+    public IServiceCollection AddSingleton(TypeInfo serviceType, object instance) {
+        IServiceCollection collection = (IServiceCollection)this;
+        collection.Add(new ServiceDescriptor(serviceType, instance));
+        return this;
+    }
+
+    public ServiceProvider BuildServiceProvider() {
+        IServiceCollection collection = (IServiceCollection)this;
+        return new ServiceProvider(collection);
+    }
+
+    public ServiceProvider BuildServiceProvider(ServiceProviderOptions options) {
+        IServiceCollection collection = (IServiceCollection)this;
+        return new ServiceProvider(collection, options);
+    }
+}
+
+public extension ServiceProviderServiceExtensions : IServiceProvider {
+    public TService GetService<TService>() where TService : class {
+        IServiceProvider provider = (IServiceProvider)this;
+        return (TService)provider.GetService(typeof(TService));
+    }
+
+    public TService GetRequiredService<TService>() where TService : class {
+        IServiceProvider provider = (IServiceProvider)this;
+        return (TService)provider.GetRequiredService(typeof(TService));
+    }
+
+    public object GetRequiredService(TypeInfo serviceType) {
+        IServiceProvider provider = (IServiceProvider)this;
+        object service = provider.GetService(serviceType);
+        if (service == null) {
+            StringBuilder message = new StringBuilder();
+            message.Append("No service is registered for '");
+            message.Append(serviceType.Name);
+            message.Append("'.");
+            throw new ServiceResolutionException(message.ToString());
+        }
+        return service;
+    }
+
+    public IEnumerable<TService> GetServices<TService>() where TService : class {
+        List<object> services;
+        IServiceProvider serviceProvider = (IServiceProvider)this;
+        ServiceProvider provider = serviceProvider as ServiceProvider;
+        if (provider != null) {
+            services = provider.GetServices(typeof(TService));
+        } else {
+            services = new List<object>();
+            object service = serviceProvider.GetService(typeof(TService));
+            if (service != null) {
+                services.Add(service);
+            }
+        }
+        List<TService> result = new List<TService>();
+        for (uint index = 0u; index < services.Count; index += 1u) {
+            result.Add((TService)services.Get(index));
+        }
+        return result;
+    }
+
+    public IServiceScope CreateScope() {
+        IServiceScopeFactory factory = (IServiceScopeFactory)(IServiceProvider)this;
+        return factory.CreateScope();
+    }
+}

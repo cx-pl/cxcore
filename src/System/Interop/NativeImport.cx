@@ -7,7 +7,8 @@ public enum NativeErrorPolicy { None, LastError, Errno }
 public final class NativeImport : System.Annotation {
     public extern constructor(string library, string entryPoint = null,
         NativeCallingConvention callingConvention = NativeCallingConvention.PlatformDefault,
-        NativeErrorPolicy captureError = NativeErrorPolicy.None, bool blocking = false);
+        NativeErrorPolicy captureError = NativeErrorPolicy.None, bool blocking = false,
+        bool noEscape = false);
 }
 
 public static class NativeError {

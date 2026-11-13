@@ -1,0 +1,34 @@
+import System.Interop;
+
+namespace System;
+
+public final class StringBuilder : Object {
+    private uint _length;
+    private uint _capacity;
+    private uint _characters;
+    private ptr _data;
+
+    public extern constructor();
+    public extern constructor(uint capacity);
+    public uint Length { extern const get; }
+    public uint Capacity { extern const get; }
+    public extern uint EnsureCapacity(uint capacity);
+    public extern StringBuilder Append(string value);
+    public extern StringBuilder Append(char value);
+    public extern StringBuilder Append(bool value);
+    public extern StringBuilder Append(int value);
+    public extern StringBuilder Append(uint value);
+    public extern StringBuilder Append(long value);
+    public extern StringBuilder Append(ulong value);
+    public extern StringBuilder Append(float value);
+    public extern StringBuilder Append(double value);
+    public extern StringBuilder Append(decimal value);
+    public extern StringBuilder Append(byte value);
+    public extern StringBuilder Append(sbyte value);
+    public extern StringBuilder Append(short value);
+    public extern StringBuilder Append(ushort value);
+    public extern StringBuilder AppendLine();
+    public extern StringBuilder AppendLine(string value);
+    public extern StringBuilder Clear();
+    @NoEscape public override extern string ToString() const;
+}

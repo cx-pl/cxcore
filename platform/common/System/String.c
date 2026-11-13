@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../../src/cxcore.h"
+#include "../cxarena.h"
+#include "../cxgc.h"
 #include "Utf8.h"
 #include "Text.internal.h"
 
 CX_STRING_DEF(_empty, "");
 
 static cx_bool cx_string_content_equals(
-    const struct CX_ID_3(cxcore, System, String) *left,
-    const struct CX_ID_3(cxcore, System, String) *right) {
+    const struct cxcore_System_String *left,
+    const struct cxcore_System_String *right) {
     if (left == right) {
         return 1;
     }
@@ -22,8 +24,8 @@ static cx_bool cx_string_content_equals(
 }
 
 static cx_int cx_string_content_compare(
-    const struct CX_ID_3(cxcore, System, String) *left,
-    const struct CX_ID_3(cxcore, System, String) *right) {
+    const struct cxcore_System_String *left,
+    const struct cxcore_System_String *right) {
     cx_uint commonLength;
     int byteComparison;
 
@@ -58,24 +60,23 @@ static cx_int cx_string_content_compare(
     return 0;
 }
 
-struct CX_ID_3(cxcore, System, String) *CX_ID_4(
-    cxcore, System, String, ToString)(const struct CX_ID_3(cxcore, System, String) * __this) {
-    return (struct CX_ID_3(cxcore, System, String) *)__this;
+struct cxcore_System_String *cxcore_System_String_ToString(const struct cxcore_System_String * __this) {
+    return (struct cxcore_System_String *)__this;
 }
 
-cx_bool CX_ID_4(cxcore, System, String, Equals)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    struct CX_ID_3(cxcore, System, Object) *other) {
+cx_bool cxcore_System_String_Equals(
+    const struct cxcore_System_String * __this,
+    struct cxcore_System_Object *other) {
     if (other == CX_NULL ||
         CX_GET_TYPEINFO(other).Hash != 0x39E2CB3A11136EA4ULL) {
         return 0;
     }
     return cx_string_content_equals(
-        __this, (const struct CX_ID_3(cxcore, System, String) *)other);
+        __this, (const struct cxcore_System_String *)other);
 }
 
-cx_int CX_ID_4(cxcore, System, String, GetHashCode)(
-    const struct CX_ID_3(cxcore, System, String) * __this) {
+cx_int cxcore_System_String_GetHashCode(
+    const struct cxcore_System_String * __this) {
     cx_uint hash = 2166136261u;
     cx_uint index;
     const cx_byte *bytes = (const cx_byte *)__this->_data;
@@ -86,15 +87,14 @@ cx_int CX_ID_4(cxcore, System, String, GetHashCode)(
     return (cx_int)hash;
 }
 
-struct CX_ID_3(cxcore, System, String) *CX_ID_4(
-    cxcore, System, String, __cx_operator_plus)(
-    const struct CX_ID_3(cxcore, System, String) *left,
-    const struct CX_ID_3(cxcore, System, String) *right) {
+struct cxcore_System_String *cxcore_System_String___cx_operator_plus(
+    const struct cxcore_System_String *left,
+    const struct cxcore_System_String *right) {
     cx_uint leftLength = left == CX_NULL ? 0 : left->_length;
     cx_uint rightLength = right == CX_NULL ? 0 : right->_length;
     cx_uint length;
     cx_byte *data;
-    struct CX_ID_3(cxcore, System, String) *result;
+    struct cxcore_System_String *result;
 
     if (leftLength > UINT_MAX - rightLength ||
         (leftLength != 0 && left->_data == CX_NULL) ||
@@ -104,62 +104,60 @@ struct CX_ID_3(cxcore, System, String) *CX_ID_4(
     length = leftLength + rightLength;
     data = length == 0
         ? CX_NULL
-        : (cx_byte *)CX_ID_4(cxcore, System, Memory, Alloc)(length);
+        : (cx_byte *)cxcore_System_Memory_Alloc(length);
     if (leftLength != 0) {
         memcpy(data, left->_data, leftLength);
     }
     if (rightLength != 0) {
         memcpy(data + leftLength, right->_data, rightLength);
     }
-    result = (struct CX_ID_3(cxcore, System, String) *)CX_ID_4(
-        cxcore, System, Memory, Alloc)((cx_uint)sizeof(*result));
-    CX_ID_5(cxcore, System, String, __constructor, _2)(result, length, data);
+    result = (struct cxcore_System_String *)cxcore_System_Memory_Alloc((cx_uint)sizeof(*result));
+    cxcore_System_String___constructor__2(result, length, data);
     return result;
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_equal)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_equal(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return cx_string_content_equals(__this, other);
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_not_equal)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_not_equal(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return !cx_string_content_equals(__this, other);
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_less)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_less(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return cx_string_content_compare(__this, other) < 0;
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_less_equal)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_less_equal(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return cx_string_content_compare(__this, other) <= 0;
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_greater)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_greater(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return cx_string_content_compare(__this, other) > 0;
 }
 
-cx_bool CX_ID_4(cxcore, System, String, __cx_operator_greater_equal)(
-    const struct CX_ID_3(cxcore, System, String) * __this,
-    const struct CX_ID_3(cxcore, System, String) *other) {
+cx_bool cxcore_System_String___cx_operator_greater_equal(
+    const struct cxcore_System_String * __this,
+    const struct cxcore_System_String *other) {
     return cx_string_content_compare(__this, other) >= 0;
 }
 
-const struct CX_ID_3(cxcore, System, String) *
-    CX_ID_5(cxcore, System, String, Empty, __const_get)() {
+const struct cxcore_System_String *
+    cxcore_System_String_Empty___const_get() {
     return &_empty;
 }
 
-cx_uint CX_ID_5(cxcore, System, String, Length,
-                __const_get)(const struct CX_ID_3(cxcore, System, String) * __this) {
+cx_uint cxcore_System_String_Length___const_get(const struct cxcore_System_String * __this) {
     const cx_byte *bytes;
     size_t offset = 0;
     cx_uint count = 0;
@@ -183,8 +181,7 @@ cx_uint CX_ID_5(cxcore, System, String, Length,
     return count;
 }
 
-cx_char CX_ID_5(cxcore, System, String, Item,
-                __const_get)(const struct CX_ID_3(cxcore, System, String) * __this, cx_uint index) {
+cx_char cxcore_System_String_Item___const_get(const struct cxcore_System_String * __this, cx_uint index) {
     const cx_byte *bytes;
     size_t offset = 0;
     cx_uint current = 0;
@@ -213,25 +210,23 @@ cx_char CX_ID_5(cxcore, System, String, Item,
     return -1;
 }
 
-void CX_ID_4(cxcore, System, String,
-             __constructor)(struct CX_ID_3(cxcore, System, String) * __this) {
-    CX_ID_4(cxcore, System, Object, __constructor)(&__this->__base);
-    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
+void cxcore_System_String___constructor(struct cxcore_System_String * __this) {
+    cxcore_System_Object___constructor(&__this->__base);
+    CX_INIT_VTABLE(__this, cxcore_System_String);
     __this->_length = 0;
-    __this->_data = CX_NULL;
+    cx_gc_store_reference((cx_ptr *)&__this->_data, CX_NULL);
 }
 
-CX_EXPORT void CX_ID_5(cxcore, System, String, __constructor,
-                       _2)(struct CX_ID_3(cxcore, System, String) * __this, cx_uint length,
+CX_EXPORT void cxcore_System_String___constructor__2(struct cxcore_System_String * __this, cx_uint length,
                            cx_ptr data) {
-    CX_ID_4(cxcore, System, Object, __constructor)(&__this->__base);
-    CX_INIT_VTABLE(__this, CX_ID_3(cxcore, System, String));
+    cxcore_System_Object___constructor(&__this->__base);
+    CX_INIT_VTABLE(__this, cxcore_System_String);
     __this->_length = length;
-    __this->_data = length == 0 ? CX_NULL : data;
+    cx_gc_store_reference(
+        (cx_ptr *)&__this->_data, length == 0 ? CX_NULL : data);
 }
 
-void CX_ID_5(cxcore, System, String, __constructor,
-             _3)(struct CX_ID_3(cxcore, System, String) * __this, cx_uint length, cx_char ch) {
+void cxcore_System_String___constructor__3(struct cxcore_System_String * __this, cx_uint length, cx_char ch) {
     cx_byte encoded[4];
     size_t encodedLength = cx_utf8_encode((cx_uint)ch, encoded);
     size_t byteLength;
@@ -242,19 +237,23 @@ void CX_ID_5(cxcore, System, String, __constructor,
         abort();
     }
     byteLength = length == 0 ? 0 : (size_t)length * encodedLength;
+    cxcore_System_String___constructor(__this);
     data = byteLength == 0 ? NULL
-                           : (cx_byte *)CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)byteLength);
+                           : (cx_byte *)cx_gc_alloc_for_owner(
+                                 __this, byteLength,
+                                 cx_arena_maximum_alignment());
     for (index = 0; index < length; ++index) {
         memcpy(data + ((size_t)index * encodedLength), encoded, encodedLength);
     }
 
-    CX_ID_5(cxcore, System, String, __constructor, _2)(__this, (cx_uint)byteLength, data);
+    __this->_length = (cx_uint)byteLength;
+    cx_gc_store_reference((cx_ptr *)&__this->_data, data);
 }
 
-typedef struct CX_ID_3(cxcore, System, WideString) cx_wide_string;
+typedef struct cxcore_System_WideString cx_wide_string;
 
-cx_wide_string *CX_ID_4(cxcore, System, String, ToWideString)(
-    const struct CX_ID_3(cxcore, System, String) *self) {
+cx_wide_string *cxcore_System_String_ToWideString(
+    const struct cxcore_System_String *self) {
     const cx_byte *bytes = self->_data;
     size_t offset = 0, count;
     cx_uint scalar, length = 0, index = 0;
@@ -267,7 +266,7 @@ cx_wide_string *CX_ID_4(cxcore, System, String, ToWideString)(
         length += scalar > 0xFFFF ? 2 : 1;
         offset += count;
     }
-    data = length == 0 ? NULL : CX_ID_4(cxcore, System, Memory, Alloc)(length * (cx_uint)sizeof(cx_wchar));
+    data = length == 0 ? NULL : cxcore_System_Memory_Alloc(length * (cx_uint)sizeof(cx_wchar));
     offset = 0;
     while (offset < self->_length) {
         if (!cx_utf8_decode(bytes + offset, self->_length - offset, &scalar, &count)) cx_encoding_error((cx_uint)offset);
@@ -275,9 +274,9 @@ cx_wide_string *CX_ID_4(cxcore, System, String, ToWideString)(
         else { scalar -= 0x10000; data[index++] = (cx_wchar)(0xD800 + (scalar >> 10)); data[index++] = (cx_wchar)(0xDC00 + (scalar & 0x3FF)); }
         offset += count;
     }
-    result = CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)sizeof(*result));
-    CX_ID_4(cxcore, System, WideString, __constructor)(result);
-    result->_data = data;
+    result = cxcore_System_Memory_Alloc((cx_uint)sizeof(*result));
+    cxcore_System_WideString___constructor(result);
+    cx_gc_store_reference(&result->_data, data);
     result->_length = length;
     return result;
 }

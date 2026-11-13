@@ -1,9 +1,9 @@
 #include "cxcore.h"
 
-cx_uint CX_ID_5(cxcore, System, Interop, NativeError, GetLastError)(void) {
+cx_uint cxcore_System_Interop_NativeError_GetLastError(void) {
     return cx_interop_last_error();
 }
 
-cx_int CX_ID_5(cxcore, System, Interop, NativeError, GetErrno)(void) {
+cx_int cxcore_System_Interop_NativeError_GetErrno(void) {
     return cx_interop_errno();
 }

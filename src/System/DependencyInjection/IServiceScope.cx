@@ -1,0 +1,7 @@
+import System;
+
+namespace System.DependencyInjection;
+
+public interface IServiceScope : IDisposable {
+    IServiceProvider ServiceProvider { const get; }
+}

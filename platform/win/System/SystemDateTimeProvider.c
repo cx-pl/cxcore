@@ -10,9 +10,9 @@
 // (This accounts for all leap years using the Gregorian calendar rules)
 const ULONGLONG _MILISECONDS_FROM_YEAR_1_TO_1601 = 504911232000000ULL;
 
-struct CX_ID_3(cxcore, System, DateTime)
-    CX_ID_4(cxcore, System, SystemDateTimeProvider,
-            GetUtcNow)(const struct CX_ID_3(cxcore, System, SystemDateTimeProvider) * __this) {
+struct cxcore_System_DateTime
+    cxcore_System_SystemDateTimeProvider_GetUtcNow(const struct cxcore_System_SystemDateTimeProvider * __this) {
+    (void)__this;
     // Get the highest precision UTC time from Windows
     FILETIME utcFileTime;
     GetSystemTimePreciseAsFileTime(&utcFileTime);
@@ -29,13 +29,13 @@ struct CX_ID_3(cxcore, System, DateTime)
     ULONGLONG utcMsYear1 = utcMsFrom1601 + _MILISECONDS_FROM_YEAR_1_TO_1601;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime) result = {._offset = 0, ._milliseconds = utcMsYear1};
+    struct cxcore_System_DateTime result = {._offset = 0, ._milliseconds = utcMsYear1};
     return result;
 }
 
-struct CX_ID_3(cxcore, System, DateTime)
-    CX_ID_4(cxcore, System, SystemDateTimeProvider,
-            GetLocalNow)(const struct CX_ID_3(cxcore, System, SystemDateTimeProvider) * __this) {
+struct cxcore_System_DateTime
+    cxcore_System_SystemDateTimeProvider_GetLocalNow(const struct cxcore_System_SystemDateTimeProvider * __this) {
+    (void)__this;
     // Get the highest precision UTC time from Windows
     FILETIME utcFileTime;
     GetSystemTimePreciseAsFileTime(&utcFileTime);
@@ -80,7 +80,7 @@ struct CX_ID_3(cxcore, System, DateTime)
             : (cx_short)offset;
 
     // Build result and return
-    struct CX_ID_3(cxcore, System, DateTime)
+    struct cxcore_System_DateTime
         result = {._offset = offsetHours, ._milliseconds = localMsYear1};
     return result;
 }

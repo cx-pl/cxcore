@@ -22,8 +22,8 @@ CX_STRING_DEF(cx_native_stack_failure, "Native stack allocation count is invalid
 
 void cx_interop_require_function(cx_bool nonnull) {
     if (!nonnull) {
-        struct CX_ID_3(cxcore, System, Exception) *error = CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)sizeof(*error));
-        CX_ID_4(cxcore, System, Exception, __constructor)(error, &cx_native_null_function);
+        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
+        cxcore_System_Exception___constructor(error, &cx_native_null_function);
         cx_exception_throw(error, __FILE__, __LINE__);
     }
 }
@@ -56,8 +56,8 @@ void cx_interop_callback_leave(struct cx_native_callback_scope *scope) {
 void *cx_interop_context_alloc(size_t size) {
     void *context = malloc(size);
     if (context == NULL) {
-        struct CX_ID_3(cxcore, System, Exception) *error = CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)sizeof(*error));
-        CX_ID_4(cxcore, System, Exception, __constructor)(error, &cx_native_context_failure);
+        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
+        cxcore_System_Exception___constructor(error, &cx_native_context_failure);
         cx_exception_throw(error, __FILE__, __LINE__);
     }
     return context;
@@ -65,8 +65,8 @@ void *cx_interop_context_alloc(size_t size) {
 
 cx_ulong cx_interop_stack_size(cx_long count, cx_ulong elementSize) {
     if (count < 0 || elementSize == 0 || (cx_ulong)count > 1024u * 1024u / elementSize) {
-        struct CX_ID_3(cxcore, System, Exception) *error = CX_ID_4(cxcore, System, Memory, Alloc)((cx_uint)sizeof(*error));
-        CX_ID_4(cxcore, System, Exception, __constructor)(error, &cx_native_stack_failure);
+        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
+        cxcore_System_Exception___constructor(error, &cx_native_stack_failure);
         cx_exception_throw(error, __FILE__, __LINE__);
     }
     return count == 0 ? 1 : (cx_ulong)count * elementSize;

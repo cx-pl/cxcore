@@ -1,0 +1,21 @@
+namespace System.DependencyInjection;
+
+public final class ServiceProviderOptions {
+    private bool _validateScopes;
+    private bool _validateOnBuild;
+
+    public bool ValidateScopes {
+        get { return _validateScopes; }
+        set { _validateScopes = value; }
+    }
+
+    public bool ValidateOnBuild {
+        get { return _validateOnBuild; }
+        set { _validateOnBuild = value; }
+    }
+
+    public constructor() {
+        _validateScopes = true;
+        _validateOnBuild = true;
+    }
+}

@@ -1,0 +1,27 @@
+namespace System;
+
+public class ArgumentException : Exception {
+    private string _paramName;
+
+    public string ParamName { const get { return _paramName; } }
+
+    public constructor(const string message) : this(message, null) { }
+
+    public constructor(const string message, const string paramName) : base(message) {
+        _paramName = paramName;
+    }
+}
+
+public class ArgumentNullException : ArgumentException {
+    public constructor(const string paramName)
+        : base(null, paramName) { }
+}
+
+public class ArgumentOutOfRangeException : ArgumentException {
+    public constructor(const string paramName)
+        : base(null, paramName) { }
+}
+
+public class InvalidOperationException : Exception {
+    public constructor(const string message) : base(message) { }
+}
