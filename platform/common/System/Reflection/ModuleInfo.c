@@ -118,13 +118,26 @@ struct cxcore_System_Reflection_ModuleInfo cx_module_info_wrap(const struct cx_m
 }
 
 CX_STRING_DEF(cx_type_module_unavailable, "The type has no defining module metadata.");
+static CX_NORETURN void cx_module_throw_invalid_operation(
+    const struct cxcore_System_String *message) {
+    struct cxcore_System_InvalidOperationException *error =
+        cx_exception_allocate_durable(
+            cxcore_System_InvalidOperationException___typeinfo.Size);
+    cxcore_System_InvalidOperationException___constructor__2(error, message);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
+
 struct cxcore_System_Reflection_ModuleInfo cxcore_System_Reflection_TypeInfo_GetModule(
     const struct cxcore_System_Reflection_TypeInfo *self) {
-    if (self == CX_NULL || self->_module == CX_NULL) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_type_module_unavailable);
-        cx_exception_throw(error, __FILE__, __LINE__);
+    if (self == CX_NULL) {
+        struct cxcore_System_NullReferenceException *error =
+            cx_exception_allocate_durable(
+                cxcore_System_NullReferenceException___typeinfo.Size);
+        cxcore_System_NullReferenceException___constructor__2(error, CX_NULL);
+        cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
     }
+    if (self->_module == CX_NULL)
+        cx_module_throw_invalid_operation(&cx_type_module_unavailable);
     return cx_module_info_wrap(self->_module);
 }
 
@@ -170,9 +183,7 @@ cx_bool cxcore_System_Reflection_ModuleInfo_CanReadFunctionArray(
 
 CX_STRING_DEF(cx_module_bad_array, "The reflected function has no supported array result reader.");
 static void cx_module_reject_array(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &cx_module_bad_array);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    cx_module_throw_invalid_operation(&cx_module_bad_array);
 }
 
 struct cxcore_System_Reflection_TypeInfo cxcore_System_Reflection_ModuleInfo_GetFunctionArrayElementType(
@@ -207,14 +218,23 @@ cx_uint cxcore_System_Reflection_ModuleInfo_ReferenceCount___const_get(
 }
 
 CX_STRING_DEF(cx_module_bad_reference, "The module reference index is out of range.");
+CX_STRING_DEF(cx_module_index_parameter, "index");
+static CX_NORETURN void cx_module_throw_range(
+    const struct cxcore_System_String *message) {
+    struct cxcore_System_ArgumentOutOfRangeException *error =
+        cx_exception_allocate_durable(
+            cxcore_System_ArgumentOutOfRangeException___typeinfo.Size);
+    cxcore_System_ArgumentOutOfRangeException___constructor__3(
+        error, message, &cx_module_index_parameter);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
+
 struct cxcore_System_Reflection_ModuleInfo cxcore_System_Reflection_ModuleInfo_GetReference(
     const struct cxcore_System_Reflection_ModuleInfo *self, cx_uint index) {
     const struct cx_module_info *descriptor = self == CX_NULL ? CX_NULL : self->_descriptor;
-    if (!cx_module_descriptor_supported(descriptor) || index >= descriptor->referenceCount) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_module_bad_reference);
-        cx_exception_throw(error, __FILE__, __LINE__);
-    }
+    if (!cx_module_descriptor_supported(descriptor))
+        cx_module_throw_invalid_operation(&cx_module_bad_reference);
+    if (index >= descriptor->referenceCount) cx_module_throw_range(&cx_module_bad_reference);
     return cx_module_info_wrap(descriptor->references[index]());
 }
 
@@ -234,11 +254,9 @@ struct cxcore_System_Reflection_AnnotationInfo cxcore_System_Reflection_ModuleIn
     struct cxcore_System_Collections_Array *expressions;
     struct cxcore_System_Collections_Array *values;
     cx_uint argumentIndex;
-    if (!cx_module_descriptor_supported(descriptor) || index >= descriptor->annotationCount) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_module_bad_annotation);
-        cx_exception_throw(error, __FILE__, __LINE__);
-    }
+    if (!cx_module_descriptor_supported(descriptor))
+        cx_module_throw_invalid_operation(&cx_module_bad_annotation);
+    if (index >= descriptor->annotationCount) cx_module_throw_range(&cx_module_bad_annotation);
     annotation = &descriptor->annotations[index];
     cx_reflection_copy_type_info(&result.DeclaringType, annotation->declaringType);
     result.FunctionIndex = annotation->functionIndex;

@@ -1,0 +1,14 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Optional provider-owned execution for value-returning scalar terminals.</summary>
+/// <remarks>
+/// Providers validate the scalar plan before execution and define their own
+/// source and expression semantics. First, Last, and ElementAt plans require
+/// explicit ordering; Single must detect zero and multiple results according
+/// to its default or non-default form.
+/// </remarks>
+public interface IQueryPositionScalarProvider<T> {
+    public T ExecutePosition(IQueryScalarPlanNode plan);
+}

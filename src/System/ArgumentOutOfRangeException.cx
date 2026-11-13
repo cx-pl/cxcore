@@ -1,0 +1,26 @@
+namespace System;
+public class ArgumentOutOfRangeException : ArgumentException {
+    private object? _actualValue;
+
+    public object? ActualValue { const get { return _actualValue; } }
+
+    public constructor() : this(null) { }
+
+    public constructor(const string paramName)
+        : this("Value was outside the valid range.", paramName, null) { }
+
+    public constructor(const string message, const string paramName)
+        : this(message, paramName, null) { }
+
+    public constructor(const string message, const string paramName,
+        const object actualValue)
+        : base(message ?? "Value was outside the valid range.", paramName) {
+        _actualValue = actualValue;
+    }
+
+    public constructor(const string message, const string paramName,
+        const object actualValue, const Exception innerException)
+        : base(message ?? "Value was outside the valid range.", paramName, innerException) {
+        _actualValue = actualValue;
+    }
+}

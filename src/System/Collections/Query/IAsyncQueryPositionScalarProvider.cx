@@ -1,0 +1,14 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Optional task-based execution for value-returning scalar terminals.</summary>
+/// <remarks>
+/// Implementations observe cancellation until the operation settles and
+/// validate terminal-specific empty, bounds, and cardinality behavior.
+/// </remarks>
+public interface IAsyncQueryPositionScalarProvider<T> {
+    public Task<T> ExecutePositionAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+}

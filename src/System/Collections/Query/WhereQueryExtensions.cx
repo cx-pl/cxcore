@@ -1,0 +1,27 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses consecutive concrete Filter stages into one iterator.</summary>
+public extension WhereQueryExtensions<T> : WhereEnumerable<T> {
+    public WhereWhereEnumerable<T> Filter(
+        delegate(T) => bool predicate) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (predicate == null) {
+            throw new System.ArgumentNullException("predicate");
+        }
+        return new WhereWhereEnumerable<T>(this, predicate);
+    }
+
+    public WhereMapEnumerable<T, TResult> Map<TResult>(
+        delegate(T) => TResult selector) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (selector == null) {
+            throw new System.ArgumentNullException("selector");
+        }
+        return new WhereMapEnumerable<T, TResult>(this, selector);
+    }
+}

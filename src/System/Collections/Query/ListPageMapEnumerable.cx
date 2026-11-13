@@ -1,0 +1,30 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListPageMapEnumerable<T, TResult> : IEnumerable<TResult> {
+    internal ListPageEnumerable<T> _source;
+    internal delegate(T) => TResult _selector;
+
+    internal constructor(
+        ListPageEnumerable<T> source,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedPageMapEnumerator<T, TResult>(
+            _source._source.GetQueryStorage(), _selector,
+            _source._offset < _source._source.Count
+                ? _source._offset : _source._source.Count,
+            (_source._offset < _source._source.Count
+                ? _source._offset : _source._source.Count) +
+                (_source._pageSize < _source._source.Count -
+                    (_source._offset < _source._source.Count
+                        ? _source._offset : _source._source.Count)
+                    ? _source._pageSize
+                    : _source._source.Count -
+                        (_source._offset < _source._source.Count
+                            ? _source._offset : _source._source.Count)));
+    }
+}

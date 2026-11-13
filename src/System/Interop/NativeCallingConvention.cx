@@ -1,0 +1,2 @@
+namespace System.Interop;
+public enum NativeCallingConvention { PlatformDefault, Cdecl, Stdcall, Winapi }

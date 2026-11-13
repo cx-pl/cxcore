@@ -1,0 +1,53 @@
+import System;
+
+namespace System.Threading.Tasks;
+// TaskState keeps all completion data in a non-generic, GC-visible object.
+// Task<T> is therefore a stable object layout across modules and specializations.
+internal final class TaskState {
+    private object _value;
+    private bool _isCompleted;
+    private bool _isFaulted;
+    private bool _isCanceled;
+    private Exception _exception;
+    private ptr _continuations;
+
+    public bool IsCompleted { const get => _isCompleted; }
+    public object Value { const get => _value; }
+    public bool IsFaulted { const get => _isFaulted; }
+    public bool IsCanceled { const get => _isCanceled; }
+    public Exception Exception { const get => _exception; }
+    public static extern void RegisterUnobservedFault(TaskState state);
+    public extern void MarkFaultObserved();
+
+    public static extern void ThrowIfNotCompleted(bool isCompleted);
+    public static extern void ThrowIfAlreadyCompleted(bool isCompleted);
+    public extern void OnCompleted(delegate() => void continuation);
+    private extern void ScheduleContinuations();
+
+    public void SetResult(object value) {
+        ThrowIfAlreadyCompleted(_isCompleted);
+        _value = value;
+        _isFaulted = false;
+        _isCompleted = true;
+        ScheduleContinuations();
+    }
+
+    public extern void SetFault(Exception exception);
+
+    public void SetCanceled() {
+        ThrowIfAlreadyCompleted(_isCompleted);
+        _isFaulted = false;
+        _isCanceled = true;
+        _isCompleted = true;
+        ScheduleContinuations();
+    }
+
+    public constructor() {
+        _value = null;
+        _isCompleted = false;
+        _isFaulted = false;
+        _isCanceled = false;
+        _exception = null;
+        _continuations = null;
+    }
+}

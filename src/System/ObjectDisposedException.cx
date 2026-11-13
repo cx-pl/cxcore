@@ -1,0 +1,22 @@
+namespace System;
+public class ObjectDisposedException : InvalidOperationException {
+    private string _objectName;
+
+    public string ObjectName { const get { return _objectName; } }
+
+    public constructor() : this(null) { }
+
+    public constructor(const string objectName)
+        : this("The object has been disposed.", objectName) { }
+
+    public constructor(const string message, const string objectName)
+        : base(message ?? "The object has been disposed.") {
+        _objectName = objectName;
+    }
+
+    public constructor(const string message, const string objectName,
+        const Exception innerException)
+        : base(message ?? "The object has been disposed.", innerException) {
+        _objectName = objectName;
+    }
+}

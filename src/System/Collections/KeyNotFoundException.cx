@@ -1,0 +1,9 @@
+namespace System.Collections;
+
+public class KeyNotFoundException : System.Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The requested key was not present in the collection.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The requested key was not present in the collection.", innerException) { }
+}

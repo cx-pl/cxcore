@@ -12,20 +12,33 @@ CX_STRING_DEF(cx_math_abs_overflow, "Math.Abs result is outside the signed integ
 CX_STRING_DEF(cx_math_invalid_bounds, "Math.Clamp requires min <= max");
 CX_STRING_DEF(cx_math_float_digits, "Math.Round float decimals must be between 0 and 6");
 CX_STRING_DEF(cx_math_double_digits, "Math.Round double decimals must be between 0 and 15");
+CX_STRING_DEF(cx_math_min_parameter, "min");
+CX_STRING_DEF(cx_math_decimals_parameter, "decimals");
 
-static CX_NORETURN void fail(const struct cxcore_System_String *message) {
-    struct cxcore_System_Exception *error =
-        cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, message);
-    cx_exception_throw(error, __FILE__, __LINE__);
+static CX_NORETURN void fail_overflow(const struct cxcore_System_String *message) {
+    struct cxcore_System_OverflowException *error =
+        cx_exception_allocate_durable(cxcore_System_OverflowException___typeinfo.Size);
+    cxcore_System_OverflowException___constructor__2(error, message);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
+
+static CX_NORETURN void fail_argument(
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *parameter) {
+    struct cxcore_System_ArgumentOutOfRangeException *error =
+        cx_exception_allocate_durable(
+            cxcore_System_ArgumentOutOfRangeException___typeinfo.Size);
+    cxcore_System_ArgumentOutOfRangeException___constructor__3(
+        error, message, parameter);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 cx_int cxcore_System_Math_Abs(cx_int value) {
-    if (value == INT_MIN) fail(&cx_math_abs_overflow);
+    if (value == INT_MIN) fail_overflow(&cx_math_abs_overflow);
     return value < 0 ? -value : value;
 }
 cx_long cxcore_System_Math_Abs__2(cx_long value) {
-    if (value == LLONG_MIN) fail(&cx_math_abs_overflow);
+    if (value == LLONG_MIN) fail_overflow(&cx_math_abs_overflow);
     return value < 0 ? -value : value;
 }
 cx_float cxcore_System_Math_Abs__3(cx_float value) {
@@ -36,19 +49,19 @@ cx_double cxcore_System_Math_Abs__4(cx_double value) {
 }
 
 cx_int cxcore_System_Math_Clamp(cx_int value, cx_int min, cx_int max) {
-    if (min > max) fail(&cx_math_invalid_bounds);
+    if (min > max) fail_argument(&cx_math_invalid_bounds, &cx_math_min_parameter);
     return value < min ? min : value > max ? max : value;
 }
 cx_long cxcore_System_Math_Clamp__2(cx_long value, cx_long min, cx_long max) {
-    if (min > max) fail(&cx_math_invalid_bounds);
+    if (min > max) fail_argument(&cx_math_invalid_bounds, &cx_math_min_parameter);
     return value < min ? min : value > max ? max : value;
 }
 cx_float cxcore_System_Math_Clamp__3(cx_float value, cx_float min, cx_float max) {
-    if (min > max) fail(&cx_math_invalid_bounds);
+    if (min > max) fail_argument(&cx_math_invalid_bounds, &cx_math_min_parameter);
     return value < min ? min : value > max ? max : value;
 }
 cx_double cxcore_System_Math_Clamp__4(cx_double value, cx_double min, cx_double max) {
-    if (min > max) fail(&cx_math_invalid_bounds);
+    if (min > max) fail_argument(&cx_math_invalid_bounds, &cx_math_min_parameter);
     return value < min ? min : value > max ? max : value;
 }
 
@@ -112,7 +125,7 @@ cx_double cxcore_System_Math_Round__3(cx_double value) {
 }
 cx_float cxcore_System_Math_Round__2(cx_float value, cx_int decimals) {
     static const cx_float powers[] = {1e0f, 1e1f, 1e2f, 1e3f, 1e4f, 1e5f, 1e6f};
-    if (decimals < 0 || decimals > 6) fail(&cx_math_float_digits);
+    if (decimals < 0 || decimals > 6) fail_argument(&cx_math_float_digits, &cx_math_decimals_parameter);
     if (fabsf(value) >= 1e8f || !isfinite(value)) return value;
     cx_float scaled = value * powers[decimals];
     return cxcore_System_Math_Round(scaled) / powers[decimals];
@@ -121,7 +134,7 @@ cx_double cxcore_System_Math_Round__4(cx_double value, cx_int decimals) {
     static const cx_double powers[] = {
         1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15
     };
-    if (decimals < 0 || decimals > 15) fail(&cx_math_double_digits);
+    if (decimals < 0 || decimals > 15) fail_argument(&cx_math_double_digits, &cx_math_decimals_parameter);
     if (fabs(value) >= 1e16 || !isfinite(value)) return value;
     cx_double scaled = value * powers[decimals];
     return cxcore_System_Math_Round__3(scaled) / powers[decimals];

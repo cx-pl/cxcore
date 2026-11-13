@@ -1,0 +1,70 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListWhereMapEnumerator<T, TResult> : IEnumerator<TResult> {
+    private Array<T> _source;
+    private delegate(T) => bool _predicate;
+    private delegate(T) => TResult _selector;
+    private uint _index;
+    private uint _length;
+    private uint _remaining;
+    private TResult _current;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => bool predicate,
+        delegate(T) => TResult selector,
+        uint length,
+        uint count) {
+        _source = source;
+        _predicate = predicate;
+        _selector = selector;
+        _length = length;
+        _remaining = count;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        if (_remaining == 0u) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_index < _length) {
+                T value = _source.Get(_index);
+                _index += 1u;
+                if (!_predicate(value)) { continue; }
+                TResult projected = _selector(value);
+                _current = projected;
+                _remaining -= 1u;
+                if (_remaining == 0u) { ReleaseSource(); }
+                return true;
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    private void ReleaseSource() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _predicate = default;
+            _selector = default;
+        }
+    }
+
+    public void Dispose() {
+        ReleaseSource();
+        _current = default;
+    }
+}

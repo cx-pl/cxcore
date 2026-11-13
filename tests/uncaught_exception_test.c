@@ -6,18 +6,25 @@
 
 typedef struct cxcore_System_Reflection_TypeInfo type_info;
 
-struct test_exception {
-    cx_ptr vtable;
-};
+CX_STRING_DEF(test_exception_message, "diagnostic message");
+CX_STRING_DEF(test_inner_exception_message, "inner diagnostic");
 
-static type_info exception_type = {0};
-static union cx_vtable_entry exception_vtable[] = {{.data = &exception_type}};
+extern void cxcore_System_Exception___constructor__2(
+    struct cxcore_System_Exception *self,
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_Exception *innerException);
 
 int main(void) {
-    struct test_exception *exception_object =
-        (struct test_exception *)cxcore_System_Memory_Alloc(
+    struct cxcore_System_Exception *inner_exception =
+        (struct cxcore_System_Exception *)cxcore_System_Memory_Alloc(
+            (cx_uint)sizeof(*inner_exception));
+    struct cxcore_System_Exception *exception_object =
+        (struct cxcore_System_Exception *)cxcore_System_Memory_Alloc(
             (cx_uint)sizeof(*exception_object));
-    exception_object->vtable = exception_vtable;
+    cxcore_System_Exception___constructor(inner_exception,
+                                          &test_inner_exception_message);
+    cxcore_System_Exception___constructor__2(
+        exception_object, &test_exception_message, inner_exception);
 #ifdef _WIN32
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
 #endif

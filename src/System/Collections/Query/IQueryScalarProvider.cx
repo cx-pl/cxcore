@@ -1,0 +1,9 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Optional synchronous boundary for provider scalar terminals.</summary>
+public interface IQueryScalarProvider {
+    public bool ExecuteAny(IQueryScalarPlanNode plan);
+    public uint ExecuteCount(IQueryScalarPlanNode plan);
+}

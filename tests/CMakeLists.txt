@@ -1,6 +1,11 @@
 function(cxcore_add_test_executable target)
     add_executable(${target} ${ARGN})
     target_compile_definitions(${target} PRIVATE CXCORE_TESTING)
+    if(WIN32 AND NOT CX_BUILD_STATIC)
+        # Imported DLL vtables cannot appear in a constant initializer under
+        # MSVC. Test-owned literal strings only need their length and data.
+        target_compile_definitions(${target} PRIVATE CX_DYNAMIC_MODULE)
+    endif()
     target_link_libraries(${target} PRIVATE cxcore)
     if(WIN32 AND NOT CX_BUILD_STATIC)
         add_custom_command(TARGET ${target} POST_BUILD
@@ -71,12 +76,21 @@ add_test(
     NAME cxcore_uncaught_exception_test
     COMMAND ${CMAKE_COMMAND}
         -DTEST_EXECUTABLE=$<TARGET_FILE:cxcore_uncaught_exception_test>
+        "-DEXPECTED_DIAGNOSTIC=diagnostic message"
+        "-DEXPECTED_INNER_DIAGNOSTIC=inner diagnostic"
         -P ${CMAKE_CURRENT_SOURCE_DIR}/verify_uncaught_exception.cmake)
+
+cxcore_add_test_executable(cxcore_throw_null_test throw_null_test.c)
+add_test(
+    NAME cxcore_throw_null_is_fatal_and_distinct_from_handler_corruption
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_EXECUTABLE=$<TARGET_FILE:cxcore_throw_null_test>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/verify_throw_null.cmake)
 
 cxcore_add_test_executable(cxcore_standard_library_tests standard_library_tests.c)
 cxcore_add_test_executable(cxcore_wide_string_tests wide_string_tests.c)
 add_test(NAME cxcore_wide_string_tests COMMAND cxcore_wide_string_tests)
-foreach(library_area IN ITEMS array char memory nullable object reflection string)
+foreach(library_area IN ITEMS array char math_typed memory nullable object reflection string)
     add_test(
         NAME cxcore_${library_area}_tests
         COMMAND cxcore_standard_library_tests ${library_area})
@@ -91,6 +105,12 @@ add_test(
 
 cxcore_add_test_executable(cxcore_managed_memory_tests managed_memory_tests.c)
 add_test(NAME cxcore_managed_memory_tests COMMAND cxcore_managed_memory_tests)
+add_test(NAME cxcore_arena_null_action_is_argument_exception
+    COMMAND cxcore_managed_memory_tests arena-null-action-typed)
+add_test(NAME cxcore_arena_invalid_capacity_has_context
+    COMMAND cxcore_managed_memory_tests arena-capacity-typed)
+add_test(NAME cxcore_arena_disposed_is_object_disposed_exception
+    COMMAND cxcore_managed_memory_tests arena-disposed-typed)
 add_test(NAME cxcore_memory_budget_combines_heap_and_arena
     COMMAND cxcore_managed_memory_tests memory-budget)
 add_test(NAME cxcore_memory_budget_rejects_arena_reservation

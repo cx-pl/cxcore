@@ -1,0 +1,12 @@
+import System;
+
+namespace System.Collections;
+public struct KeyValuePair<TKey, TValue> {
+    public TKey Key;
+    public TValue Value;
+
+    public constructor(TKey key, TValue value) {
+        Key = key;
+        Value = value;
+    }
+}

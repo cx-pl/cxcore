@@ -1,0 +1,14 @@
+import System;
+
+namespace System.Threading.Tasks;
+public final class TaskCompletionSourceVoid {
+    private TaskHandle _task;
+
+    public TaskHandle Task { const get => _task; }
+
+    public void SetResult() { _task.SetResult(); }
+    public void SetException(Exception exception) { _task.SetFault(exception); }
+    public void SetCanceled() { _task.SetCanceled(); }
+
+    public constructor() { _task = new TaskHandle(false); }
+}

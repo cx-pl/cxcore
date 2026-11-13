@@ -1,0 +1,11 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Non-generic view used to inspect plan ancestry across projections.</summary>
+public interface IQueryPlanNode {
+    public string Kind { const get; }
+    public string SourceName { const get; }
+    public object Source { const get; }
+    public object Expression { const get; }
+}

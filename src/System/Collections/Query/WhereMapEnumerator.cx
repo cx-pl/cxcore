@@ -1,0 +1,64 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class WhereMapEnumerator<T, TResult> : IEnumerator<TResult> {
+    private IEnumerable<T> _source;
+    private IEnumerator<T> _enumerator;
+    private delegate(T) => bool _predicate;
+    private delegate(T) => TResult _selector;
+    private TResult _current;
+    private bool _started;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    internal constructor(
+        IEnumerable<T> source,
+        delegate(T) => bool predicate,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _predicate = predicate;
+        _selector = selector;
+        _started = false;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            return false;
+        }
+        try {
+            if (!_started) {
+                _enumerator = _source.GetEnumerator();
+                _started = true;
+            }
+            while (_enumerator.MoveNext()) {
+                T value = _enumerator.Current;
+                if (!_predicate(value)) {
+                    continue;
+                }
+                _current = _selector(value);
+                return true;
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            if (_started) {
+                _enumerator.Dispose();
+            }
+            _source = default;
+            _enumerator = default;
+            _predicate = default;
+            _selector = default;
+            _current = default;
+        }
+    }
+}

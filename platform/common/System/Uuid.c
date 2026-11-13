@@ -8,9 +8,30 @@ typedef struct cxcore_System_Uuid uuid;
 typedef struct cxcore_System_String string;
 CX_STRING_DEF(uuid_error_message, "UUID generation failed or received invalid arguments");
 static CX_NORETURN void uuid_error(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &uuid_error_message);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    struct cxcore_System_InvalidOperationException *error =
+        cx_exception_allocate_durable(
+            cxcore_System_InvalidOperationException___typeinfo.Size);
+    cxcore_System_InvalidOperationException___constructor__2(
+        error, &uuid_error_message);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
+
+CX_STRING_DEF(uuid_null_name_message, "UUID name cannot be null.");
+CX_STRING_DEF(uuid_name_parameter, "name");
+static CX_NORETURN void uuid_null_name(void) {
+    struct cxcore_System_ArgumentNullException *error =
+        cx_exception_allocate_durable(cxcore_System_ArgumentNullException___typeinfo.Size);
+    cxcore_System_ArgumentNullException___constructor__3(
+        error, &uuid_null_name_message, &uuid_name_parameter);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
+
+CX_STRING_DEF(uuid_bad_name_message, "UUID name data is invalid.");
+static CX_NORETURN void uuid_bad_name(void) {
+    struct cxcore_System_ArgumentException *error =
+        cx_exception_allocate_durable(cxcore_System_ArgumentException___typeinfo.Size);
+    cxcore_System_ArgumentException___constructor__2(error, &uuid_bad_name_message);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 struct cxcore_System_Uuid
@@ -37,7 +58,8 @@ static uuid random_uuid(unsigned version) {
     return from_bytes(bytes, version);
 }
 static uuid named_uuid(uuid namespaceId, const string *name, int sha1) {
-    if (!name || (name->_length && !name->_data)) uuid_error();
+    if (name == NULL) uuid_null_name();
+    if (name->_length && !name->_data) uuid_bad_name();
     unsigned char bytes[16], digest[20];
     to_bytes(namespaceId, bytes);
     cx_uuid_hash h = {{0x67452301,0xefcdab89,0x98badcfe,0x10325476,0xc3d2e1f0},0,0,sha1,{0}};

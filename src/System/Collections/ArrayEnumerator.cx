@@ -1,0 +1,40 @@
+namespace System.Collections;
+public final class ArrayEnumerator<T> : IEnumerator<T> {
+    private T[] _items;
+    private uint _count;
+    private uint _nextIndex;
+    private bool _reverse;
+
+    public T Current {
+        const get { return _items[_reverse ? _nextIndex : _nextIndex - 1u]; }
+    }
+
+    public constructor(T[] items, uint count) {
+        _items = items;
+        _count = count;
+        _nextIndex = 0u;
+        _reverse = false;
+    }
+
+    public void Reverse() {
+        _reverse = true;
+        _nextIndex = _count;
+    }
+
+    public bool MoveNext() {
+        if (_reverse) {
+            if (_nextIndex == 0u) {
+                return false;
+            }
+            _nextIndex -= 1u;
+            return true;
+        }
+        if (_nextIndex >= _count) {
+            return false;
+        }
+        _nextIndex += 1u;
+        return true;
+    }
+
+    public void Dispose() {}
+}

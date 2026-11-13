@@ -984,6 +984,9 @@ static const struct cx_reflection_field cxcore_System_Exception___reflection_fie
     {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
      (cx_uint)offsetof(struct cxcore_System_Exception, _innerException),
      &cxcore_System_Nullable___typeinfo, "_innerException", (cx_uint)sizeof(((struct cxcore_System_Exception*)0)->_innerException)},
+    {CX_REFLECTION_FLAG_VISIBILITY_PRIVATE,
+     (cx_uint)offsetof(struct cxcore_System_Exception, _stackTrace),
+     &cxcore_System_String___typeinfo, "_stackTrace", (cx_uint)sizeof(((struct cxcore_System_Exception*)0)->_stackTrace)},
 };
 static const struct cx_reflection_parameter cxcore_System_Exception___reflection_params_0[] = {
     {0, &cxcore_System_String___typeinfo, "message", CX_NULL},
@@ -1031,7 +1034,7 @@ static const struct cx_runtime_type_info cxcore_System_Exception___runtime_type_
     .interfaces = CX_NULL,
     .interfaceCount = 0,
     .fields = (const struct cx_reflection_field *)cxcore_System_Exception___reflection_fields,
-    .fieldCount = 2,
+    .fieldCount = 3,
     .functions = (const struct cx_reflection_function *)cxcore_System_Exception___reflection_functions,
     .functionCount = 8,
 };
@@ -2952,6 +2955,8 @@ void cxcore_System_Exception___constructor(struct cxcore_System_Exception * __th
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Exception);
     (void)cx_gc_store_reference((cx_ptr *)&__this->_message, (cx_ptr)message);
+    (void)cx_gc_store_reference((cx_ptr *)&__this->_innerException._obj, CX_NULL);
+    (void)cx_gc_store_reference((cx_ptr *)&__this->_stackTrace, CX_NULL);
 }
 
 void cxcore_System_Exception___constructor__2(struct cxcore_System_Exception * __this,
@@ -2964,6 +2969,7 @@ void cxcore_System_Exception___constructor__2(struct cxcore_System_Exception * _
     (void)cx_gc_store_reference((cx_ptr *)&__this->_message, (cx_ptr)message);
     (void)cx_gc_store_reference(
         (cx_ptr *)&__this->_innerException._obj, (cx_ptr)innerException);
+    (void)cx_gc_store_reference((cx_ptr *)&__this->_stackTrace, CX_NULL);
 }
 
 cx_long cxcore_System_TimeSpan_Hours___const_get(const struct cxcore_System_TimeSpan * __this) {

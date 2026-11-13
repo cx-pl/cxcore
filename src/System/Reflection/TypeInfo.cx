@@ -1,7 +1,6 @@
 import System.Interop;
 
 namespace System.Reflection;
-
 public struct TypeInfo {
     public const ulong Hash;
     public const uint Flags;
@@ -42,11 +41,4 @@ public struct TypeInfo {
     @NoEscape public extern bool IsServiceSequence(object value) const;
     public extern object CreateCollectionFromSequence(object value) const;
     public extern object InvokeConstructor(uint functionIndex, const object[] arguments) const;
-}
-
-internal final class TypeInfoHolder {
-    private TypeInfo _value;
-
-    public extern constructor(TypeInfo value);
-    public extern TypeInfo GetValue() const;
 }

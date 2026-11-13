@@ -1,0 +1,17 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Optional task-based provider execution for Any and Count terminals.</summary>
+/// <remarks>
+/// Implementations observe cancellation until the operation settles, and
+/// complete the returned task only after releasing provider resources.
+/// </remarks>
+public interface IAsyncQueryScalarProvider {
+    public Task<bool> ExecuteAnyAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+    public Task<uint> ExecuteCountAsync(
+        IQueryScalarPlanNode plan,
+        CancellationToken cancellationToken);
+}

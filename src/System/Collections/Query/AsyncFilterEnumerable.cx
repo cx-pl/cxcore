@@ -1,0 +1,22 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A replayable asynchronous filter query.</summary>
+public final class AsyncFilterEnumerable<T> : IAsyncEnumerable<T> {
+    private IAsyncEnumerable<T> _source;
+    private delegate(T) => bool _predicate;
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => bool predicate) {
+        _source = source;
+        _predicate = predicate;
+    }
+
+    public IAsyncEnumerator<T> GetAsyncEnumerator(
+        CancellationToken cancellationToken) {
+        return new AsyncFilterEnumerator<T>(
+            _source, _predicate, cancellationToken);
+    }
+}

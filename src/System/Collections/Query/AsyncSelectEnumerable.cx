@@ -1,0 +1,22 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A replayable asynchronous projection.</summary>
+public final class AsyncSelectEnumerable<T, TResult> : IAsyncEnumerable<TResult> {
+    private IAsyncEnumerable<T> _source;
+    private delegate(T) => TResult _selector;
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+    }
+
+    public IAsyncEnumerator<TResult> GetAsyncEnumerator(
+        CancellationToken cancellationToken) {
+        return new AsyncSelectEnumerator<T, TResult>(
+            _source, _selector, cancellationToken);
+    }
+}

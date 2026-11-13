@@ -1,0 +1,4 @@
+import System;
+
+namespace System.Threading.Tasks;
+public delegate void CancellationCallback();

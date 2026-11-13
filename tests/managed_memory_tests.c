@@ -18,6 +18,18 @@
 #include "../platform/common/cxgc.h"
 #include "../platform/common/cxnumeric.h"
 
+static void cx_memory_noop_action(void *context) {
+    (void)context;
+}
+
+static int cx_memory_string_equals(
+    const struct cxcore_System_String *value,
+    const char *expected) {
+    size_t length = strlen(expected);
+    return value != NULL && value->_length == length &&
+        memcmp(value->_data, expected, length) == 0;
+}
+
 extern cx_ptr cxcore_test_System_Memory_AddObjectRoot(cx_ptr value);
 extern void cxcore_test_System_Memory_RemoveObjectRoot(cx_ptr handle);
 
@@ -817,6 +829,68 @@ static void *attempt_active_arena_teardown_on_worker_entry(void *argument) {
 int main(int argc, char **argv) {
     size_t collections_before;
     size_t collected_before;
+    if (argc == 2 && strcmp(argv[1], "arena-null-action-typed") == 0) {
+        struct cx_exception_frame frame;
+        cx_action empty_action = {0};
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            cxcore_System_Memory_WithArena(empty_action);
+            return 101;
+        }
+        if (!cxcore_System_Exception_Matches(
+                (const struct cxcore_System_Exception *)cx_exception_current(),
+                cxcore_System_ArgumentNullException___typeinfo) ||
+            !cx_memory_string_equals(
+                cxcore_System_ArgumentException_ParamName___const_get(
+                    (const struct cxcore_System_ArgumentException *)cx_exception_current()),
+                "action")) return 102;
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+        return 0;
+    }
+    if (argc == 2 && strcmp(argv[1], "arena-capacity-typed") == 0) {
+        struct cx_exception_frame frame;
+        cx_action action = {0};
+        action.__function = cx_memory_noop_action;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            cxcore_System_Memory_WithArena__2(0u, action);
+            return 103;
+        }
+        if (!cxcore_System_Exception_Matches(
+                (const struct cxcore_System_Exception *)cx_exception_current(),
+                cxcore_System_ArgumentOutOfRangeException___typeinfo) ||
+            !cx_memory_string_equals(
+                cxcore_System_ArgumentException_ParamName___const_get(
+                    (const struct cxcore_System_ArgumentException *)cx_exception_current()),
+                "capacity")) return 104;
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+        return 0;
+    }
+    if (argc == 2 && strcmp(argv[1], "arena-disposed-typed") == 0) {
+        struct cx_exception_frame frame;
+        struct cxcore_System_MemoryArena arena;
+        cx_action action = {0};
+        action.__function = cx_memory_noop_action;
+        cxcore_System_MemoryArena___constructor(&arena, 256u);
+        cxcore_System_MemoryArena_Dispose(&arena);
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            cxcore_System_MemoryArena_Run(&arena, action);
+            return 105;
+        }
+        if (!cxcore_System_Exception_Matches(
+                (const struct cxcore_System_Exception *)cx_exception_current(),
+                cxcore_System_ObjectDisposedException___typeinfo) ||
+            !cx_memory_string_equals(
+                cxcore_System_ObjectDisposedException_ObjectName___const_get(
+                    (const struct cxcore_System_ObjectDisposedException *)cx_exception_current()),
+                "MemoryArena")) return 106;
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+        return 0;
+    }
     if (argc == 2 && strcmp(argv[1], "arena-cycle-root") == 0) {
         struct cx_arena *arena = cx_arena_create(256u, 0u, 0);
         struct cx_arena_scope scope;

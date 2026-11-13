@@ -1,0 +1,17 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred projection over an enumerable source.</summary>
+public final class SelectEnumerable<T, TResult> : IEnumerable<TResult> {
+    private IEnumerable<T> _source;
+    private delegate(T) => TResult _selector;
+
+    internal constructor(IEnumerable<T> source, delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new SelectEnumerator<T, TResult>(_source.GetEnumerator(), _selector);
+    }
+}

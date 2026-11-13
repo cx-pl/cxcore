@@ -1,0 +1,35 @@
+import System;
+
+namespace System.Threading.Tasks;
+// Shared failure behavior keeps original exception identity across task types.
+public struct VoidTask {
+    private ptr _value;
+    private bool _isCompleted;
+    private bool _isFaulted;
+    private Exception _exception;
+
+    public bool IsCompleted { const get => _isCompleted; }
+    public static extern void ThrowIfFaulted(bool isFaulted, Exception exception);
+    public void GetResult() const { ThrowIfFaulted(_isFaulted, _exception); }
+
+    public static VoidTask Faulted(Exception exception) {
+        var task = new VoidTask();
+        task._isFaulted = true;
+        task._exception = exception;
+        return task;
+    }
+
+    public constructor() {
+        _value = null;
+        _isCompleted = true;
+        _isFaulted = false;
+        _exception = null;
+    }
+
+    private constructor(bool isFaulted, Exception exception) {
+        _value = null;
+        _isCompleted = true;
+        _isFaulted = isFaulted;
+        _exception = exception;
+    }
+}

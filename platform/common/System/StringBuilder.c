@@ -14,7 +14,7 @@ typedef struct cxcore_System_StringBuilder builder;
 typedef struct cxcore_System_String string;
 
 cx_uint cxcore_System_StringBuilder_EnsureCapacity(builder *self, cx_uint capacity) {
-    if (self == CX_NULL) cx_text_error();
+    if (self == CX_NULL) cx_text_null_reference();
     if (capacity <= self->_capacity) return self->_capacity;
     cx_uint grown = self->_capacity < 64 ? 64 : self->_capacity;
     while (grown < capacity) {
@@ -41,15 +41,17 @@ void cxcore_System_StringBuilder___constructor(builder *self) {
     cxcore_System_StringBuilder___constructor__2(self, 64);
 }
 cx_uint cxcore_System_StringBuilder_Length___const_get(const builder *self) {
-    if (!self) cx_text_error();
+    if (!self) cx_text_null_reference();
     return self->_characters;
 }
 cx_uint cxcore_System_StringBuilder_Capacity___const_get(const builder *self) {
-    if (!self) cx_text_error();
+    if (!self) cx_text_null_reference();
     return self->_capacity;
 }
 static builder *append(builder *self, const cx_byte *bytes, cx_uint length) {
-    if (!self || (length && !bytes) || length > UINT_MAX - self->_length) cx_text_error();
+    if (!self) cx_text_null_reference();
+    if (length && !bytes) cx_text_argument_null("value");
+    if (length > UINT_MAX - self->_length) cx_text_overflow();
     if (!length) return self;
     cx_uint characters = 0;
     size_t position = 0;
@@ -63,7 +65,7 @@ static builder *append(builder *self, const cx_byte *bytes, cx_uint length) {
     uintptr_t start = (uintptr_t)self->_data, input = (uintptr_t)bytes;
     int aliased = self->_data && input >= start && input - start < self->_length;
     size_t offset = aliased ? (size_t)(input - start) : 0;
-    if (aliased && length > self->_length - offset) cx_text_error();
+    if (aliased && length > self->_length - offset) cx_text_argument_range("value");
     cxcore_System_StringBuilder_EnsureCapacity(self, self->_length + length);
     if (aliased) bytes = (const cx_byte *)self->_data + offset;
     memmove((cx_byte *)self->_data + self->_length, bytes, length);
@@ -108,7 +110,7 @@ static builder *append_float(builder *self, double value, int single) {
     if (isinf(value)) return append(self,(const cx_byte *)(value < 0 ? "-Infinity" : "Infinity"),value < 0 ? 9 : 8);
     char text[64];
     int length = cx_platform_format_float(text, sizeof(text), value, single);
-    if (length < 0 || (size_t)length >= sizeof(text)) cx_text_error();
+    if (length < 0 || (size_t)length >= sizeof(text)) cx_text_format();
     return append(self, (cx_byte *)text, (cx_uint)length);
 }
 builder *cxcore_System_StringBuilder_Append__8(builder *self, cx_float value) {
@@ -146,12 +148,12 @@ builder *cxcore_System_StringBuilder_AppendLine__2(builder *self, string *value)
     return cxcore_System_StringBuilder_AppendLine(self);
 }
 builder *cxcore_System_StringBuilder_Clear(builder *self) {
-    if (!self) cx_text_error();
+    if (!self) cx_text_null_reference();
     self->_length = self->_characters = 0;
     return self;
 }
 string *cxcore_System_StringBuilder_ToString(const builder *self) {
-    if (!self) cx_text_error();
+    if (!self) cx_text_null_reference();
     if (!self->_length) return (string *)cxcore_System_String_Empty___const_get();
     void *data = cxcore_System_Memory_Alloc(self->_length);
     memcpy(data, self->_data, self->_length);

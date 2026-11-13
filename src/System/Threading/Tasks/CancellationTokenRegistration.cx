@@ -1,0 +1,24 @@
+import System;
+
+namespace System.Threading.Tasks;
+public struct CancellationTokenRegistration {
+    private CancellationTokenSource _source;
+    private uint _registrationId;
+
+    public static CancellationTokenRegistration None {
+        const get => new CancellationTokenRegistration(null, 0u);
+    }
+
+    public void Dispose() {
+        if (_source != null) {
+            _source.Unregister(_registrationId);
+            _source = null;
+            _registrationId = 0u;
+        }
+    }
+
+    internal constructor(CancellationTokenSource source, uint registrationId) {
+        _source = source;
+        _registrationId = registrationId;
+    }
+}

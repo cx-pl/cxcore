@@ -1,0 +1,50 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListWhereEnumerator<T> : IEnumerator<T> {
+    private Array<T> _source;
+    private delegate(T) => bool _predicate;
+    private uint _index;
+    private uint _length;
+    private T _current;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => bool predicate,
+        uint length) {
+        _source = source;
+        _predicate = predicate;
+        _length = length;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) { return false; }
+        try {
+            while (_index < _length) {
+                T value = _source.Get(_index);
+                _index += 1u;
+                if (_predicate(value)) {
+                    _current = value;
+                    return true;
+                }
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _predicate = default;
+            _current = default;
+        }
+    }
+}

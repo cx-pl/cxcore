@@ -40,7 +40,7 @@ public static class Memory {
                 pendingOperation.Type.Hash != typeof(Task<T>).Hash) {
                 Exception mismatch;
                 delegate() => void createMismatch = () => {
-                    mismatch = new Exception();
+                    mismatch = new InvalidCastException();
                 };
                 WithDurable(createMismatch);
                 return TaskHandle.Faulted(mismatch);
@@ -82,7 +82,7 @@ public static class Memory {
                 pendingOperation.Type.Hash != typeof(Task<T>).Hash) {
                 Exception mismatch;
                 delegate() => void createMismatch = () => {
-                    mismatch = new Exception();
+                    mismatch = new InvalidCastException();
                 };
                 WithDurable(createMismatch);
                 return TaskHandle.Faulted(mismatch);

@@ -583,11 +583,19 @@ cx_bool cx_is_interface(struct cx_iface_ref source, const cx_type_info *targetTy
     return cx_type_is(cx_interface_type(source), targetType);
 }
 
+static CX_NORETURN void cx_throw_invalid_cast(void) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_InvalidCastException___typeinfo.Size);
+    cxcore_System_InvalidCastException___constructor(
+        (struct cxcore_System_InvalidCastException *)exception);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
+
 cx_ptr cx_checked_cast_object(cx_ptr instance, const cx_type_info *targetType) {
     if (instance == CX_NULL || cx_is_object(instance, targetType)) {
         return instance;
     }
-    abort();
+    cx_throw_invalid_cast();
 }
 
 cx_ptr cx_safe_cast_object(cx_ptr instance, const cx_type_info *targetType) {
@@ -651,7 +659,7 @@ cx_ptr cx_checked_cast_interface(struct cx_iface_ref source, const cx_type_info 
     if (cx_is_interface(source, targetType)) {
         return source.instance;
     }
-    abort();
+    cx_throw_invalid_cast();
 }
 
 struct cx_iface_ref cx_checked_cast_object_to_interface(cx_ptr instance,
@@ -667,7 +675,7 @@ struct cx_iface_ref cx_checked_cast_object_to_interface(cx_ptr instance,
     if (instance == CX_NULL || result.vtable != CX_NULL) {
         return result;
     }
-    abort();
+    cx_throw_invalid_cast();
 }
 
 struct cx_iface_ref cx_checked_cast_interface_to_interface(struct cx_iface_ref source,
@@ -684,7 +692,7 @@ struct cx_iface_ref cx_checked_cast_interface_to_interface(struct cx_iface_ref s
     if (source.instance == CX_NULL || result.vtable != CX_NULL) {
         return result;
     }
-    abort();
+    cx_throw_invalid_cast();
 }
 
 const struct cx_interface_impl *cx_reflection_interfaces(const cx_type_info *typeInfo,

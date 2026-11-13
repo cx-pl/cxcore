@@ -1,0 +1,14 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Typed storage for a constant expression value.</summary>
+public final class QueryConstant<T> {
+    private T _value;
+
+    public T Value { const get { return _value; } }
+
+    public constructor(T value) {
+        _value = value;
+    }
+}

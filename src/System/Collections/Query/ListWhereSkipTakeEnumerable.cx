@@ -1,0 +1,19 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListWhereSkipTakeEnumerable<T> : IEnumerable<T> {
+    private ListWhereSkipEnumerable<T> _source;
+    private uint _count;
+
+    internal constructor(ListWhereSkipEnumerable<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new IndexedWhereTakeEnumerator<T>(
+            _source._source._source.GetQueryStorage(),
+            _source._source._predicate,
+            _source._source._source.Count, _source._skip, _count);
+    }
+}

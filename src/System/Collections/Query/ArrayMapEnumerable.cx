@@ -1,0 +1,46 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred indexed map over a concrete array.</summary>
+public final class ArrayMapEnumerable<T, TResult> : IEnumerable<TResult> {
+    internal Array<T> _source;
+    internal delegate(T) => TResult _selector;
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapEnumerator<T, TResult>(
+            _source, _selector, _source.Length);
+    }
+
+    public ArrayMapFilterEnumerable<T, TResult> Filter(
+        delegate(TResult) => bool predicate) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (predicate == null) {
+            throw new System.ArgumentNullException("predicate");
+        }
+        return new ArrayMapFilterEnumerable<T, TResult>(
+            this, predicate);
+    }
+
+    public ArrayMapTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayMapTakeEnumerable<T, TResult>(this, count);
+    }
+
+    public ArrayMapSkipEnumerable<T, TResult> Skip(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayMapSkipEnumerable<T, TResult>(this, count);
+    }
+}

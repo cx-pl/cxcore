@@ -22,10 +22,12 @@ static const struct cx_gc_root_region cx_thread_roots[] = {
 
 CX_STRING_DEF(cx_thread_invalid, "Invalid thread handle or self join");
 CX_STRING_DEF(cx_thread_null_action, "Thread.Start requires a non-null action");
+CX_STRING_DEF(cx_thread_action_parameter, "action");
 CX_STRING_DEF(cx_thread_start_failed, "Unable to start native thread");
 CX_STRING_DEF(cx_thread_scoped_action, "A synchronous allocation arena cannot publish a thread action");
 CX_STRING_DEF(cx_thread_join_active_arena, "Thread.Join cannot wait while its retained arena is active on the caller");
 CX_STRING_DEF(cx_thread_invalid_sleep, "Sleep duration must be non-negative");
+CX_STRING_DEF(cx_thread_sleep_parameter, "milliseconds");
 
 static void cx_thread_store_action(cx_action *destination, cx_action value) {
     destination->__function = value.__function;
@@ -162,7 +164,8 @@ cx_thread cxcore_System_Threading_Thread_Start(cx_action action) {
     struct cx_arena *logical_arena;
     cx_bool started;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_threading_raise(&cx_thread_null_action);
+        cx_threading_raise_argument_null(
+            &cx_thread_null_action, &cx_thread_action_parameter);
     }
     if (!cx_arena_scheduler_use_allowed()) {
         cx_threading_raise(&cx_thread_scoped_action);
@@ -284,7 +287,10 @@ static void cx_thread_native_sleep(void *context) {
     cx_platform_thread_sleep(milliseconds);
 }
 void cxcore_System_Threading_Thread_Sleep(cx_int milliseconds) {
-    if (milliseconds < 0) cx_threading_raise(&cx_thread_invalid_sleep);
+    if (milliseconds < 0) {
+        cx_threading_raise_argument_out_of_range(
+            &cx_thread_invalid_sleep, &cx_thread_sleep_parameter);
+    }
     cx_sleep_state.milliseconds = (cx_uint)milliseconds;
     cx_gc_run_blocking(cx_thread_native_sleep, &cx_sleep_state);
 }

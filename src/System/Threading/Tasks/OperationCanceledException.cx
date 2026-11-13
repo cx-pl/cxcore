@@ -1,0 +1,38 @@
+import System;
+
+namespace System.Threading.Tasks;
+public class OperationCanceledException : Exception {
+    private CancellationToken _cancellationToken;
+
+    public CancellationToken CancellationToken {
+        const get => _cancellationToken;
+    }
+
+    public constructor() : this(null, null, CancellationToken.None) { }
+
+    public constructor(CancellationToken cancellationToken) : base() {
+        _cancellationToken = cancellationToken;
+    }
+
+    public constructor(const string message) : this(message, null, CancellationToken.None) { }
+
+    public constructor(const string message, const Exception innerException)
+        : this(message, innerException, CancellationToken.None) { }
+
+    public constructor(const string message, CancellationToken cancellationToken)
+        : this(message, null, cancellationToken) { }
+
+    public constructor(const string message, const Exception innerException,
+        CancellationToken cancellationToken)
+        : base(message ?? "The operation was canceled.", innerException) {
+        _cancellationToken = cancellationToken;
+    }
+
+    public static void ThrowIfCanceled(
+        bool isCanceled,
+        CancellationToken cancellationToken) {
+        if (isCanceled) {
+            throw new OperationCanceledException(cancellationToken);
+        }
+    }
+}

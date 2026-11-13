@@ -1,0 +1,8 @@
+namespace System;
+public class NullReferenceException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "A required object reference is null.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "A required object reference is null.", innerException) { }
+}

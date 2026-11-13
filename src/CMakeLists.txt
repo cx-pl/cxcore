@@ -22,3 +22,9 @@ endif()
 target_include_directories(cxcore
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.obj/cxcore.h")
+    # Generated clients need the complete public declarations for CX-defined
+    # core APIs (including newly added exception properties and constructors).
+    target_include_directories(cxcore BEFORE INTERFACE
+        "${CMAKE_CURRENT_SOURCE_DIR}/.obj")
+endif()

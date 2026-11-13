@@ -1,0 +1,19 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses indexed list filtering with a bounded output prefix.</summary>
+public final class ListWhereTakeEnumerable<T> : IEnumerable<T> {
+    private ListWhereEnumerable<T> _source;
+    private uint _count;
+
+    internal constructor(ListWhereEnumerable<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new IndexedWhereTakeEnumerator<T>(
+            _source._source.GetQueryStorage(), _source._predicate,
+            _source._source.Count, 0u, _count);
+    }
+}

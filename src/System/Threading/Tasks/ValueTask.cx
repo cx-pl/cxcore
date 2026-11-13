@@ -1,0 +1,70 @@
+import System;
+
+namespace System.Threading.Tasks;
+public struct ValueTask<T> {
+    private Task<T> _task;
+    private ReusableValueTaskSource<T> _source;
+    private uint _version;
+    private bool _hasSource;
+    private bool _consumed;
+    private T _result;
+
+    public bool IsCompleted { const get => _hasSource
+        ? TaskRuntime.ReusableSourceIsCompleted(_source, _version)
+        : _task == null || _task.IsCompleted; }
+
+    public T GetResult() {
+        TaskState.ThrowIfAlreadyCompleted(_consumed);
+        _consumed = true;
+        if (_hasSource) { return _source.GetResult(_version); }
+        if (_task != null) { return _task.GetResult(); }
+        return _result;
+    }
+
+    public Task<T> AsTask() {
+        TaskState.ThrowIfAlreadyCompleted(_consumed);
+        _consumed = true;
+        if (_hasSource) {
+            var completion = new TaskCompletionSource<T>();
+            var source = _source;
+            var version = _version;
+            source.OnCompleted(version, () => {
+                try {
+                    completion.SetResult(source.GetResult(version));
+                } catch (OperationCanceledException) {
+                    completion.SetCanceled();
+                } catch (Exception exception) {
+                    completion.SetException(exception);
+                }
+            });
+            return completion.GetTask();
+        }
+        if (_task != null) { return _task; }
+        return new Task<T>(_result);
+    }
+
+    public void OnCompleted(delegate() => void continuation) {
+        if (_hasSource) { _source.OnCompleted(_version, continuation); }
+        else if (_task != null) { _task.OnCompleted(continuation); }
+    }
+
+    public void SetTask(Task<T> task) {
+        _task = task;
+        _source = null;
+        _version = 0u;
+        _hasSource = false;
+        _consumed = false;
+    }
+    public void SetSource(ReusableValueTaskSource<T> source, uint version) {
+        _task = null;
+        _source = source;
+        _version = version;
+        _hasSource = true;
+        _consumed = false;
+    }
+    public constructor(T result) {
+        _result = result;
+        _consumed = false;
+    }
+    public constructor() { }
+}

@@ -1,0 +1,45 @@
+import System;
+
+namespace System.Threading.Tasks;
+// Default(ValueTask) is an inline successful completion. Exceptional,
+// canceled, and pending operations use a persistent TaskHandle.
+public struct ValueTaskHandle {
+    private TaskHandle _task;
+    private bool _hasTask;
+    private bool _consumed;
+
+    public bool IsCompleted { const get => !_hasTask || _task.IsCompleted; }
+
+    public void GetResult() {
+        TaskState.ThrowIfAlreadyCompleted(_consumed);
+        _consumed = true;
+        if (_hasTask) {
+            _task.GetResult();
+        }
+    }
+
+    public TaskHandle AsTask() {
+        TaskState.ThrowIfAlreadyCompleted(_consumed);
+        _consumed = true;
+        if (_hasTask) {
+            return _task;
+        }
+        return new TaskHandle();
+    }
+
+    public void OnCompleted(delegate() => void continuation) {
+        if (_hasTask) { _task.OnCompleted(continuation); }
+    }
+
+    public constructor() {
+        _task = null;
+        _hasTask = false;
+        _consumed = false;
+    }
+
+    public constructor(TaskHandle task) {
+        _task = task;
+        _hasTask = true;
+        _consumed = false;
+    }
+}

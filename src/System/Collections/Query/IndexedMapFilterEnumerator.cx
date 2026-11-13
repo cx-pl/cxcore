@@ -1,0 +1,71 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class IndexedMapFilterEnumerator<T, TResult>
+    : IEnumerator<TResult> {
+    private Array<T> _source;
+    private delegate(T) => TResult _selector;
+    private delegate(TResult) => bool _predicate;
+    private uint _index;
+    private uint _length;
+    private uint _remaining;
+    private TResult _current;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => TResult selector,
+        delegate(TResult) => bool predicate,
+        uint length,
+        uint count) {
+        _source = source;
+        _selector = selector;
+        _predicate = predicate;
+        _length = length;
+        _remaining = count;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        if (_remaining == 0u) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_index < _length) {
+                T value = _source.Get(_index);
+                _index += 1u;
+                TResult mapped = _selector(value);
+                if (!_predicate(mapped)) { continue; }
+                _current = mapped;
+                _remaining -= 1u;
+                if (_remaining == 0u) { ReleaseSource(); }
+                return true;
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    private void ReleaseSource() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _selector = default;
+            _predicate = default;
+        }
+    }
+
+    public void Dispose() {
+        ReleaseSource();
+        _current = default;
+    }
+}

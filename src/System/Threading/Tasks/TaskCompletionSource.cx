@@ -1,0 +1,12 @@
+import System;
+
+namespace System.Threading.Tasks;
+public struct TaskCompletionSource<T> {
+    private Task<T> _task;
+    public Task<T> Task { const get => _task; }
+    public Task<T> GetTask() { return _task; }
+    public void SetResult(T result) { _task.SetResult(result); }
+    public void SetException(Exception exception) { _task.SetFault(exception); }
+    public void SetCanceled() { _task.SetCanceled(); }
+    public constructor() { _task = new Task<T>(); }
+}

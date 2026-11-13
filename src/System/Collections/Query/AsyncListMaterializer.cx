@@ -1,0 +1,140 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+internal final class AsyncListMaterializer<T, TLayout> {
+    private IAsyncEnumerable<T> _source;
+    private CancellationToken _cancellationToken;
+    private IAsyncEnumerator<T> _enumerator;
+    private List<T> _values;
+    private Task<List<T>> _completion;
+
+    internal constructor() {
+    }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        CancellationToken cancellationToken,
+        IAsyncEnumerator<T> enumerator,
+        List<T> values,
+        Task<List<T>> completion) {
+        _source = source;
+        _cancellationToken = cancellationToken;
+        _enumerator = enumerator;
+        _values = values;
+        _completion = completion;
+    }
+
+    internal Task<List<T>> Start() {
+        try {
+            _enumerator = _source.GetAsyncEnumerator(_cancellationToken);
+            if (_enumerator == null) {
+                Complete(new System.InvalidOperationException(
+                    "The async source returned a null enumerator."));
+                return _completion;
+            }
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return _completion;
+        }
+        Advance();
+        return _completion;
+    }
+
+    private void Advance() {
+        while (true) {
+            Task<bool> moveTask;
+            try {
+                moveTask = _enumerator.MoveNextAsync().AsTask();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moveTask.IsCompleted) {
+                AsyncListMaterializer<T, TLayout> state = this;
+                moveTask.OnCompleted(() => state.CompleteMove(moveTask));
+                return;
+            }
+            bool moved;
+            try {
+                moved = moveTask.GetResult();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moved) {
+                BeginDispose(null);
+                return;
+            }
+            try {
+                _values.Add(_enumerator.Current);
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+        }
+    }
+
+    private void CompleteMove(Task<bool> moveTask) {
+        bool moved;
+        try {
+            moved = moveTask.GetResult();
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return;
+        }
+        if (!moved) {
+            BeginDispose(null);
+            return;
+        }
+        try {
+            _values.Add(_enumerator.Current);
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return;
+        }
+        Advance();
+    }
+
+    private void BeginDispose(System.Exception failure) {
+        TaskHandle disposeTask;
+        try {
+            disposeTask = _enumerator.DisposeAsync().AsTask();
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return;
+        }
+        if (disposeTask.IsCompleted) {
+            CompleteDispose(disposeTask, failure);
+        } else {
+            AsyncListMaterializer<T, TLayout> state = this;
+            disposeTask.OnCompleted(() =>
+                state.CompleteDispose(disposeTask, failure));
+        }
+    }
+
+    private void CompleteDispose(
+        TaskHandle disposeTask,
+        System.Exception failure) {
+        try {
+            disposeTask.GetResult();
+        } catch (System.Exception disposeException) {
+            failure = disposeException;
+        }
+        Complete(failure);
+    }
+
+    private void Complete(System.Exception failure) {
+        if (failure is OperationCanceledException) {
+            _completion.SetCanceled();
+        } else if (failure != null) {
+            _completion.SetFault(failure);
+        } else {
+            _completion.SetResult(_values);
+        }
+        _source = default;
+        _cancellationToken = default;
+        _enumerator = default;
+        _values = default;
+    }
+}

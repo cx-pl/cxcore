@@ -1,0 +1,15 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public extension ListWhereMapExtensions<T> : ListWhereEnumerable<T> {
+    public ListWhereMapEnumerable<T, TResult> Map<TResult>(
+        delegate(T) => TResult selector) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (selector == null) {
+            throw new System.ArgumentNullException("selector");
+        }
+        return new ListWhereMapEnumerable<T, TResult>(this, selector);
+    }
+}

@@ -1,0 +1,13 @@
+namespace System.Collections;
+internal class LinkedListNode<T> {
+    internal T Value;
+    internal LinkedListNode<T> Previous;
+    internal LinkedListNode<T> Next;
+
+    internal constructor(T value) {
+        Value = value;
+        Previous = null;
+        Next = null;
+    }
+
+}

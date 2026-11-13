@@ -1,0 +1,5 @@
+namespace System.Interop;
+public static class NativeError {
+    public static extern uint GetLastError();
+    public static extern int GetErrno();
+}

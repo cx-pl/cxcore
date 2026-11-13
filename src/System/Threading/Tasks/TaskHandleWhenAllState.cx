@@ -1,0 +1,72 @@
+import System;
+
+namespace System.Threading.Tasks;
+internal final class TaskHandleWhenAllState {
+    private TaskHandle[] _children;
+    private TaskHandle _completion;
+    private uint _remaining;
+    private Exception _firstException;
+    private bool _wasCanceled;
+
+    public TaskHandle Task { const get => _completion; }
+
+    public constructor(TaskHandle[] children) {
+        if (children == null) {
+            throw new ArgumentNullException("children");
+        }
+        _children = new TaskHandle[children.Length];
+        for (uint index = 0u; index < children.Length; index += 1u) {
+            if (children[index] == null) {
+                throw new ArgumentNullException("children");
+            }
+            _children[index] = children[index];
+        }
+        _completion = new TaskHandle(false);
+        _remaining = children.Length;
+        _firstException = null;
+        _wasCanceled = false;
+    }
+
+    public void Start() {
+        if (_remaining == 0u) {
+            _completion.SetResult();
+            return;
+        }
+        uint count = _remaining;
+        for (uint index = 0u; index < count; index += 1u) {
+            RegisterChild(index);
+        }
+    }
+
+    private void RegisterChild(uint index) {
+        TaskHandle child = _children[index];
+        child.OnCompleted(() => this.Complete(index));
+    }
+
+    private void Complete(uint index) {
+        TaskHandle child = _children[index];
+        if (child.IsCanceled) {
+            _wasCanceled = true;
+        } else {
+            try {
+                child.GetResult();
+            } catch (Exception exception) {
+                if (_firstException == null) {
+                    _firstException = exception;
+                }
+            }
+        }
+
+        _remaining -= 1u;
+        if (_remaining != 0u) {
+            return;
+        }
+        if (_firstException != null) {
+            _completion.SetFault(_firstException);
+        } else if (_wasCanceled) {
+            _completion.SetCanceled();
+        } else {
+            _completion.SetResult();
+        }
+    }
+}

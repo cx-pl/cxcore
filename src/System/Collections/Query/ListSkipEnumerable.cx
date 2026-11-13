@@ -1,0 +1,27 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListSkipEnumerable<T> : IEnumerable<T> {
+    private List<T> _source;
+    private uint _count;
+
+    internal constructor(List<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ArrayRangeEnumerator<T>(
+            _source.GetQueryStorage(),
+            _count < _source.Count ? _count : _source.Count,
+            _source.Count);
+    }
+
+    /// <summary>Applies a bounded prefix to this indexed skip without interface enumeration.</summary>
+    public ListPageEnumerable<T> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ListPageEnumerable<T>(_source, _count, count);
+    }
+}

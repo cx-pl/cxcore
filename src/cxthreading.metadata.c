@@ -4,14 +4,16 @@
 #include "cxruntime.h"
 #if defined(_MSC_VER)
 #pragma warning(disable:4100 4101) /* unused generated parameters and temporaries */
+#elif defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wclobbered"
+#pragma GCC diagnostic ignored "-Wmissing-braces"
 #endif
 #include <stdlib.h>
 #include <string.h>
-#if defined(_MSC_VER)
-__declspec(dllimport) __declspec(noreturn) void __cdecl abort(void);
-#elif defined(__GNUC__)
-__attribute__((noreturn)) void abort(void);
-#endif
 #if !defined(CX_RUNTIME_ABI_VERSION) || CX_RUNTIME_ABI_VERSION != 1
 #error This generated code requires cxcore runtime ABI version 1.
 #endif
@@ -29,7 +31,6 @@ CX_STRING_DEF(__name_System_Threading_AtomicInt, "AtomicInt");
 CX_STRING_DEF(__name_System_Threading_Mutex, "Mutex");
 CX_STRING_DEF(__name_System_Threading_Tasks_CancellationToken, "CancellationToken");
 CX_STRING_DEF(__name_System_Threading_Tasks_CancellationTokenRegistration, "CancellationTokenRegistration");
-CX_STRING_DEF(__name_System_Threading_Tasks_OperationCanceledException, "OperationCanceledException");
 CX_STRING_DEF(__name_System_Threading_Tasks_ReusableValueTask, "ReusableValueTask");
 CX_STRING_DEF(__name_System_Threading_Tasks_TaskCompletionSource, "TaskCompletionSource");
 CX_STRING_DEF(__name_System_Threading_Tasks_TaskRuntime, "TaskRuntime");
@@ -46,11 +47,12 @@ CX_STRING_DEF(__name_System_Threading_Tasks_TaskCompletionSourceVoid, "TaskCompl
 CX_STRING_DEF(__name_System_Threading_Tasks_TaskHandle, "TaskHandle");
 CX_STRING_DEF(__name_System_Threading_Tasks_TaskHandleWhenAllState, "TaskHandleWhenAllState");
 CX_STRING_DEF(__name_System_Threading_Tasks_TaskState, "TaskState");
+CX_STRING_DEF(__name_System_Threading_Tasks_OperationCanceledException, "OperationCanceledException");
 CX_STRING_DEF(__name_System_Threading_Tasks_CancellationCallback, "CancellationCallback");
 CX_STRING_DEF(__namespace_System_Threading, "System.Threading");
 CX_STRING_DEF(__namespace_System_Threading_Tasks, "System.Threading.Tasks");
-CX_STRING_DEF(cxcore___string_B619DA1ED32E9031, "TaskHandle.WhenAll requires a child array.");
-CX_STRING_DEF(cxcore___string_349A2B2D451ACA67, "TaskHandle.WhenAll child entries cannot be null.");
+CX_STRING_DEF(cxcore___string_23DDB743A4BB5546, "children");
+CX_STRING_DEF(cxcore___string_7192FE2222EE9854, "The operation was canceled.");
 
 //
 // Static fields
@@ -76,7 +78,6 @@ extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_AtomicIn
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Mutex___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_CancellationToken___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_CancellationTokenRegistration___typeinfo;
-extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ReusableValueTask___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskCompletionSource___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskRuntime___typeinfo;
@@ -93,10 +94,18 @@ extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_Ta
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskHandle___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskHandleWhenAllState___typeinfo;
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskState___typeinfo;
+extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo;
 
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_AtomicInt)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_AtomicInt___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Threading_AtomicInt, _state), CX_NULL, "_state", (cx_uint)sizeof(((struct cxcore_System_Threading_AtomicInt*)0)->_state) },
@@ -197,8 +206,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_AtomicInt___typ
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Mutex)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Mutex___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Threading_Mutex, _state), CX_NULL, "_state", (cx_uint)sizeof(((struct cxcore_System_Threading_Mutex*)0)->_state) },
@@ -260,8 +276,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Mutex___typeinf
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_CancellationToken)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_CancellationToken___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_CancellationToken, _source), &cxcore_System_Threading_Tasks_CancellationTokenSource___typeinfo, "_source", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_CancellationToken*)0)->_source) },
@@ -352,8 +375,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_Cancellat
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_CancellationTokenRegistration)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_CancellationTokenRegistration___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration, _source), &cxcore_System_Threading_Tasks_CancellationTokenSource___typeinfo, "_source", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)0)->_source) },
@@ -435,129 +465,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_Cancellat
 };
 #endif
 
-CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_OperationCanceledException)
-CX_END_VTABLE_DEF;
-#if !defined(CX_DYNAMIC_MODULE)
-static const struct cx_reflection_field cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[] = {
-    { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_OperationCanceledException, _cancellationToken), &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "_cancellationToken", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_OperationCanceledException*)0)->_cancellationToken) },
-};
-#else
-static struct cx_reflection_field cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[1];
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
 #endif
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
-{
-    if (__argumentCount != 0 || (0 != 0 && __arguments == CX_NULL))
-    {
-        return CX_NULL;
-    }
-    (void)__arguments;
-    if (__target != CX_NULL) return CX_NULL;
-    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
-    cxcore_System_Threading_Tasks_OperationCanceledException___constructor(__instance);
-    return (cx_ptr)__instance;
-}
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
-{
-    if (__argumentCount != 1 || (1 != 0 && __arguments == CX_NULL))
-    {
-        return CX_NULL;
-    }
-    if (__target != CX_NULL) return CX_NULL;
-    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
-    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_0 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[0], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
-    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(__instance, __cx_value_argument_0);
-    return (cx_ptr)__instance;
-}
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
-{
-    if (__argumentCount != 2 || (2 != 0 && __arguments == CX_NULL))
-    {
-        return CX_NULL;
-    }
-    (void)__target;
-    const cx_bool __cx_value_argument_0 = *((const cx_bool*)cx_unbox_value(__arguments[0], &cxcore_System_Bool___typeinfo));
-    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_1 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[1], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
-    cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(__cx_value_argument_0, __cx_value_argument_1);
-    return CX_NULL;
-}
-static const cx_reflection_invoker cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invokers[] = {
-    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0,
-    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1,
-    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2,
-    CX_NULL,
-};
-#if !defined(CX_DYNAMIC_MODULE)
-static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[] = {
-    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
-};
-#else
-static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[1];
-#endif
-#if !defined(CX_DYNAMIC_MODULE)
-static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[] = {
-    { 0, &cxcore_System_Bool___typeinfo, "isCanceled", CX_NULL },
-    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
-};
-#else
-static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[2];
-#endif
-#if !defined(CX_DYNAMIC_MODULE)
-static const struct cx_reflection_function cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[] = {
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", CX_NULL, 0 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1, 1 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "ThrowIfCanceled", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2, 2 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "CancellationToken", CX_NULL, 0 },
-};
-#else
-static struct cx_reflection_function cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[4];
-#endif
-static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_create_instance(void) {
-    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
-    cxcore_System_Threading_Tasks_OperationCanceledException___constructor(__instance);
-    CX_INIT_VTABLE(__instance, cxcore_System_Threading_Tasks_OperationCanceledException);
-    return __instance;
-}
-static const struct cx_runtime_type_info cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info = {
-    .interfaces = CX_NULL,
-    .interfaceCount = 0,
-    .fields = (const struct cx_reflection_field*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields,
-    .fieldCount = 1,
-    .functions = (const struct cx_reflection_function*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions,
-    .functionCount = 4,
-    .createInstance = cxcore_System_Threading_Tasks_OperationCanceledException___reflection_create_instance,
-    .invokers = (const cx_reflection_invoker*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invokers,
-};
-#if !defined(CX_DYNAMIC_MODULE)
-struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo = {
-    .Hash = 0x3EB4E4905D2C68B,
-    ._module = (cx_ptr)&CXCORE___module_info,
-    .Flags = CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_CLASS,
-    .Size = sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException),
-    .Name = &__name_System_Threading_Tasks_OperationCanceledException,
-    .Namespace = &__namespace_System_Threading_Tasks,
-    .BaseType = { ._obj = &cxcore_System_Exception___typeinfo },
-    .RuntimeTypeInfo = (cx_ptr)&cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info,
-    .GenericArity = 0,
-};
-#else
-struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo = {
-    .Hash = 0x3EB4E4905D2C68B,
-    ._module = (cx_ptr)&CXCORE___module_info,
-    .Flags = CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_CLASS,
-    .Size = sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException),
-    .Name = &__name_System_Threading_Tasks_OperationCanceledException,
-    .Namespace = &__namespace_System_Threading_Tasks,
-    .BaseType = { ._obj = CX_NULL },
-    .RuntimeTypeInfo = (cx_ptr)&cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info,
-    .GenericArity = 0,
-};
-#endif
-
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_ReusableValueTask)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_ReusableValueTask___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ReusableValueTask, _source), CX_NULL, "_source", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ReusableValueTask*)0)->_source) },
@@ -637,8 +553,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ReusableV
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_TaskCompletionSource)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_TaskCompletionSource___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_TaskCompletionSource, _task), CX_NULL, "_task", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_TaskCompletionSource*)0)->_task) },
@@ -1009,8 +932,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskSched
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_ValueTask)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_ValueTask___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ValueTask, _task), CX_NULL, "_task", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ValueTask*)0)->_task) },
@@ -1112,8 +1042,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ValueTask
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_ValueTaskHandle)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_ValueTaskHandle___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ValueTaskHandle, _task), &cxcore_System_Threading_Tasks_TaskHandle___typeinfo, "_task", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ValueTaskHandle*)0)->_task) },
@@ -1243,8 +1180,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ValueTask
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_VoidTask)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_VoidTask___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_VoidTask, _value), CX_NULL, "_value", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_VoidTask*)0)->_value) },
@@ -1373,8 +1317,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_VoidTask_
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Thread)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Thread___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Threading_Thread, _state), CX_NULL, "_state", (cx_uint)sizeof(((struct cxcore_System_Threading_Thread*)0)->_state) },
@@ -1460,11 +1411,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Thread___typein
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_CancellationTokenSource)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_CancellationTokenSource___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_CancellationTokenSource, _isCancellationRequested), &cxcore_System_Bool___typeinfo, "_isCancellationRequested", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)0)->_isCancellationRequested) },
@@ -1588,11 +1546,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_Cancellat
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_ReusableValueTaskContinuationState)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_ReusableValueTaskContinuationState___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_FUNCTION_VALUE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ReusableValueTaskContinuationState, _continuation), CX_NULL, "_continuation", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ReusableValueTaskContinuationState*)0)->_continuation) },
@@ -1656,11 +1621,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ReusableV
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_ReusableValueTaskSource)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_ReusableValueTaskSource___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ReusableValueTaskSource, _version), &cxcore_System_UInt___typeinfo, "_version", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ReusableValueTaskSource*)0)->_version) },
@@ -1808,11 +1780,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_ReusableV
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_Task)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_Task___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_Task, _isCompleted), &cxcore_System_Bool___typeinfo, "_isCompleted", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_Task*)0)->_isCompleted) },
@@ -1926,11 +1905,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_Task___ty
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_TaskCompletionSourceVoid)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_TaskCompletionSourceVoid___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid, _task), &cxcore_System_Threading_Tasks_TaskHandle___typeinfo, "_task", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*)0)->_task) },
@@ -2050,11 +2036,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskCompl
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_TaskHandle)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_TaskHandle___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_TaskHandle, _state), &cxcore_System_Threading_Tasks_TaskState___typeinfo, "_state", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_TaskHandle*)0)->_state) },
@@ -2307,11 +2300,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskHandl
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_TaskHandleWhenAllState)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_TaskHandleWhenAllState___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState, _children), &cxcore_System_Collections_Array___typeinfo, "_children", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState*)0)->_children) },
@@ -2443,11 +2443,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskHandl
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_TaskState)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Threading_Tasks_TaskState___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_TaskState, _value), &cxcore_System_Object___typeinfo, "_value", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_TaskState*)0)->_value) },
@@ -2615,6 +2622,227 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_TaskState
     .GenericArity = 0,
 };
 #endif
+
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
+CX_BEGIN_VTABLE_DEF(cxcore_System_Threading_Tasks_OperationCanceledException)
+CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
+CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
+CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
+CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_field cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[] = {
+    { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_OperationCanceledException, _cancellationToken), &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "_cancellationToken", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_OperationCanceledException*)0)->_cancellationToken) },
+};
+#else
+static struct cx_reflection_field cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[1];
+#endif
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 0 || (0 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    (void)__arguments;
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor(__instance);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 1 || (1 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_0 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[0], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(__instance, __cx_value_argument_0);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 1 || (1 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__3(__instance, (const struct cxcore_System_String*)__arguments[0]);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_3(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_3(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 2 || (2 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__4(__instance, (const struct cxcore_System_String*)__arguments[0], (const struct cxcore_System_Exception*)__arguments[1]);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_4(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_4(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 2 || (2 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_1 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[1], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__5(__instance, (const struct cxcore_System_String*)__arguments[0], __cx_value_argument_1);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_5(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_5(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 3 || (3 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    if (__target != CX_NULL) return CX_NULL;
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_2 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[2], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(__instance, (const struct cxcore_System_String*)__arguments[0], (const struct cxcore_System_Exception*)__arguments[1], __cx_value_argument_2);
+    return (cx_ptr)__instance;
+}
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_6(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount) CX_MAYBE_UNUSED;
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_6(cx_ptr __target, const cx_ptr *__arguments, cx_uint __argumentCount)
+{
+    if (__argumentCount != 2 || (2 != 0 && __arguments == CX_NULL))
+    {
+        return CX_NULL;
+    }
+    (void)__target;
+    const cx_bool __cx_value_argument_0 = *((const cx_bool*)cx_unbox_value(__arguments[0], &cxcore_System_Bool___typeinfo));
+    const struct cxcore_System_Threading_Tasks_CancellationToken __cx_value_argument_1 = *((const struct cxcore_System_Threading_Tasks_CancellationToken*)cx_unbox_value(__arguments[1], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+    cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(__cx_value_argument_0, __cx_value_argument_1);
+    return CX_NULL;
+}
+static const cx_reflection_invoker cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invokers[] = {
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_0,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_1,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_2,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_3,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_4,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_5,
+    cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invoke_6,
+    CX_NULL,
+};
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[] = {
+    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[1];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[1];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+    { 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3[2];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4[2];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+    { 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL },
+    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5[3];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6[] = {
+    { 0, &cxcore_System_Bool___typeinfo, "isCanceled", CX_NULL },
+    { 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6[2];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_function cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[] = {
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", CX_NULL, 0 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1, 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2, 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3, 2 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4, 2 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5, 3 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "ThrowIfCanceled", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6, 2 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "CancellationToken", CX_NULL, 0 },
+};
+#else
+static struct cx_reflection_function cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[8];
+#endif
+static cx_ptr cxcore_System_Threading_Tasks_OperationCanceledException___reflection_create_instance(void) {
+    struct cxcore_System_Threading_Tasks_OperationCanceledException *__instance = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException));
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor(__instance);
+    CX_INIT_VTABLE(__instance, cxcore_System_Threading_Tasks_OperationCanceledException);
+    return __instance;
+}
+static const struct cx_runtime_type_info cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info = {
+    .interfaces = CX_NULL,
+    .interfaceCount = 0,
+    .fields = (const struct cx_reflection_field*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields,
+    .fieldCount = 1,
+    .functions = (const struct cx_reflection_function*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions,
+    .functionCount = 8,
+    .createInstance = cxcore_System_Threading_Tasks_OperationCanceledException___reflection_create_instance,
+    .invokers = (const cx_reflection_invoker*)cxcore_System_Threading_Tasks_OperationCanceledException___reflection_invokers,
+};
+#if !defined(CX_DYNAMIC_MODULE)
+struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo = {
+    .Hash = 0x3EB4E4905D2C68B,
+    ._module = (cx_ptr)&CXCORE___module_info,
+    .Flags = CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_CLASS,
+    .Size = sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException),
+    .Name = &__name_System_Threading_Tasks_OperationCanceledException,
+    .Namespace = &__namespace_System_Threading_Tasks,
+    .BaseType = { ._obj = &cxcore_System_Exception___typeinfo },
+    .RuntimeTypeInfo = (cx_ptr)&cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info,
+    .GenericArity = 0,
+};
+#else
+struct cxcore_System_Reflection_TypeInfo cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo = {
+    .Hash = 0x3EB4E4905D2C68B,
+    ._module = (cx_ptr)&CXCORE___module_info,
+    .Flags = CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_TYPE_CLASS,
+    .Size = sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException),
+    .Name = &__name_System_Threading_Tasks_OperationCanceledException,
+    .Namespace = &__namespace_System_Threading_Tasks,
+    .BaseType = { ._obj = CX_NULL },
+    .RuntimeTypeInfo = (cx_ptr)&cxcore_System_Threading_Tasks_OperationCanceledException___runtime_type_info,
+    .GenericArity = 0,
+};
+#endif
 static struct cx_runtime_once __cx_module_once_CXCORE;
 void CX_API __cx_module_init_CXCORE(void)
 {
@@ -2650,8 +2878,7 @@ void CX_API __cx_module_init_CXCORE(void)
         __name_System_Threading_Thread.__base.__vtable = cxcore_System_String___vtable;
         __namespace_System_Threading.__base.__vtable = cxcore_System_String___vtable;
         __namespace_System_Threading_Tasks.__base.__vtable = cxcore_System_String___vtable;
-        cxcore___string_349A2B2D451ACA67.__base.__vtable = cxcore_System_String___vtable;
-        cxcore___string_B619DA1ED32E9031.__base.__vtable = cxcore_System_String___vtable;
+        cxcore___string_23DDB743A4BB5546.__base.__vtable = cxcore_System_String___vtable;
         cxcore_System_Threading_AtomicInt___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Threading_AtomicInt, _state), CX_NULL, "_state", (cx_uint)sizeof(((struct cxcore_System_Threading_AtomicInt*)0)->_state) };
         cxcore_System_Threading_AtomicInt___reflection_params_0[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_Int___typeinfo, "value", CX_NULL };
         cxcore_System_Threading_AtomicInt___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "AtomicInt", cxcore_System_Threading_AtomicInt___reflection_params_0, 1 };
@@ -2685,15 +2912,6 @@ void CX_API __cx_module_init_CXCORE(void)
         cxcore_System_Threading_Tasks_CancellationTokenRegistration___reflection_params_1[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_UInt___typeinfo, "registrationId", CX_NULL };
         cxcore_System_Threading_Tasks_CancellationTokenRegistration___reflection_functions[1] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_INTERNAL | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "CancellationTokenRegistration", cxcore_System_Threading_Tasks_CancellationTokenRegistration___reflection_params_1, 2 };
         cxcore_System_Threading_Tasks_CancellationTokenRegistration___reflection_functions[2] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Threading_Tasks_CancellationTokenRegistration___typeinfo, "None", CX_NULL, 0 };
-        cx_gc_store_reference((cx_ptr*)&cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo.BaseType._obj, (cx_ptr)&cxcore_System_Exception___typeinfo);
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_OperationCanceledException, _cancellationToken), &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "_cancellationToken", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_OperationCanceledException*)0)->_cancellationToken) };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", CX_NULL, 0 };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[1] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1, 1 };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_Bool___typeinfo, "isCanceled", CX_NULL };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[2] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "ThrowIfCanceled", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2, 2 };
-        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[3] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "CancellationToken", CX_NULL, 0 };
         cxcore_System_Threading_Tasks_ReusableValueTask___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ReusableValueTask, _source), CX_NULL, "_source", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ReusableValueTask*)0)->_source) };
         cxcore_System_Threading_Tasks_ReusableValueTask___reflection_fields[1] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_ReusableValueTask, _version), &cxcore_System_UInt___typeinfo, "_version", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_ReusableValueTask*)0)->_version) };
         cxcore_System_Threading_Tasks_ReusableValueTask___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC, CX_REFLECTION_NO_SLOT, CX_NULL, "GetResult", CX_NULL, 0 };
@@ -2986,6 +3204,27 @@ void CX_API __cx_module_init_CXCORE(void)
         cxcore_System_Threading_Tasks_TaskState___reflection_functions[12] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Bool___typeinfo, "IsFaulted", CX_NULL, 0 };
         cxcore_System_Threading_Tasks_TaskState___reflection_functions[13] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Bool___typeinfo, "IsCanceled", CX_NULL, 0 };
         cxcore_System_Threading_Tasks_TaskState___reflection_functions[14] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Exception___typeinfo, "Exception", CX_NULL, 0 };
+        cx_gc_store_reference((cx_ptr*)&cxcore_System_Threading_Tasks_OperationCanceledException___typeinfo.BaseType._obj, (cx_ptr)&cxcore_System_Exception___typeinfo);
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_Threading_Tasks_OperationCanceledException, _cancellationToken), &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "_cancellationToken", (cx_uint)sizeof(((struct cxcore_System_Threading_Tasks_OperationCanceledException*)0)->_cancellationToken) };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", CX_NULL, 0 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[1] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_1, 1 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[2] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_2, 1 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[3] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_3, 2 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[4] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_4, 2 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5[2] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[5] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "OperationCanceledException", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_5, 3 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_Bool___typeinfo, "isCanceled", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "cancellationToken", CX_NULL };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[6] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "ThrowIfCanceled", cxcore_System_Threading_Tasks_OperationCanceledException___reflection_params_6, 2 };
+        cxcore_System_Threading_Tasks_OperationCanceledException___reflection_functions[7] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_Threading_Tasks_CancellationToken___typeinfo, "CancellationToken", CX_NULL, 0 };
         #endif
         cx_exception_pop(&__cx_module_exception_frame);
         cx_runtime_once_complete(&__cx_module_once_CXCORE);
@@ -3002,7 +3241,7 @@ void CX_API __cx_module_init_CXCORE(void)
 // Functions
 //
 
-struct __cx_lambda_41616DF41D_143_37_environment {
+struct __cx_lambda_312D753189_159_37_environment {
     struct cxcore_System_Object __base;
     void *capture_0;
     void *capture_1;
@@ -3012,10 +3251,10 @@ struct __cx_lambda_41616DF41D_143_37_environment {
     void *capture_5;
     void *capture_6;
 };
-static void *__cx_create___cx_lambda_41616DF41D_143_37_environment(const void *__cx_capture_0, const void *__cx_capture_1, const void *__cx_capture_2, const void *__cx_capture_3, const void *__cx_capture_4, const void *__cx_capture_5, const void *__cx_capture_6) CX_MAYBE_UNUSED;
-static void *__cx_create___cx_lambda_41616DF41D_143_37_environment(const void *__cx_capture_0, const void *__cx_capture_1, const void *__cx_capture_2, const void *__cx_capture_3, const void *__cx_capture_4, const void *__cx_capture_5, const void *__cx_capture_6)
+static void *__cx_create___cx_lambda_312D753189_159_37_environment(const void *__cx_capture_0, const void *__cx_capture_1, const void *__cx_capture_2, const void *__cx_capture_3, const void *__cx_capture_4, const void *__cx_capture_5, const void *__cx_capture_6) CX_MAYBE_UNUSED;
+static void *__cx_create___cx_lambda_312D753189_159_37_environment(const void *__cx_capture_0, const void *__cx_capture_1, const void *__cx_capture_2, const void *__cx_capture_3, const void *__cx_capture_4, const void *__cx_capture_5, const void *__cx_capture_6)
 {
-    struct __cx_lambda_41616DF41D_143_37_environment *__cx_result = (struct __cx_lambda_41616DF41D_143_37_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_41616DF41D_143_37_environment));
+    struct __cx_lambda_312D753189_159_37_environment *__cx_result = (struct __cx_lambda_312D753189_159_37_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_312D753189_159_37_environment));
     __cx_result->__base.__vtable = cxcore_System_Object___vtable;
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_0, (cx_ptr)__cx_capture_0);
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_1, (cx_ptr)__cx_capture_1);
@@ -3027,129 +3266,129 @@ static void *__cx_create___cx_lambda_41616DF41D_143_37_environment(const void *_
     return __cx_result;
 }
 
-struct __cx_lambda_41616DF41D_260_47_environment {
+struct __cx_lambda_312D753189_276_47_environment {
     struct cxcore_System_Object __base;
     void *capture_0;
 };
-static void *__cx_create___cx_lambda_41616DF41D_260_47_environment(const void *__cx_capture_0) CX_MAYBE_UNUSED;
-static void *__cx_create___cx_lambda_41616DF41D_260_47_environment(const void *__cx_capture_0)
+static void *__cx_create___cx_lambda_312D753189_276_47_environment(const void *__cx_capture_0) CX_MAYBE_UNUSED;
+static void *__cx_create___cx_lambda_312D753189_276_47_environment(const void *__cx_capture_0)
 {
-    struct __cx_lambda_41616DF41D_260_47_environment *__cx_result = (struct __cx_lambda_41616DF41D_260_47_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_41616DF41D_260_47_environment));
+    struct __cx_lambda_312D753189_276_47_environment *__cx_result = (struct __cx_lambda_312D753189_276_47_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_312D753189_276_47_environment));
     __cx_result->__base.__vtable = cxcore_System_Object___vtable;
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_0, (cx_ptr)__cx_capture_0);
     return __cx_result;
 }
 
-struct __cx_lambda_41616DF41D_275_63_environment {
+struct __cx_lambda_312D753189_291_63_environment {
     struct cxcore_System_Object __base;
     void *capture_0;
 };
-static void *__cx_create___cx_lambda_41616DF41D_275_63_environment(const void *__cx_capture_0) CX_MAYBE_UNUSED;
-static void *__cx_create___cx_lambda_41616DF41D_275_63_environment(const void *__cx_capture_0)
+static void *__cx_create___cx_lambda_312D753189_291_63_environment(const void *__cx_capture_0) CX_MAYBE_UNUSED;
+static void *__cx_create___cx_lambda_312D753189_291_63_environment(const void *__cx_capture_0)
 {
-    struct __cx_lambda_41616DF41D_275_63_environment *__cx_result = (struct __cx_lambda_41616DF41D_275_63_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_41616DF41D_275_63_environment));
+    struct __cx_lambda_312D753189_291_63_environment *__cx_result = (struct __cx_lambda_312D753189_291_63_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_312D753189_291_63_environment));
     __cx_result->__base.__vtable = cxcore_System_Object___vtable;
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_0, (cx_ptr)__cx_capture_0);
     return __cx_result;
 }
 
-struct __cx_lambda_41616DF41D_280_47_environment {
+struct __cx_lambda_312D753189_296_47_environment {
     struct cxcore_System_Object __base;
     void *capture_0;
     void *capture_1;
 };
-static void *__cx_create___cx_lambda_41616DF41D_280_47_environment(const void *__cx_capture_0, const void *__cx_capture_1) CX_MAYBE_UNUSED;
-static void *__cx_create___cx_lambda_41616DF41D_280_47_environment(const void *__cx_capture_0, const void *__cx_capture_1)
+static void *__cx_create___cx_lambda_312D753189_296_47_environment(const void *__cx_capture_0, const void *__cx_capture_1) CX_MAYBE_UNUSED;
+static void *__cx_create___cx_lambda_312D753189_296_47_environment(const void *__cx_capture_0, const void *__cx_capture_1)
 {
-    struct __cx_lambda_41616DF41D_280_47_environment *__cx_result = (struct __cx_lambda_41616DF41D_280_47_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_41616DF41D_280_47_environment));
+    struct __cx_lambda_312D753189_296_47_environment *__cx_result = (struct __cx_lambda_312D753189_296_47_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_312D753189_296_47_environment));
     __cx_result->__base.__vtable = cxcore_System_Object___vtable;
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_0, (cx_ptr)__cx_capture_0);
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_1, (cx_ptr)__cx_capture_1);
     return __cx_result;
 }
 
-struct __cx_lambda_41616DF41D_365_27_environment {
+struct __cx_lambda_312D753189_381_27_environment {
     struct cxcore_System_Object __base;
     void *capture_0;
     void *capture_1;
 };
-static void *__cx_create___cx_lambda_41616DF41D_365_27_environment(const void *__cx_capture_0, const void *__cx_capture_1) CX_MAYBE_UNUSED;
-static void *__cx_create___cx_lambda_41616DF41D_365_27_environment(const void *__cx_capture_0, const void *__cx_capture_1)
+static void *__cx_create___cx_lambda_312D753189_381_27_environment(const void *__cx_capture_0, const void *__cx_capture_1) CX_MAYBE_UNUSED;
+static void *__cx_create___cx_lambda_312D753189_381_27_environment(const void *__cx_capture_0, const void *__cx_capture_1)
 {
-    struct __cx_lambda_41616DF41D_365_27_environment *__cx_result = (struct __cx_lambda_41616DF41D_365_27_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_41616DF41D_365_27_environment));
+    struct __cx_lambda_312D753189_381_27_environment *__cx_result = (struct __cx_lambda_312D753189_381_27_environment*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct __cx_lambda_312D753189_381_27_environment));
     __cx_result->__base.__vtable = cxcore_System_Object___vtable;
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_0, (cx_ptr)__cx_capture_0);
     cx_gc_store_reference((cx_ptr*)&__cx_result->capture_1, (cx_ptr)__cx_capture_1);
     return __cx_result;
 }
 
-static void cxcore___cx_lambda_41616DF41D_143_37(void *__cx_environment);
-static void cxcore___cx_lambda_41616DF41D_260_47(void *__cx_environment);
-static void cxcore___cx_lambda_41616DF41D_275_63(void *__cx_environment);
-static void cxcore___cx_lambda_41616DF41D_280_47(void *__cx_environment);
-static void cxcore___cx_lambda_41616DF41D_365_27(void *__cx_environment);
-static struct cx_reflection_function __cx_function_reflection_FF84E805C048A5F7;
-static struct cx_runtime_once __cx_function_reflection_FF84E805C048A5F7_lock;
-static const struct cx_reflection_function *__cx_function_reflection_FF84E805C048A5F7_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_FF84E805C048A5F7_lock)) {
-        __cx_function_reflection_FF84E805C048A5F7 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_583_37", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_FF84E805C048A5F7_lock);
+static void cxcore___cx_lambda_312D753189_159_37(void *__cx_environment);
+static void cxcore___cx_lambda_312D753189_276_47(void *__cx_environment);
+static void cxcore___cx_lambda_312D753189_291_63(void *__cx_environment);
+static void cxcore___cx_lambda_312D753189_296_47(void *__cx_environment);
+static void cxcore___cx_lambda_312D753189_381_27(void *__cx_environment);
+static struct cx_reflection_function __cx_function_reflection_08F3B902C1EFC85B;
+static struct cx_runtime_once __cx_function_reflection_08F3B902C1EFC85B_lock;
+static const struct cx_reflection_function *__cx_function_reflection_08F3B902C1EFC85B_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_08F3B902C1EFC85B_lock)) {
+        __cx_function_reflection_08F3B902C1EFC85B = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_599_37", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_08F3B902C1EFC85B_lock);
     }
-    return &__cx_function_reflection_FF84E805C048A5F7;
+    return &__cx_function_reflection_08F3B902C1EFC85B;
 }
-static struct cx_reflection_function __cx_function_reflection_1E593E39F9424347;
-static struct cx_runtime_once __cx_function_reflection_1E593E39F9424347_lock;
-static const struct cx_reflection_function *__cx_function_reflection_1E593E39F9424347_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_1E593E39F9424347_lock)) {
-        __cx_function_reflection_1E593E39F9424347 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_528_41", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_1E593E39F9424347_lock);
+static struct cx_reflection_function __cx_function_reflection_D0F87775EC49F5C0;
+static struct cx_runtime_once __cx_function_reflection_D0F87775EC49F5C0_lock;
+static const struct cx_reflection_function *__cx_function_reflection_D0F87775EC49F5C0_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_D0F87775EC49F5C0_lock)) {
+        __cx_function_reflection_D0F87775EC49F5C0 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_544_41", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_D0F87775EC49F5C0_lock);
     }
-    return &__cx_function_reflection_1E593E39F9424347;
+    return &__cx_function_reflection_D0F87775EC49F5C0;
 }
-static struct cx_reflection_function __cx_function_reflection_92952F7F4193E666;
-static struct cx_runtime_once __cx_function_reflection_92952F7F4193E666_lock;
-static const struct cx_reflection_function *__cx_function_reflection_92952F7F4193E666_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_92952F7F4193E666_lock)) {
-        __cx_function_reflection_92952F7F4193E666 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_143_37", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_92952F7F4193E666_lock);
+static struct cx_reflection_function __cx_function_reflection_F604F4B2E03D1D5C;
+static struct cx_runtime_once __cx_function_reflection_F604F4B2E03D1D5C_lock;
+static const struct cx_reflection_function *__cx_function_reflection_F604F4B2E03D1D5C_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_F604F4B2E03D1D5C_lock)) {
+        __cx_function_reflection_F604F4B2E03D1D5C = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_159_37", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_F604F4B2E03D1D5C_lock);
     }
-    return &__cx_function_reflection_92952F7F4193E666;
+    return &__cx_function_reflection_F604F4B2E03D1D5C;
 }
-static struct cx_reflection_function __cx_function_reflection_EDDEBAF7C5E7E243;
-static struct cx_runtime_once __cx_function_reflection_EDDEBAF7C5E7E243_lock;
-static const struct cx_reflection_function *__cx_function_reflection_EDDEBAF7C5E7E243_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_EDDEBAF7C5E7E243_lock)) {
-        __cx_function_reflection_EDDEBAF7C5E7E243 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_260_47", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_EDDEBAF7C5E7E243_lock);
+static struct cx_reflection_function __cx_function_reflection_3FCEBE54FD46C8F3;
+static struct cx_runtime_once __cx_function_reflection_3FCEBE54FD46C8F3_lock;
+static const struct cx_reflection_function *__cx_function_reflection_3FCEBE54FD46C8F3_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_3FCEBE54FD46C8F3_lock)) {
+        __cx_function_reflection_3FCEBE54FD46C8F3 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_276_47", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_3FCEBE54FD46C8F3_lock);
     }
-    return &__cx_function_reflection_EDDEBAF7C5E7E243;
+    return &__cx_function_reflection_3FCEBE54FD46C8F3;
 }
-static struct cx_reflection_function __cx_function_reflection_6897B82193BE2253;
-static struct cx_runtime_once __cx_function_reflection_6897B82193BE2253_lock;
-static const struct cx_reflection_function *__cx_function_reflection_6897B82193BE2253_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_6897B82193BE2253_lock)) {
-        __cx_function_reflection_6897B82193BE2253 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_275_63", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_6897B82193BE2253_lock);
+static struct cx_reflection_function __cx_function_reflection_8D1B624B121863AA;
+static struct cx_runtime_once __cx_function_reflection_8D1B624B121863AA_lock;
+static const struct cx_reflection_function *__cx_function_reflection_8D1B624B121863AA_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_8D1B624B121863AA_lock)) {
+        __cx_function_reflection_8D1B624B121863AA = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_291_63", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_8D1B624B121863AA_lock);
     }
-    return &__cx_function_reflection_6897B82193BE2253;
+    return &__cx_function_reflection_8D1B624B121863AA;
 }
-static struct cx_reflection_function __cx_function_reflection_DA622F822B5B55A4;
-static struct cx_runtime_once __cx_function_reflection_DA622F822B5B55A4_lock;
-static const struct cx_reflection_function *__cx_function_reflection_DA622F822B5B55A4_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_DA622F822B5B55A4_lock)) {
-        __cx_function_reflection_DA622F822B5B55A4 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_280_47", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_DA622F822B5B55A4_lock);
+static struct cx_reflection_function __cx_function_reflection_D8214D6499FFDEFA;
+static struct cx_runtime_once __cx_function_reflection_D8214D6499FFDEFA_lock;
+static const struct cx_reflection_function *__cx_function_reflection_D8214D6499FFDEFA_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_D8214D6499FFDEFA_lock)) {
+        __cx_function_reflection_D8214D6499FFDEFA = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_296_47", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_D8214D6499FFDEFA_lock);
     }
-    return &__cx_function_reflection_DA622F822B5B55A4;
+    return &__cx_function_reflection_D8214D6499FFDEFA;
 }
-static struct cx_reflection_function __cx_function_reflection_9C2D7BF91CCD5D98;
-static struct cx_runtime_once __cx_function_reflection_9C2D7BF91CCD5D98_lock;
-static const struct cx_reflection_function *__cx_function_reflection_9C2D7BF91CCD5D98_get(void) {
-    if (cx_runtime_once_begin(&__cx_function_reflection_9C2D7BF91CCD5D98_lock)) {
-        __cx_function_reflection_9C2D7BF91CCD5D98 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_41616DF41D_365_27", CX_NULL, 0 };
-        cx_runtime_once_complete(&__cx_function_reflection_9C2D7BF91CCD5D98_lock);
+static struct cx_reflection_function __cx_function_reflection_86D5CA07111EF202;
+static struct cx_runtime_once __cx_function_reflection_86D5CA07111EF202_lock;
+static const struct cx_reflection_function *__cx_function_reflection_86D5CA07111EF202_get(void) {
+    if (cx_runtime_once_begin(&__cx_function_reflection_86D5CA07111EF202_lock)) {
+        __cx_function_reflection_86D5CA07111EF202 = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_HIDDEN | CX_REFLECTION_FLAG_STATIC, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "__cx_lambda_312D753189_381_27", CX_NULL, 0 };
+        cx_runtime_once_complete(&__cx_function_reflection_86D5CA07111EF202_lock);
     }
-    return &__cx_function_reflection_9C2D7BF91CCD5D98;
+    return &__cx_function_reflection_86D5CA07111EF202;
 }
 
 #ifndef CX_FUNCTION_HELPERS_CX_FN_136FFEE706DF35B2
@@ -3187,7 +3426,7 @@ static inline struct cxcore_System_Reflection_FunctionInfo __cx_delegate_get_met
 static inline struct cxcore_System_Collections_Array* __cx_delegate_get_invocation_list_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 value) {
     cx_uint count = __cx_delegate_count_CX_FN_136FFEE706DF35B2(value);
     const void *__cx_owner = value.__invocation_list != NULL ? (const void*)value.__invocation_list : (value.__environment != NULL ? (const void*)value.__environment : (const void*)value.__target);
-    struct cxcore_System_Collections_Array *result = (__cx_owner == NULL ? cx_array_with_type(cx_array_new((cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_bc403224c77282451242dec58318c2410acc3e72e356e3544f9443a3ceb4380b") : cx_array_with_type(cx_array_new_for_owner((cx_ptr)(__cx_owner), (cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_bc403224c77282451242dec58318c2410acc3e72e356e3544f9443a3ceb4380b"));
+    struct cxcore_System_Collections_Array *result = (__cx_owner == NULL ? cx_array_with_type(cx_array_new((cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_4b76b70773172fc4e64f4812706b11f0c4560cd8d96cfaaac737eb795a10b7b1") : cx_array_with_type(cx_array_new_for_owner((cx_ptr)(__cx_owner), (cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_4b76b70773172fc4e64f4812706b11f0c4560cd8d96cfaaac737eb795a10b7b1"));
     for (cx_uint index = 0; index < count; ++index)
     {
         CX_FN_136FFEE706DF35B2 __cx_item = __cx_delegate_item_CX_FN_136FFEE706DF35B2(value, index);
@@ -3239,7 +3478,7 @@ static inline CX_FN_136FFEE706DF35B2 __cx_delegate_combine_CX_FN_136FFEE706DF35B
     if (head == NULL) return (CX_FN_136FFEE706DF35B2){ 0 };
     if (head == tail) return head->value;
     CX_FN_136FFEE706DF35B2 result = { 0 };
-    result.__invocation_list = head;
+    cx_gc_store_reference((cx_ptr*)&result.__invocation_list, (cx_ptr)head);
     return result;
 }
 static inline CX_FN_136FFEE706DF35B2 __cx_delegate_remove_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 source, CX_FN_136FFEE706DF35B2 value) {
@@ -3267,7 +3506,7 @@ static inline CX_FN_136FFEE706DF35B2 __cx_delegate_remove_CX_FN_136FFEE706DF35B2
     if (head == NULL) return (CX_FN_136FFEE706DF35B2){ 0 };
     if (head == tail) return head->value;
     CX_FN_136FFEE706DF35B2 result = { 0 };
-    result.__invocation_list = head;
+    cx_gc_store_reference((cx_ptr*)&result.__invocation_list, (cx_ptr)head);
     return result;
 }
 static inline cx_bool __cx_delegate_equal_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 left, CX_FN_136FFEE706DF35B2 right) {
@@ -3298,94 +3537,94 @@ static inline cx_ptr __cx_delegate_dynamic_invoke_CX_FN_136FFEE706DF35B2(CX_FN_1
 
 
 
-#line 143 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-static void cxcore___cx_lambda_41616DF41D_143_37(void *__cx_environment) {
+#line 159 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+static void cxcore___cx_lambda_312D753189_159_37(void *__cx_environment) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 144 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_0))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback)), "cx_generic_79019360533cdbee41395db26a0a9e6479924b7eb2b0d90451ddfe21b175c74e"))));
-    #line 145 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_2))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cx_uint)), "cx_generic_d41e0cce6e36f4ef45edb011c9c977063d015f98401029cb83b9b170d8a5d3ab"))));
-    #line 146 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_3))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cx_ptr)), "cx_generic_75df35d3457f6a80c2eb3c633abe31755e4365e423bcc12a00638931191b1315"))));
-    #line 147 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    for (cx_uint index = 0u; (index < (((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount); index += 1u)
+    #line 160 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_0))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback)), "cx_generic_79019360533cdbee41395db26a0a9e6479924b7eb2b0d90451ddfe21b175c74e"))));
+    #line 161 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_2))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cx_uint)), "cx_generic_d41e0cce6e36f4ef45edb011c9c977063d015f98401029cb83b9b170d8a5d3ab"))));
+    #line 162 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_3))), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount + 1u)), (cx_uint)sizeof(cx_ptr)), "cx_generic_75df35d3457f6a80c2eb3c633abe31755e4365e423bcc12a00638931191b1315"))));
+    #line 163 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    for (cx_uint index = 0u; (index < (((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount); index += 1u)
     {
         cx_gc_safepoint();
-        #line 147 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 163 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 148 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_0)), index, (*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback))), (*(cx_ptr*)cx_array_at((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr))));
-            #line 150 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            (*(cx_uint*)cx_array_at((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_2)), (cx_uint)(index), (cx_uint)sizeof(cx_uint))) = (*(cx_uint*)cx_array_at((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint)));
-            #line 151 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_3)), (cx_uint)(index), (cx_uint)sizeof(cx_ptr)))), (cx_ptr)((*(cx_ptr*)cx_array_at((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr))))));
+            #line 164 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_0)), index, (*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at_checked((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback), __FILE__, __LINE__)), (*(cx_ptr*)cx_array_at_checked((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__)));
+            #line 166 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            (*(cx_uint*)cx_array_at_checked((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_2)), (cx_uint)(index), (cx_uint)sizeof(cx_uint), __FILE__, __LINE__)) = (*(cx_uint*)cx_array_at_checked((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint), __FILE__, __LINE__));
+            #line 167 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at_checked((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_3)), (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__))), (cx_ptr)((*(cx_ptr*)cx_array_at_checked((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__)))));
         }
     }
-    #line 153 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_0)), (((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount, (*((CX_FN_136FFEE706DF35B2*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_4)), (*((cx_ptr*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_5)));
-    #line 155 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    (*(cx_uint*)cx_array_at((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_2)), (cx_uint)((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount), (cx_uint)sizeof(cx_uint))) = (*((cx_uint*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_6));
-    #line 156 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_3)), (cx_uint)((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackCount), (cx_uint)sizeof(cx_ptr)))), (cx_ptr)((*((cx_ptr*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_5)))));
-    #line 157 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbacks), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_0)))));
-    #line 158 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackIds), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_2)))));
-    #line 159 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_1))->_callbackArenas), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_41616DF41D_143_37_environment*)__cx_environment)->capture_3)))));
+    #line 169 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_0)), (((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount, (*((CX_FN_136FFEE706DF35B2*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_4)), (*((cx_ptr*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_5)));
+    #line 171 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    (*(cx_uint*)cx_array_at_checked((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_2)), (cx_uint)((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount), (cx_uint)sizeof(cx_uint), __FILE__, __LINE__)) = (*((cx_uint*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_6));
+    #line 172 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at_checked((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_3)), (cx_uint)((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackCount), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__))), (cx_ptr)((*((cx_ptr*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_5)))));
+    #line 173 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbacks), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_0)))));
+    #line 174 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackIds), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_2)))));
+    #line 175 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&((((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_1))->_callbackArenas), (cx_ptr)((*((struct cxcore_System_Collections_Array**)((struct __cx_lambda_312D753189_159_37_environment*)__cx_environment)->capture_3)))));
 }
 
-#line 260 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-static void cxcore___cx_lambda_41616DF41D_260_47(void *__cx_environment) {
+#line 276 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+static void cxcore___cx_lambda_312D753189_276_47(void *__cx_environment) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetResult((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_41616DF41D_260_47_environment*)__cx_environment)->capture_0)));
+    cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetResult((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_312D753189_276_47_environment*)__cx_environment)->capture_0)));
 }
 
-#line 275 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-static void cxcore___cx_lambda_41616DF41D_275_63(void *__cx_environment) {
+#line 291 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+static void cxcore___cx_lambda_312D753189_291_63(void *__cx_environment) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 276 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    if ((!cxcore_System_Threading_Tasks_TaskHandle_IsCompleted___const_get(cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_41616DF41D_275_63_environment*)__cx_environment)->capture_0))))))
-    #line 276 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 292 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    if ((!cxcore_System_Threading_Tasks_TaskHandle_IsCompleted___const_get(cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_312D753189_291_63_environment*)__cx_environment)->capture_0))))))
+    #line 292 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 277 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-        cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetCanceled((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_41616DF41D_275_63_environment*)__cx_environment)->capture_0)));
+        #line 293 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+        cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetCanceled((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_312D753189_291_63_environment*)__cx_environment)->capture_0)));
     }
 }
 
-#line 280 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-static void cxcore___cx_lambda_41616DF41D_280_47(void *__cx_environment) {
+#line 296 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+static void cxcore___cx_lambda_312D753189_296_47(void *__cx_environment) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 281 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    if ((!cxcore_System_Threading_Tasks_TaskHandle_IsCompleted___const_get(cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_41616DF41D_280_47_environment*)__cx_environment)->capture_0))))))
-    #line 281 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 297 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    if ((!cxcore_System_Threading_Tasks_TaskHandle_IsCompleted___const_get(cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_312D753189_296_47_environment*)__cx_environment)->capture_0))))))
+    #line 297 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 282 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-        cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetResult((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_41616DF41D_280_47_environment*)__cx_environment)->capture_0)));
+        #line 298 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+        cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetResult((*((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)((struct __cx_lambda_312D753189_296_47_environment*)__cx_environment)->capture_0)));
     }
-    #line 284 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    cxcore_System_Threading_Tasks_CancellationTokenRegistration_Dispose(&((*((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)((struct __cx_lambda_41616DF41D_280_47_environment*)__cx_environment)->capture_1))));
+    #line 300 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    cxcore_System_Threading_Tasks_CancellationTokenRegistration_Dispose(&((*((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)((struct __cx_lambda_312D753189_296_47_environment*)__cx_environment)->capture_1))));
 }
 
-#line 365 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-static void cxcore___cx_lambda_41616DF41D_365_27(void *__cx_environment) {
+#line 381 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+static void cxcore___cx_lambda_312D753189_381_27(void *__cx_environment) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Complete(((struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState*)((struct __cx_lambda_41616DF41D_365_27_environment*)__cx_environment)->capture_1), (*((cx_uint*)((struct __cx_lambda_41616DF41D_365_27_environment*)__cx_environment)->capture_0)));
+    cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Complete(((struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState*)((struct __cx_lambda_312D753189_381_27_environment*)__cx_environment)->capture_1), (*((cx_uint*)((struct __cx_lambda_312D753189_381_27_environment*)__cx_environment)->capture_0)));
 }
 
 struct cxcore_System_Threading_Tasks_CancellationToken cxcore_System_Threading_Tasks_CancellationToken_None___const_get() {
@@ -3394,7 +3633,7 @@ struct cxcore_System_Threading_Tasks_CancellationToken cxcore_System_Threading_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_CancellationToken __cx_return_value;
     (void)&__cx_return_value;
-    #line 64 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 80 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_CancellationToken __cx_new_0;
     return (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_CancellationToken___constructor(&__cx_new_0, CX_NULL), __cx_new_0);
 }
@@ -3408,18 +3647,18 @@ cx_bool cxcore_System_Threading_Tasks_CancellationToken_IsCancellationRequested_
     return ((__this->_source != CX_NULL) && cxcore_System_Threading_Tasks_CancellationTokenSource_IsCancellationRequested___const_get(__this->_source));
 }
 
-#line 71 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 87 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationToken_ThrowIfCancellationRequested(struct cxcore_System_Threading_Tasks_CancellationToken* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 72 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 88 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_CancellationToken __cx_new_0;
     cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(cxcore_System_Threading_Tasks_CancellationToken_IsCancellationRequested___const_get(__this), (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_CancellationToken___constructor(&__cx_new_0, __this->_source), __cx_new_0));
 }
 
-#line 76 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 92 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System_Threading_Tasks_CancellationToken_Register(struct cxcore_System_Threading_Tasks_CancellationToken* __this, CX_FN_136FFEE706DF35B2 callback) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -3427,24 +3666,24 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_CancellationTokenRegistration __cx_return_value;
     (void)&__cx_return_value;
-    #line 77 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 93 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_source != CX_NULL))
-    #line 77 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 93 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 78 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 94 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return cxcore_System_Threading_Tasks_CancellationTokenSource_Register(__this->_source, callback);
     }
-    #line 80 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 96 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return cxcore_System_Threading_Tasks_CancellationTokenRegistration_None___const_get();
 }
 
-#line 83 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 99 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationToken___constructor(struct cxcore_System_Threading_Tasks_CancellationToken* __this, struct cxcore_System_Threading_Tasks_CancellationTokenSource* source) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 84 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 100 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)cx_gc_store_reference((cx_ptr*)&(__this->_source), (cx_ptr)(source)));
 }
 
@@ -3458,81 +3697,35 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
     return (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_CancellationTokenRegistration___constructor(&__cx_new_0, CX_NULL, 0u), __cx_new_0);
 }
 
-#line 96 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 112 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationTokenRegistration_Dispose(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 97 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 113 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_source != CX_NULL))
-    #line 97 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 113 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 98 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 114 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_CancellationTokenSource_Unregister(__this->_source, __this->_registrationId);
-        #line 99 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 115 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         ((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)cx_gc_store_reference((cx_ptr*)&(__this->_source), (cx_ptr)(CX_NULL)));
-        #line 100 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 116 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         __this->_registrationId = 0u;
     }
 }
 
-#line 104 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 120 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationTokenRegistration___constructor(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration* __this, struct cxcore_System_Threading_Tasks_CancellationTokenSource* source, cx_uint registrationId) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 105 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 121 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Threading_Tasks_CancellationTokenSource*)cx_gc_store_reference((cx_ptr*)&(__this->_source), (cx_ptr)(source)));
-    #line 106 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 122 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_registrationId = registrationId;
-}
-
-struct cxcore_System_Threading_Tasks_CancellationToken cxcore_System_Threading_Tasks_OperationCanceledException_CancellationToken___const_get(const struct cxcore_System_Threading_Tasks_OperationCanceledException* __this) {
-    __cx_module_init_CXCORE();
-    cx_int __cx_transfer = 0;
-    (void)&__cx_transfer;
-    struct cxcore_System_Threading_Tasks_CancellationToken __cx_return_value;
-    (void)&__cx_return_value;
-    return __this->_cancellationToken;
-}
-
-#line 45 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-void cxcore_System_Threading_Tasks_OperationCanceledException___constructor(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this) {
-    __cx_register_static_roots_CXCORE();
-    __cx_module_init_CXCORE();
-    cx_int __cx_transfer = 0;
-    (void)&__cx_transfer;
-    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(__this, cxcore_System_Threading_Tasks_CancellationToken_None___const_get());
-}
-
-#line 47 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
-    __cx_register_static_roots_CXCORE();
-    __cx_module_init_CXCORE();
-    cx_int __cx_transfer = 0;
-    (void)&__cx_transfer;
-    cxcore_System_Exception___constructor__3(&__this->__base);
-    CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_OperationCanceledException);
-    #line 48 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    (*(struct cxcore_System_Threading_Tasks_CancellationToken*)cx_gc_copy_value((cx_ptr)&(__this->_cancellationToken), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationToken[]){ cancellationToken })[0], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
-}
-
-#line 51 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-void cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(cx_bool isCanceled, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
-    __cx_register_static_roots_CXCORE();
-    __cx_module_init_CXCORE();
-    cx_int __cx_transfer = 0;
-    (void)&__cx_transfer;
-    #line 54 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    if (isCanceled)
-    #line 54 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    {
-        #line 55 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-        struct cxcore_System_Threading_Tasks_OperationCanceledException* __cx_new_0;
-        CX_THROW((cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(__cx_new_0 = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException)), cancellationToken), __cx_new_0));
-    }
 }
 
 cx_bool cxcore_System_Threading_Tasks_ReusableValueTask_IsCompleted___const_get(const struct cxcore_System_Threading_Tasks_ReusableValueTask* __this) {
@@ -3544,15 +3737,15 @@ cx_bool cxcore_System_Threading_Tasks_ReusableValueTask_IsCompleted___const_get(
     return cxcore_System_Threading_Tasks_TaskRuntime_ReusableSourceIsCompleted(((struct cxcore_System_Object*)(__this->_source)), __this->_version);
 }
 
-#line 603 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 619 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ReusableValueTask___constructor(struct cxcore_System_Threading_Tasks_ReusableValueTask* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 604 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 620 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Threading_Tasks_ReusableValueTaskSource*)cx_gc_store_reference((cx_ptr*)&(__this->_source), (cx_ptr)(CX_NULL)));
-    #line 605 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 621 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_version = 0u;
 }
 
@@ -3565,13 +3758,13 @@ struct cxcore_System_Threading_Tasks_Task* cxcore_System_Threading_Tasks_TaskCom
     return __this->_task;
 }
 
-#line 787 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 803 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskCompletionSource___constructor(struct cxcore_System_Threading_Tasks_TaskCompletionSource* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 787 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 803 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_Task* __cx_new_0;
     ((struct cxcore_System_Threading_Tasks_Task*)cx_gc_store_reference((cx_ptr*)&(__this->_task), (cx_ptr)(((struct cxcore_System_Threading_Tasks_Task*)((cxcore_System_Threading_Tasks_Task___constructor__2(__cx_new_0 = (struct cxcore_System_Threading_Tasks_Task*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_Task))), __cx_new_0))))));
 }
@@ -3585,7 +3778,7 @@ cx_bool cxcore_System_Threading_Tasks_ValueTask_IsCompleted___const_get(const st
     return (__this->_hasSource ? cxcore_System_Threading_Tasks_TaskRuntime_ReusableSourceIsCompleted(((struct cxcore_System_Object*)(__this->_source)), __this->_version) : ((__this->_task == CX_NULL) || cxcore_System_Threading_Tasks_Task_IsCompleted___const_get(((struct cxcore_System_Threading_Tasks_Task*)(__this->_task)))));
 }
 
-#line 566 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 582 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ValueTask___constructor__2(struct cxcore_System_Threading_Tasks_ValueTask* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -3602,26 +3795,26 @@ cx_bool cxcore_System_Threading_Tasks_ValueTaskHandle_IsCompleted___const_get(co
     return ((!__this->_hasTask) || cxcore_System_Threading_Tasks_TaskHandle_IsCompleted___const_get(__this->_task));
 }
 
-#line 744 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 760 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ValueTaskHandle_GetResult(struct cxcore_System_Threading_Tasks_ValueTaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 745 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 761 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(__this->_consumed);
-    #line 746 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 762 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_consumed = CX_TRUE;
-    #line 747 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 763 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (__this->_hasTask)
-    #line 747 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 763 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 748 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 764 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskHandle_GetResult(__this->_task);
     }
 }
 
-#line 752 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 768 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_ValueTaskHandle_AsTask(struct cxcore_System_Threading_Tasks_ValueTaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -3629,62 +3822,62 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_V
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 753 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 769 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(__this->_consumed);
-    #line 754 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 770 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_consumed = CX_TRUE;
-    #line 755 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 771 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (__this->_hasTask)
-    #line 755 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 771 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 756 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 772 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return __this->_task;
     }
-    #line 758 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 774 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_new_0;
     return (cxcore_System_Threading_Tasks_TaskHandle___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskHandle*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle))), __cx_new_0);
 }
 
-#line 761 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 777 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ValueTaskHandle_OnCompleted(struct cxcore_System_Threading_Tasks_ValueTaskHandle* __this, CX_FN_136FFEE706DF35B2 continuation) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 762 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 778 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (__this->_hasTask)
-    #line 762 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 778 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 762 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 778 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskHandle_OnCompleted(__this->_task, continuation);
     }
 }
 
-#line 765 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 781 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ValueTaskHandle___constructor(struct cxcore_System_Threading_Tasks_ValueTaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 766 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 782 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(__this->_task), (cx_ptr)(CX_NULL)));
-    #line 767 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 783 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_hasTask = CX_FALSE;
-    #line 768 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 784 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_consumed = CX_FALSE;
 }
 
-#line 771 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 787 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ValueTaskHandle___constructor__2(struct cxcore_System_Threading_Tasks_ValueTaskHandle* __this, struct cxcore_System_Threading_Tasks_TaskHandle* task) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 772 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 788 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(__this->_task), (cx_ptr)(task)));
-    #line 773 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 789 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_hasTask = CX_TRUE;
-    #line 774 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 790 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_consumed = CX_FALSE;
 }
 
@@ -3697,17 +3890,17 @@ cx_bool cxcore_System_Threading_Tasks_VoidTask_IsCompleted___const_get(const str
     return __this->_isCompleted;
 }
 
-#line 14 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 16 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_VoidTask_GetResult(const struct cxcore_System_Threading_Tasks_VoidTask* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 14 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 16 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_VoidTask_ThrowIfFaulted(__this->_isFaulted, __this->_exception);
 }
 
-#line 16 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 18 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_VoidTask cxcore_System_Threading_Tasks_VoidTask_Faulted(struct cxcore_System_Exception* exception) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -3715,47 +3908,47 @@ struct cxcore_System_Threading_Tasks_VoidTask cxcore_System_Threading_Tasks_Void
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_VoidTask __cx_return_value;
     (void)&__cx_return_value;
-    #line 17 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 19 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_VoidTask __cx_new_0;
     struct cxcore_System_Threading_Tasks_VoidTask task;
     (*(struct cxcore_System_Threading_Tasks_VoidTask*)cx_gc_copy_value((cx_ptr)&(task), (cx_ptr)&((struct cxcore_System_Threading_Tasks_VoidTask[]){ (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_VoidTask___constructor(&__cx_new_0), __cx_new_0) })[0], &cxcore_System_Threading_Tasks_VoidTask___typeinfo));
-    #line 18 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 20 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     (task)._isFaulted = CX_TRUE;
-    #line 19 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 21 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&((task)._exception), (cx_ptr)(exception)));
-    #line 20 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 22 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return task;
 }
 
-#line 23 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 25 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_VoidTask___constructor(struct cxcore_System_Threading_Tasks_VoidTask* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 24 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 26 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(__this->_value), (cx_ptr)(CX_NULL)));
-    #line 25 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 27 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_TRUE;
-    #line 26 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 28 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isFaulted = CX_FALSE;
-    #line 27 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 29 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(__this->_exception), (cx_ptr)(CX_NULL)));
 }
 
-#line 30 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 32 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_VoidTask___constructor__2(struct cxcore_System_Threading_Tasks_VoidTask* __this, cx_bool isFaulted, struct cxcore_System_Exception* exception) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 31 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 33 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(__this->_value), (cx_ptr)(CX_NULL)));
-    #line 32 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 34 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_TRUE;
-    #line 33 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 35 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isFaulted = isFaulted;
-    #line 34 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 36 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(__this->_exception), (cx_ptr)(exception)));
 }
 
@@ -3778,7 +3971,7 @@ struct cxcore_System_Threading_Tasks_CancellationToken cxcore_System_Threading_T
     return (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_CancellationToken___constructor(&__cx_new_0, (struct cxcore_System_Threading_Tasks_CancellationTokenSource*)(__this)), __cx_new_0);
 }
 
-#line 124 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 140 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System_Threading_Tasks_CancellationTokenSource_Register(struct cxcore_System_Threading_Tasks_CancellationTokenSource* __this, CX_FN_136FFEE706DF35B2 callback) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -3788,45 +3981,45 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
     (void)&__cx_return_value;
     CX_FN_136FFEE706DF35B2 *__cx_generated_cell_1 = (CX_FN_136FFEE706DF35B2*)cxcore_System_Memory_Alloc((cx_uint)sizeof(CX_FN_136FFEE706DF35B2));
     __cx_delegate_store_CX_FN_136FFEE706DF35B2(&(*__cx_generated_cell_1), callback);
-    #line 125 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 141 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (__this->_isCancellationRequested)
-    #line 125 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 141 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 126 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-        CX_FN_136FFEE706DF35B2 __cx_function_value_126_13;
-        (__cx_function_value_126_13 = (*__cx_generated_cell_1), __cx_delegate_invoke_CX_FN_136FFEE706DF35B2(__cx_function_value_126_13));
-        #line 127 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 142 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+        CX_FN_136FFEE706DF35B2 __cx_function_value_142_13;
+        (__cx_function_value_142_13 = (*__cx_generated_cell_1), __cx_delegate_invoke_CX_FN_136FFEE706DF35B2(__cx_function_value_142_13));
+        #line 143 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return cxcore_System_Threading_Tasks_CancellationTokenRegistration_None___const_get();
     }
-    #line 130 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 146 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskRuntime_RequireCancellationRegistrationAllowed();
-    #line 131 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 147 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_ptr *__cx_generated_cell_2 = (cx_ptr*)cxcore_System_Memory_Alloc((cx_uint)sizeof(cx_ptr));
     ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(*__cx_generated_cell_2), (cx_ptr)(cxcore_System_Threading_Tasks_TaskRuntime_CaptureCancellationCallbackArena())));
-    #line 133 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 149 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_uint *__cx_generated_cell_3 = (cx_uint*)cxcore_System_Memory_Alloc((cx_uint)sizeof(cx_uint));
     *__cx_generated_cell_3 = __this->_nextCallbackId;
-    #line 134 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 150 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_nextCallbackId += 1u;
-    #line 135 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 151 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_nextCallbackId == 0u))
-    #line 135 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 151 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 136 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 152 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         __this->_nextCallbackId = 1u;
     }
-    #line 138 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 154 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* *__cx_generated_cell_4 = (struct cxcore_System_Collections_Array**)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Collections_Array*));
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(*__cx_generated_cell_4), (cx_ptr)(CX_NULL)));
-    #line 139 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 155 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* *__cx_generated_cell_5 = (struct cxcore_System_Collections_Array**)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Collections_Array*));
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(*__cx_generated_cell_5), (cx_ptr)(CX_NULL)));
-    #line 140 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 156 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* *__cx_generated_cell_6 = (struct cxcore_System_Collections_Array**)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Collections_Array*));
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(*__cx_generated_cell_6), (cx_ptr)(CX_NULL)));
-    #line 141 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 157 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_bool registered = CX_FALSE;
-    #line 142 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 158 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
         struct cx_exception_frame __cx_finally_frame_2;
         cx_exception_push(&__cx_finally_frame_2);
@@ -3836,12 +4029,12 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
             cx_exception_push(&__cx_exception_frame_3);
             if (setjmp(__cx_exception_frame_3.environment) == 0)
             {
-                #line 142 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 158 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 {
-                    #line 143 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 159 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     void *__cx_lambda_environment_1;
-                    cxcore_System_Threading_Tasks_TaskRuntime_WithDurable((__cx_lambda_environment_1 = __cx_create___cx_lambda_41616DF41D_143_37_environment((const void*)(__cx_generated_cell_4), (const void*)(__this), (const void*)(__cx_generated_cell_5), (const void*)(__cx_generated_cell_6), (const void*)(__cx_generated_cell_1), (const void*)(__cx_generated_cell_2), (const void*)(__cx_generated_cell_3)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_41616DF41D_143_37, .__environment = __cx_lambda_environment_1, .__target = (cx_ptr)__cx_lambda_environment_1, .__method = __cx_function_reflection_92952F7F4193E666_get() })));
-                    #line 161 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    cxcore_System_Threading_Tasks_TaskRuntime_WithDurable((__cx_lambda_environment_1 = __cx_create___cx_lambda_312D753189_159_37_environment((const void*)(__cx_generated_cell_4), (const void*)(__this), (const void*)(__cx_generated_cell_5), (const void*)(__cx_generated_cell_6), (const void*)(__cx_generated_cell_1), (const void*)(__cx_generated_cell_2), (const void*)(__cx_generated_cell_3)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_312D753189_159_37, .__environment = __cx_lambda_environment_1, .__target = (cx_ptr)__cx_lambda_environment_1, .__method = __cx_function_reflection_F604F4B2E03D1D5C_get() })));
+                    #line 177 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     registered = CX_TRUE;
                 }
                 cx_exception_pop(&__cx_exception_frame_3);
@@ -3860,13 +4053,13 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
         {
             cx_exception_pop(&__cx_finally_frame_2);
         }
-        #line 162 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 178 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 163 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 179 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             if (((!registered) && ((*__cx_generated_cell_2) != CX_NULL)))
-            #line 163 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 179 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             {
-                #line 164 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 180 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 cxcore_System_Threading_Tasks_TaskRuntime_ReleaseCancellationCallbackArena((*__cx_generated_cell_2));
             }
         }
@@ -3875,102 +4068,102 @@ struct cxcore_System_Threading_Tasks_CancellationTokenRegistration cxcore_System
             CX_RETHROW();
         }
     }
-    #line 167 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 183 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_callbackCount += 1u;
-    #line 168 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 184 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_CancellationTokenRegistration __cx_new_0;
     return (memset(&__cx_new_0, 0, sizeof(__cx_new_0)), cxcore_System_Threading_Tasks_CancellationTokenRegistration___constructor(&__cx_new_0, __this, (*__cx_generated_cell_3)), __cx_new_0);
 }
 
-#line 171 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 187 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationTokenSource_Unregister(struct cxcore_System_Threading_Tasks_CancellationTokenSource* __this, cx_uint registrationId) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 172 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 188 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_isCancellationRequested || (registrationId == 0u)))
-    #line 172 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 188 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 173 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 189 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return;
     }
-    #line 175 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 191 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     for (cx_uint index = 0u; (index < __this->_callbackCount); index += 1u)
     {
         cx_gc_safepoint();
-        #line 175 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 191 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 176 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            if (((*(cx_uint*)cx_array_at(__this->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint))) != registrationId))
-            #line 176 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 192 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            if (((*(cx_uint*)cx_array_at_checked(__this->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint), __FILE__, __LINE__)) != registrationId))
+            #line 192 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             {
-                #line 177 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 193 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 continue;
             }
-            #line 179 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 195 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             cx_ptr callbackArena;
-            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(callbackArena), (cx_ptr)((*(cx_ptr*)cx_array_at(__this->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr))))));
-            #line 180 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(callbackArena), (cx_ptr)((*(cx_ptr*)cx_array_at_checked(__this->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__)))));
+            #line 196 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback(__this->_callbacks, index, (cxcore_System_Threading_Tasks_CancellationCallback){ 0 }, callbackArena);
-            #line 182 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            (*(cx_uint*)cx_array_at(__this->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint))) = 0u;
-            #line 183 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at(__this->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr)))), (cx_ptr)(CX_NULL)));
-            #line 184 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 198 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            (*(cx_uint*)cx_array_at_checked(__this->_callbackIds, (cx_uint)(index), (cx_uint)sizeof(cx_uint), __FILE__, __LINE__)) = 0u;
+            #line 199 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at_checked(__this->_callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__))), (cx_ptr)(CX_NULL)));
+            #line 200 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             if ((callbackArena != CX_NULL))
-            #line 184 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 200 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             {
-                #line 185 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 201 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 cxcore_System_Threading_Tasks_TaskRuntime_ReleaseCancellationCallbackArena(callbackArena);
             }
-            #line 187 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 203 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             return;
         }
     }
 }
 
-#line 191 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 207 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationTokenSource_Cancel(struct cxcore_System_Threading_Tasks_CancellationTokenSource* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 192 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 208 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (__this->_isCancellationRequested)
-    #line 192 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 208 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 193 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 209 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return;
     }
-    #line 195 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 211 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCancellationRequested = CX_TRUE;
-    #line 196 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 212 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* callbacks;
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(callbacks), (cx_ptr)(__this->_callbacks)));
-    #line 197 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 213 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* callbackArenas;
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(callbackArenas), (cx_ptr)(__this->_callbackArenas)));
-    #line 198 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 214 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_uint callbackCount = __this->_callbackCount;
-    #line 199 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 215 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbacks), (cx_ptr)(CX_NULL)));
-    #line 200 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 216 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbackIds), (cx_ptr)(CX_NULL)));
-    #line 201 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 217 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbackArenas), (cx_ptr)(CX_NULL)));
-    #line 202 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 218 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_callbackCount = 0u;
-    #line 203 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 219 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Exception* firstException;
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(firstException), (cx_ptr)(CX_NULL)));
-    #line 204 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 220 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     for (cx_uint index = 0u; (index < callbackCount); index += 1u)
     {
         cx_gc_safepoint();
-        #line 204 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 220 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 205 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 221 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             {
                 struct cx_exception_frame __cx_finally_frame_3;
                 cx_exception_push(&__cx_finally_frame_3);
@@ -3980,14 +4173,14 @@ void cxcore_System_Threading_Tasks_CancellationTokenSource_Cancel(struct cxcore_
                     cx_exception_push(&__cx_exception_frame_4);
                     if (setjmp(__cx_exception_frame_4.environment) == 0)
                     {
-                        #line 205 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                        #line 221 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                         {
-                            #line 206 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-                            if ((!__cx_delegate_is_null_CX_FN_136FFEE706DF35B2((*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at(callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback))))))
-                            #line 206 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                            #line 222 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+                            if ((!__cx_delegate_is_null_CX_FN_136FFEE706DF35B2((*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at_checked(callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback), __FILE__, __LINE__)))))
+                            #line 222 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                             {
-                                #line 207 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-                                cxcore_System_Threading_Tasks_TaskRuntime_InvokeCancellationCallback((*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at(callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback))), (*(cx_ptr*)cx_array_at(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr))));
+                                #line 223 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+                                cxcore_System_Threading_Tasks_TaskRuntime_InvokeCancellationCallback((*(cxcore_System_Threading_Tasks_CancellationCallback*)cx_array_at_checked(callbacks, (cx_uint)(index), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback), __FILE__, __LINE__)), (*(cx_ptr*)cx_array_at_checked(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__)));
                             }
                         }
                         cx_exception_pop(&__cx_exception_frame_4);
@@ -3998,13 +4191,13 @@ void cxcore_System_Threading_Tasks_CancellationTokenSource_Cancel(struct cxcore_
                         if (cx_exception_pending() && cxcore_System_Exception_Matches(cx_exception_current(), cxcore_System_Exception___typeinfo))
                         {
                             struct cxcore_System_Exception* exception = (struct cxcore_System_Exception*)cx_exception_current();
-                            #line 210 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                            #line 226 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                             {
-                                #line 211 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                                #line 227 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                                 if ((firstException == CX_NULL))
-                                #line 211 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                                #line 227 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                                 {
-                                    #line 212 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                                    #line 228 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                                     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(firstException), (cx_ptr)(exception)));
                                 }
                             }
@@ -4021,20 +4214,20 @@ void cxcore_System_Threading_Tasks_CancellationTokenSource_Cancel(struct cxcore_
                 {
                     cx_exception_pop(&__cx_finally_frame_3);
                 }
-                #line 214 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 230 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 {
-                    #line 215 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 231 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     cx_ptr callbackArena;
-                    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(callbackArena), (cx_ptr)((*(cx_ptr*)cx_array_at(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr))))));
-                    #line 216 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(callbackArena), (cx_ptr)((*(cx_ptr*)cx_array_at_checked(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__)))));
+                    #line 232 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     cxcore_System_Threading_Tasks_TaskRuntime_StoreCancellationCallback(callbacks, index, (cxcore_System_Threading_Tasks_CancellationCallback){ 0 }, callbackArena);
-                    #line 218 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-                    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr)))), (cx_ptr)(CX_NULL)));
-                    #line 219 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 234 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+                    ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&((*(cx_ptr*)cx_array_at_checked(callbackArenas, (cx_uint)(index), (cx_uint)sizeof(cx_ptr), __FILE__, __LINE__))), (cx_ptr)(CX_NULL)));
+                    #line 235 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     if ((callbackArena != CX_NULL))
-                    #line 219 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 235 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     {
-                        #line 220 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                        #line 236 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                         cxcore_System_Threading_Tasks_TaskRuntime_ReleaseCancellationCallbackArena(callbackArena);
                     }
                 }
@@ -4045,16 +4238,16 @@ void cxcore_System_Threading_Tasks_CancellationTokenSource_Cancel(struct cxcore_
             }
         }
     }
-    #line 224 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 240 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((firstException != CX_NULL))
-    #line 224 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 240 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 225 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 241 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         CX_THROW(firstException);
     }
 }
 
-#line 229 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 245 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_CancellationTokenSource___constructor(struct cxcore_System_Threading_Tasks_CancellationTokenSource* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4062,17 +4255,17 @@ void cxcore_System_Threading_Tasks_CancellationTokenSource___constructor(struct 
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_CancellationTokenSource);
-    #line 230 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 246 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCancellationRequested = CX_FALSE;
-    #line 231 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 247 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbacks), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(0u), (cx_uint)sizeof(cxcore_System_Threading_Tasks_CancellationCallback)), "cx_generic_79019360533cdbee41395db26a0a9e6479924b7eb2b0d90451ddfe21b175c74e"))));
-    #line 232 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 248 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbackIds), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(0u), (cx_uint)sizeof(cx_uint)), "cx_generic_d41e0cce6e36f4ef45edb011c9c977063d015f98401029cb83b9b170d8a5d3ab"))));
-    #line 233 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 249 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_callbackArenas), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(0u), (cx_uint)sizeof(cx_ptr)), "cx_generic_75df35d3457f6a80c2eb3c633abe31755e4365e423bcc12a00638931191b1315"))));
-    #line 234 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 250 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_callbackCount = 0u;
-    #line 235 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 251 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_nextCallbackId = 1u;
 }
 
@@ -4085,7 +4278,7 @@ cx_bool cxcore_System_Threading_Tasks_ReusableValueTaskSource_IsCompleted___cons
     return __this->_isCompleted;
 }
 
-#line 732 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 748 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_ReusableValueTaskSource___constructor(struct cxcore_System_Threading_Tasks_ReusableValueTaskSource* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4113,7 +4306,7 @@ cx_bool cxcore_System_Threading_Tasks_Task_IsCanceled___const_get(const struct c
     return __this->_isCanceled;
 }
 
-#line 466 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 482 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_Task___constructor(struct cxcore_System_Threading_Tasks_Task* __this, void* result) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4121,13 +4314,13 @@ void cxcore_System_Threading_Tasks_Task___constructor(struct cxcore_System_Threa
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_Task);
-    #line 467 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 483 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_gc_store_reference((cx_ptr*)&(__this->_result), (cx_ptr)(result));
-    #line 468 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 484 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_TRUE;
 }
 
-#line 471 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 487 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_Task___constructor__2(struct cxcore_System_Threading_Tasks_Task* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4146,37 +4339,37 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     return __this->_task;
 }
 
-#line 795 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 811 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetResult(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 795 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 811 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskHandle_SetResult(__this->_task);
 }
 
-#line 796 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 812 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetException(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __this, struct cxcore_System_Exception* exception) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 796 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 812 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskHandle_SetFault(__this->_task, exception);
 }
 
-#line 797 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 813 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetCanceled(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 797 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 813 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskHandle_SetCanceled(__this->_task);
 }
 
-#line 799 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 815 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskCompletionSourceVoid___constructor(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4184,7 +4377,7 @@ void cxcore_System_Threading_Tasks_TaskCompletionSourceVoid___constructor(struct
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_TaskCompletionSourceVoid);
-    #line 799 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 815 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_new_0;
     ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(__this->_task), (cx_ptr)((cxcore_System_Threading_Tasks_TaskHandle___constructor__2(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskHandle*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle)), CX_FALSE), __cx_new_0))));
 }
@@ -4207,23 +4400,23 @@ cx_bool cxcore_System_Threading_Tasks_TaskHandle_IsCanceled___const_get(const st
     return cxcore_System_Threading_Tasks_TaskState_IsCanceled___const_get(__this->_state);
 }
 
-#line 244 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 260 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle_GetResult(const struct cxcore_System_Threading_Tasks_TaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 245 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 261 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ThrowIfNotCompleted(cxcore_System_Threading_Tasks_TaskState_IsCompleted___const_get(__this->_state));
-    #line 246 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 262 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_MarkFaultObserved(__this->_state);
-    #line 247 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 263 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(cxcore_System_Threading_Tasks_TaskState_IsCanceled___const_get(__this->_state), cxcore_System_Threading_Tasks_CancellationToken_None___const_get());
-    #line 249 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 265 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_VoidTask_ThrowIfFaulted(cxcore_System_Threading_Tasks_TaskState_IsFaulted___const_get(__this->_state), cxcore_System_Threading_Tasks_TaskState_Exception___const_get(__this->_state));
 }
 
-#line 252 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 268 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_TaskHandle_Faulted(struct cxcore_System_Exception* exception) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4231,17 +4424,17 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 253 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 269 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_new_0;
     struct cxcore_System_Threading_Tasks_TaskHandle* task;
     ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(task), (cx_ptr)((cxcore_System_Threading_Tasks_TaskHandle___constructor__2(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskHandle*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle)), CX_FALSE), __cx_new_0))));
-    #line 254 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 270 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskHandle_SetFault(task, exception);
-    #line 255 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 271 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return task;
 }
 
-#line 258 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 274 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_TaskHandle_Delay(cx_uint milliseconds) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4249,18 +4442,18 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 259 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 275 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __cx_new_0;
     struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* *__cx_generated_cell_2 = (struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*));
     ((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*)cx_gc_store_reference((cx_ptr*)&(*__cx_generated_cell_2), (cx_ptr)((cxcore_System_Threading_Tasks_TaskCompletionSourceVoid___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid))), __cx_new_0))));
-    #line 260 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 276 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     void *__cx_lambda_environment_2;
-    cxcore_System_Threading_Tasks_TaskScheduler_PostAfter(milliseconds, (__cx_lambda_environment_2 = __cx_create___cx_lambda_41616DF41D_260_47_environment((const void*)(__cx_generated_cell_2)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_41616DF41D_260_47, .__environment = __cx_lambda_environment_2, .__target = (cx_ptr)__cx_lambda_environment_2, .__method = __cx_function_reflection_EDDEBAF7C5E7E243_get() })));
-    #line 261 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    cxcore_System_Threading_Tasks_TaskScheduler_PostAfter(milliseconds, (__cx_lambda_environment_2 = __cx_create___cx_lambda_312D753189_276_47_environment((const void*)(__cx_generated_cell_2)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_312D753189_276_47, .__environment = __cx_lambda_environment_2, .__target = (cx_ptr)__cx_lambda_environment_2, .__method = __cx_function_reflection_3FCEBE54FD46C8F3_get() })));
+    #line 277 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*__cx_generated_cell_2));
 }
 
-#line 264 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 280 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_TaskHandle_Delay__2(cx_uint milliseconds, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4268,33 +4461,33 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 267 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 283 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* __cx_new_0;
     struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid* *__cx_generated_cell_3 = (struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid**)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*));
     ((struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*)cx_gc_store_reference((cx_ptr*)&(*__cx_generated_cell_3), (cx_ptr)((cxcore_System_Threading_Tasks_TaskCompletionSourceVoid___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskCompletionSourceVoid))), __cx_new_0))));
-    #line 268 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 284 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (cxcore_System_Threading_Tasks_CancellationToken_IsCancellationRequested___const_get(&(cancellationToken)))
-    #line 268 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 284 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 269 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 285 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_SetCanceled((*__cx_generated_cell_3));
-        #line 270 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 286 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*__cx_generated_cell_3));
     }
-    #line 273 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 289 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_CancellationTokenRegistration *__cx_generated_cell_4 = (struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration));
     (*(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)cx_gc_copy_value((cx_ptr)&(*__cx_generated_cell_4), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration[]){ cxcore_System_Threading_Tasks_CancellationTokenRegistration_None___const_get() })[0], &cxcore_System_Threading_Tasks_CancellationTokenRegistration___typeinfo));
-    #line 275 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 291 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     void *__cx_lambda_environment_3;
-    (*(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)cx_gc_copy_value((cx_ptr)&((*__cx_generated_cell_4)), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration[]){ cxcore_System_Threading_Tasks_CancellationToken_Register(&(cancellationToken), (__cx_lambda_environment_3 = __cx_create___cx_lambda_41616DF41D_275_63_environment((const void*)(__cx_generated_cell_3)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_41616DF41D_275_63, .__environment = __cx_lambda_environment_3, .__target = (cx_ptr)__cx_lambda_environment_3, .__method = __cx_function_reflection_6897B82193BE2253_get() }))) })[0], &cxcore_System_Threading_Tasks_CancellationTokenRegistration___typeinfo));
-    #line 280 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    (*(struct cxcore_System_Threading_Tasks_CancellationTokenRegistration*)cx_gc_copy_value((cx_ptr)&((*__cx_generated_cell_4)), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationTokenRegistration[]){ cxcore_System_Threading_Tasks_CancellationToken_Register(&(cancellationToken), (__cx_lambda_environment_3 = __cx_create___cx_lambda_312D753189_291_63_environment((const void*)(__cx_generated_cell_3)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_312D753189_291_63, .__environment = __cx_lambda_environment_3, .__target = (cx_ptr)__cx_lambda_environment_3, .__method = __cx_function_reflection_8D1B624B121863AA_get() }))) })[0], &cxcore_System_Threading_Tasks_CancellationTokenRegistration___typeinfo));
+    #line 296 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     void *__cx_lambda_environment_4;
-    cxcore_System_Threading_Tasks_TaskScheduler_PostAfter(milliseconds, (__cx_lambda_environment_4 = __cx_create___cx_lambda_41616DF41D_280_47_environment((const void*)(__cx_generated_cell_3), (const void*)(__cx_generated_cell_4)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_41616DF41D_280_47, .__environment = __cx_lambda_environment_4, .__target = (cx_ptr)__cx_lambda_environment_4, .__method = __cx_function_reflection_DA622F822B5B55A4_get() })));
-    #line 286 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    cxcore_System_Threading_Tasks_TaskScheduler_PostAfter(milliseconds, (__cx_lambda_environment_4 = __cx_create___cx_lambda_312D753189_296_47_environment((const void*)(__cx_generated_cell_3), (const void*)(__cx_generated_cell_4)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_312D753189_296_47, .__environment = __cx_lambda_environment_4, .__target = (cx_ptr)__cx_lambda_environment_4, .__method = __cx_function_reflection_D8214D6499FFDEFA_get() })));
+    #line 302 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return cxcore_System_Threading_Tasks_TaskCompletionSourceVoid_Task___const_get((*__cx_generated_cell_3));
 }
 
-#line 292 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 308 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_TaskHandle_WhenAll(struct cxcore_System_Threading_Tasks_TaskHandle* first, struct cxcore_System_Threading_Tasks_TaskHandle* second) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4302,18 +4495,18 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 293 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 309 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Collections_Array* children;
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(children), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(2u), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*)), "cx_generic_a4ee102a8b4fc412f30bd855347cab3d0d639754d052b9c5a004cf4f3c875b76"))));
-    #line 294 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(children, (cx_uint)(0u), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*)))), (cx_ptr)(first)));
-    #line 295 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(children, (cx_uint)(1u), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*)))), (cx_ptr)(second)));
-    #line 296 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 310 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(children, (cx_uint)(0u), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__))), (cx_ptr)(first)));
+    #line 311 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(children, (cx_uint)(1u), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__))), (cx_ptr)(second)));
+    #line 312 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return cxcore_System_Threading_Tasks_TaskHandle_WhenAll__2(children);
 }
 
-#line 302 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 318 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_TaskHandle_WhenAll__2(struct cxcore_System_Collections_Array* children) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4321,47 +4514,47 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     (void)&__cx_transfer;
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_return_value;
     (void)&__cx_return_value;
-    #line 303 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 319 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* __cx_new_0;
     struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* state;
     ((struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState*)cx_gc_store_reference((cx_ptr*)&(state), (cx_ptr)((cxcore_System_Threading_Tasks_TaskHandleWhenAllState___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState)), children), __cx_new_0))));
-    #line 304 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 320 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Start(state);
-    #line 305 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 321 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     return cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Task___const_get(state);
 }
 
-#line 308 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 324 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle_SetResult(struct cxcore_System_Threading_Tasks_TaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 308 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 324 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_SetResult(__this->_state, CX_NULL);
 }
 
-#line 309 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 325 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle_SetFault(struct cxcore_System_Threading_Tasks_TaskHandle* __this, struct cxcore_System_Exception* exception) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 309 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 325 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_SetFault(__this->_state, exception);
 }
 
-#line 310 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 326 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle_SetCanceled(struct cxcore_System_Threading_Tasks_TaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 310 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 326 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_SetCanceled(__this->_state);
 }
 
-#line 313 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 329 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle___constructor(struct cxcore_System_Threading_Tasks_TaskHandle* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4369,14 +4562,14 @@ void cxcore_System_Threading_Tasks_TaskHandle___constructor(struct cxcore_System
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_TaskHandle);
-    #line 314 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 330 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskState* __cx_new_0;
     ((struct cxcore_System_Threading_Tasks_TaskState*)cx_gc_store_reference((cx_ptr*)&(__this->_state), (cx_ptr)((cxcore_System_Threading_Tasks_TaskState___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskState*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskState))), __cx_new_0))));
-    #line 315 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 331 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_SetResult(__this->_state, CX_NULL);
 }
 
-#line 318 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 334 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandle___constructor__2(struct cxcore_System_Threading_Tasks_TaskHandle* __this, cx_bool completed) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4384,13 +4577,13 @@ void cxcore_System_Threading_Tasks_TaskHandle___constructor__2(struct cxcore_Sys
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_TaskHandle);
-    #line 319 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 335 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskState* __cx_new_0;
     ((struct cxcore_System_Threading_Tasks_TaskState*)cx_gc_store_reference((cx_ptr*)&(__this->_state), (cx_ptr)((cxcore_System_Threading_Tasks_TaskState___constructor(__cx_new_0 = (struct cxcore_System_Threading_Tasks_TaskState*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskState))), __cx_new_0))));
-    #line 320 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 336 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (completed)
     {
-        #line 320 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 336 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskState_SetResult(__this->_state, CX_NULL);
     }
 }
@@ -4404,7 +4597,7 @@ struct cxcore_System_Threading_Tasks_TaskHandle* cxcore_System_Threading_Tasks_T
     return __this->_completion;
 }
 
-#line 335 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 351 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandleWhenAllState___constructor(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* __this, struct cxcore_System_Collections_Array* children) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4412,75 +4605,75 @@ void cxcore_System_Threading_Tasks_TaskHandleWhenAllState___constructor(struct c
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_TaskHandleWhenAllState);
-    #line 336 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 352 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((children == CX_NULL))
-    #line 336 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 352 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 337 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-        struct cxcore_System_Exception* __cx_new_0;
-        CX_THROW((cxcore_System_Exception___constructor(__cx_new_0 = (struct cxcore_System_Exception*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Exception)), &cxcore___string_B619DA1ED32E9031), __cx_new_0));
+        #line 353 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+        struct cxcore_System_ArgumentNullException* __cx_new_0;
+        CX_THROW((cxcore_System_ArgumentNullException___constructor__2(__cx_new_0 = (struct cxcore_System_ArgumentNullException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_ArgumentNullException)), (const struct cxcore_System_String*)(&cxcore___string_23DDB743A4BB5546)), __cx_new_0));
     }
-    #line 339 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 355 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Collections_Array*)cx_gc_store_reference((cx_ptr*)&(__this->_children), (cx_ptr)(cx_array_with_type(cx_array_new((cx_uint)(cxcore_System_Collections_Array_Length___const_get(children)), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*)), "cx_generic_a4ee102a8b4fc412f30bd855347cab3d0d639754d052b9c5a004cf4f3c875b76"))));
-    #line 340 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 356 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     for (cx_uint index = 0u; (index < cxcore_System_Collections_Array_Length___const_get(children)); index += 1u)
     {
         cx_gc_safepoint();
-        #line 340 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 356 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 341 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            if (((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*))) == CX_NULL))
-            #line 341 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 357 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            if (((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__)) == CX_NULL))
+            #line 357 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             {
-                #line 342 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-                struct cxcore_System_Exception* __cx_new_1;
-                CX_THROW((cxcore_System_Exception___constructor(__cx_new_1 = (struct cxcore_System_Exception*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Exception)), &cxcore___string_349A2B2D451ACA67), __cx_new_1));
+                #line 358 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+                struct cxcore_System_ArgumentNullException* __cx_new_1;
+                CX_THROW((cxcore_System_ArgumentNullException___constructor__2(__cx_new_1 = (struct cxcore_System_ArgumentNullException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_ArgumentNullException)), (const struct cxcore_System_String*)(&cxcore___string_23DDB743A4BB5546)), __cx_new_1));
             }
-            #line 344 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
-            ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(__this->_children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*)))), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*))))));
+            #line 360 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+            ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(__this->_children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__))), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__)))));
         }
     }
-    #line 346 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 362 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* __cx_new_2;
     ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(__this->_completion), (cx_ptr)((cxcore_System_Threading_Tasks_TaskHandle___constructor__2(__cx_new_2 = (struct cxcore_System_Threading_Tasks_TaskHandle*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle)), CX_FALSE), __cx_new_2))));
-    #line 347 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 363 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_remaining = cxcore_System_Collections_Array_Length___const_get(children);
-    #line 348 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 364 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(__this->_firstException), (cx_ptr)(CX_NULL)));
-    #line 349 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 365 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_wasCanceled = CX_FALSE;
 }
 
-#line 352 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 368 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Start(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 353 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 369 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_remaining == 0u))
-    #line 353 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 369 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 354 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 370 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskHandle_SetResult(__this->_completion);
-        #line 355 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 371 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return;
     }
-    #line 357 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 373 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cx_uint count = __this->_remaining;
-    #line 358 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 374 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     for (cx_uint index = 0u; (index < count); index += 1u)
     {
         cx_gc_safepoint();
-        #line 358 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 374 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 359 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 375 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             cxcore_System_Threading_Tasks_TaskHandleWhenAllState_RegisterChild(__this, index);
         }
     }
 }
 
-#line 363 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 379 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_RegisterChild(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* __this, cx_uint index) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4488,42 +4681,42 @@ void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_RegisterChild(struct c
     (void)&__cx_transfer;
     cx_uint *__cx_generated_cell_1 = (cx_uint*)cxcore_System_Memory_Alloc((cx_uint)sizeof(cx_uint));
     *__cx_generated_cell_1 = index;
-    #line 364 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 380 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* child;
-    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(child), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(__this->_children, (cx_uint)((*__cx_generated_cell_1)), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*))))));
-    #line 365 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(child), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(__this->_children, (cx_uint)((*__cx_generated_cell_1)), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__)))));
+    #line 381 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     void *__cx_lambda_environment_5;
-    cxcore_System_Threading_Tasks_TaskHandle_OnCompleted(child, (__cx_lambda_environment_5 = __cx_create___cx_lambda_41616DF41D_365_27_environment((const void*)(__cx_generated_cell_1), (const void*)(__this)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_41616DF41D_365_27, .__environment = __cx_lambda_environment_5, .__target = (cx_ptr)__cx_lambda_environment_5, .__method = __cx_function_reflection_9C2D7BF91CCD5D98_get() })));
+    cxcore_System_Threading_Tasks_TaskHandle_OnCompleted(child, (__cx_lambda_environment_5 = __cx_create___cx_lambda_312D753189_381_27_environment((const void*)(__cx_generated_cell_1), (const void*)(__this)), ((CX_FN_136FFEE706DF35B2){ .__function = &cxcore___cx_lambda_312D753189_381_27, .__environment = __cx_lambda_environment_5, .__target = (cx_ptr)__cx_lambda_environment_5, .__method = __cx_function_reflection_86D5CA07111EF202_get() })));
 }
 
-#line 368 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 384 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Complete(struct cxcore_System_Threading_Tasks_TaskHandleWhenAllState* __this, cx_uint index) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 369 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 385 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     struct cxcore_System_Threading_Tasks_TaskHandle* child;
-    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(child), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at(__this->_children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*))))));
-    #line 370 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    ((struct cxcore_System_Threading_Tasks_TaskHandle*)cx_gc_store_reference((cx_ptr*)&(child), (cx_ptr)((*(struct cxcore_System_Threading_Tasks_TaskHandle**)cx_array_at_checked(__this->_children, (cx_uint)(index), (cx_uint)sizeof(struct cxcore_System_Threading_Tasks_TaskHandle*), __FILE__, __LINE__)))));
+    #line 386 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if (cxcore_System_Threading_Tasks_TaskHandle_IsCanceled___const_get(child))
-    #line 370 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 386 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 371 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 387 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         __this->_wasCanceled = CX_TRUE;
     }
     else
-    #line 372 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 388 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 373 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 389 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
             struct cx_exception_frame __cx_exception_frame_1;
             cx_exception_push(&__cx_exception_frame_1);
             if (setjmp(__cx_exception_frame_1.environment) == 0)
             {
-                #line 373 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                #line 389 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                 {
-                    #line 374 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 390 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     cxcore_System_Threading_Tasks_TaskHandle_GetResult(child);
                 }
                 cx_exception_pop(&__cx_exception_frame_1);
@@ -4534,13 +4727,13 @@ void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Complete(struct cxcore
                 if (cx_exception_pending() && cxcore_System_Exception_Matches(cx_exception_current(), cxcore_System_Exception___typeinfo))
                 {
                     struct cxcore_System_Exception* exception = (struct cxcore_System_Exception*)cx_exception_current();
-                    #line 375 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                    #line 391 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                     {
-                        #line 376 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                        #line 392 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                         if ((__this->_firstException == CX_NULL))
-                        #line 376 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                        #line 392 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                         {
-                            #line 377 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+                            #line 393 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
                             ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(__this->_firstException), (cx_ptr)(exception)));
                         }
                     }
@@ -4553,35 +4746,35 @@ void cxcore_System_Threading_Tasks_TaskHandleWhenAllState_Complete(struct cxcore
             }
         }
     }
-    #line 382 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 398 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_remaining -= 1u;
-    #line 383 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 399 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_remaining != 0u))
-    #line 383 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 399 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 384 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 400 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         return;
     }
-    #line 386 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 402 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     if ((__this->_firstException != CX_NULL))
-    #line 386 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 402 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     {
-        #line 387 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 403 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         cxcore_System_Threading_Tasks_TaskHandle_SetFault(__this->_completion, __this->_firstException);
     }
     else
     {
-        #line 388 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 404 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         if (__this->_wasCanceled)
-        #line 388 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 404 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 389 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 405 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             cxcore_System_Threading_Tasks_TaskHandle_SetCanceled(__this->_completion);
         }
         else
-        #line 390 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+        #line 406 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
         {
-            #line 391 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+            #line 407 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
             cxcore_System_Threading_Tasks_TaskHandle_SetResult(__this->_completion);
         }
     }
@@ -4632,43 +4825,43 @@ struct cxcore_System_Exception* cxcore_System_Threading_Tasks_TaskState_Exceptio
     return __this->_exception;
 }
 
-#line 419 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 435 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskState_SetResult(struct cxcore_System_Threading_Tasks_TaskState* __this, struct cxcore_System_Object* value) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 420 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 436 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(__this->_isCompleted);
-    #line 421 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 437 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Object*)cx_gc_store_reference((cx_ptr*)&(__this->_value), (cx_ptr)(value)));
-    #line 422 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 438 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isFaulted = CX_FALSE;
-    #line 423 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 439 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_TRUE;
-    #line 424 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 440 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ScheduleContinuations(__this);
 }
 
-#line 429 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 445 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskState_SetCanceled(struct cxcore_System_Threading_Tasks_TaskState* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
     cx_int __cx_transfer = 0;
     (void)&__cx_transfer;
-    #line 430 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 446 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(__this->_isCompleted);
-    #line 431 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 447 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isFaulted = CX_FALSE;
-    #line 432 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 448 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCanceled = CX_TRUE;
-    #line 433 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 449 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_TRUE;
-    #line 434 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 450 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     cxcore_System_Threading_Tasks_TaskState_ScheduleContinuations(__this);
 }
 
-#line 437 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+#line 453 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
 void cxcore_System_Threading_Tasks_TaskState___constructor(struct cxcore_System_Threading_Tasks_TaskState* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_module_init_CXCORE();
@@ -4676,17 +4869,102 @@ void cxcore_System_Threading_Tasks_TaskState___constructor(struct cxcore_System_
     (void)&__cx_transfer;
     cxcore_System_Object___constructor(&__this->__base);
     CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_TaskState);
-    #line 438 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 454 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Object*)cx_gc_store_reference((cx_ptr*)&(__this->_value), (cx_ptr)(CX_NULL)));
-    #line 439 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 455 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCompleted = CX_FALSE;
-    #line 440 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 456 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isFaulted = CX_FALSE;
-    #line 441 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 457 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     __this->_isCanceled = CX_FALSE;
-    #line 442 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 458 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((struct cxcore_System_Exception*)cx_gc_store_reference((cx_ptr*)&(__this->_exception), (cx_ptr)(CX_NULL)));
-    #line 443 "C:\\workspace\\cx-pl\\.build\\threading-metadata-de7a41cb176d407081957c6c7709971d\\sources\\Task.cx"
+    #line 459 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
     ((cx_ptr)cx_gc_store_native_pointer((cx_ptr*)&(__this->_continuations), (cx_ptr)(CX_NULL)));
+}
+
+struct cxcore_System_Threading_Tasks_CancellationToken cxcore_System_Threading_Tasks_OperationCanceledException_CancellationToken___const_get(const struct cxcore_System_Threading_Tasks_OperationCanceledException* __this) {
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    struct cxcore_System_Threading_Tasks_CancellationToken __cx_return_value;
+    (void)&__cx_return_value;
+    return __this->_cancellationToken;
+}
+
+#line 47 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(__this, CX_NULL, CX_NULL, cxcore_System_Threading_Tasks_CancellationToken_None___const_get());
+}
+
+#line 49 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Exception___constructor__3(&__this->__base);
+    CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_OperationCanceledException);
+    #line 50 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    (*(struct cxcore_System_Threading_Tasks_CancellationToken*)cx_gc_copy_value((cx_ptr)&(__this->_cancellationToken), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationToken[]){ cancellationToken })[0], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+}
+
+#line 53 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__3(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, const struct cxcore_System_String* message) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(__this, message, CX_NULL, cxcore_System_Threading_Tasks_CancellationToken_None___const_get());
+}
+
+#line 55 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__4(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, const struct cxcore_System_String* message, const struct cxcore_System_Exception* innerException) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(__this, message, innerException, cxcore_System_Threading_Tasks_CancellationToken_None___const_get());
+}
+
+#line 58 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__5(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, const struct cxcore_System_String* message, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(__this, message, CX_NULL, cancellationToken);
+}
+
+#line 61 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException___constructor__6(struct cxcore_System_Threading_Tasks_OperationCanceledException* __this, const struct cxcore_System_String* message, const struct cxcore_System_Exception* innerException, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    cxcore_System_Exception___constructor__2(&__this->__base, (struct cxcore_System_String*)(((message) != CX_NULL ? (message) : (const struct cxcore_System_String*)(&cxcore___string_7192FE2222EE9854))), (struct cxcore_System_Exception*)(innerException));
+    CX_INIT_VTABLE(__this, cxcore_System_Threading_Tasks_OperationCanceledException);
+    #line 64 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    (*(struct cxcore_System_Threading_Tasks_CancellationToken*)cx_gc_copy_value((cx_ptr)&(__this->_cancellationToken), (cx_ptr)&((struct cxcore_System_Threading_Tasks_CancellationToken[]){ cancellationToken })[0], &cxcore_System_Threading_Tasks_CancellationToken___typeinfo));
+}
+
+#line 67 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+void cxcore_System_Threading_Tasks_OperationCanceledException_ThrowIfCanceled(cx_bool isCanceled, struct cxcore_System_Threading_Tasks_CancellationToken cancellationToken) {
+    __cx_register_static_roots_CXCORE();
+    __cx_module_init_CXCORE();
+    cx_int __cx_transfer = 0;
+    (void)&__cx_transfer;
+    #line 70 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    if (isCanceled)
+    #line 70 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+    {
+        #line 71 "C:\\workspace\\cx-pl\\.build\\threading-metadata-d0e9f1c7f0da490ea61a97531fa14aad\\sources\\Task.cx"
+        struct cxcore_System_Threading_Tasks_OperationCanceledException* __cx_new_0;
+        CX_THROW((cxcore_System_Threading_Tasks_OperationCanceledException___constructor__2(__cx_new_0 = (struct cxcore_System_Threading_Tasks_OperationCanceledException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_Threading_Tasks_OperationCanceledException)), cancellationToken), __cx_new_0));
+    }
 }
 

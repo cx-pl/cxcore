@@ -5,6 +5,8 @@
 
 typedef struct cxcore_System_StringBuilder builder;
 typedef struct cxcore_System_String string;
+extern void cxcore_System_String___constructor__2(
+    string *self, cx_uint length, cx_ptr data);
 #define SB(name) cxcore_System_StringBuilder_ ## name
 #define SBO(name,index) cxcore_System_StringBuilder_ ## name ## _ ## index
 static string input(const char *text) {
@@ -18,6 +20,7 @@ static void equal(const string *value, const char *expected) {
 }
 int main(void) {
     builder value;
+    cx_gc_attach_thread();
     SBO(__constructor,_2)(&value,1);
     assert(cxcore_System_StringBuilder_Length___const_get(&value) == 0);
     string hello = input("hello");
@@ -57,5 +60,32 @@ int main(void) {
 #else
     equal(SB(ToString)(&value),"hello\n");
 #endif
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            SBO(Append,_3)(CX_NULL, CX_TRUE);
+            assert(!"A null StringBuilder receiver must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_NullReferenceException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        struct cx_exception_frame frame;
+        value._length = UINT_MAX;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            SBO(Append,_3)(&value, CX_TRUE);
+            assert(!"StringBuilder append overflow must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_OverflowException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
     return 0;
 }

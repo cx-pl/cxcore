@@ -1,0 +1,19 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>
+/// Nonblocking provider execution. Providers may be supplied by external
+/// libraries. ExecuteAsync observes cancellation through completion and settles
+/// its task only after releasing resources. Stream defers opening work until the
+/// consumer advances its async enumerator; providers observe the token passed to
+/// GetAsyncEnumerator and release resources on completion, faults, cancellation,
+/// and partial-consumer disposal. Implementations must not block on async work.
+/// </summary>
+public interface IAsyncQueryProvider {
+    public Task<List<T>> ExecuteAsync<T>(
+        QueryPlan<T> plan,
+        CancellationToken cancellationToken);
+
+    public IAsyncEnumerable<T> Stream<T>(QueryPlan<T> plan);
+}

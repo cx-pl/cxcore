@@ -1,0 +1,264 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Continuation-driven enumerator for an awaited filter predicate.</summary>
+public final class AsyncFilterAsyncEnumerator<T> : IAsyncEnumerator<T> {
+    private IAsyncEnumerable<T> _source;
+    private IAsyncEnumerator<T> _sourceEnumerator;
+    private delegate(T) => Task<bool> _predicate;
+    private CancellationToken _cancellationToken;
+    private TaskHandle _disposeTask;
+    private TaskCompletionSource _disposeCompletion;
+    private Task<bool> _moveCompletion;
+    private T _candidate;
+    private T _current;
+    private bool _sourceOpened;
+    private bool _disposed;
+    private bool _disposeStarted;
+    private bool _movePending;
+
+    public T Current { const get => _current; }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => Task<bool> predicate,
+        CancellationToken cancellationToken) {
+        _source = source;
+        _sourceEnumerator = null;
+        _predicate = predicate;
+        _cancellationToken = cancellationToken;
+        _disposeTask = null;
+        _disposeCompletion = null;
+        _moveCompletion = null;
+        _sourceOpened = false;
+        _disposed = false;
+        _disposeStarted = false;
+        _movePending = false;
+    }
+
+    public ValueTask<bool> MoveNextAsync() {
+        if (_disposed) {
+            return new ValueTask<bool>(false);
+        }
+        if (_movePending) {
+            throw new System.InvalidOperationException(
+                "A filter MoveNextAsync operation is already pending.");
+        }
+        _current = default;
+        _candidate = default;
+        Task<bool> completion = new Task<bool>();
+        _moveCompletion = completion;
+        _movePending = true;
+        try {
+            if (!_sourceOpened) {
+                IAsyncEnumerator<T> sourceEnumerator =
+                    _source.GetAsyncEnumerator(
+                    _cancellationToken);
+                if (sourceEnumerator == null) {
+                    throw new System.InvalidOperationException(
+                        "The async source returned no enumerator.");
+                }
+                _sourceEnumerator = sourceEnumerator;
+                _sourceOpened = true;
+            }
+            Advance();
+        } catch (System.Exception exception) {
+            CompleteMoveException(exception);
+        }
+        ValueTask<bool> result;
+        result.SetTask(completion);
+        return result;
+    }
+
+    private void Advance() {
+        while (_movePending && !_disposed) {
+            try {
+                ValueTask<bool> moveValueTask =
+                    _sourceEnumerator.MoveNextAsync();
+                Task<bool> moveTask = moveValueTask.AsTask();
+                if (!moveTask.IsCompleted) {
+                    AsyncFilterAsyncEnumerator<T> state = this;
+                    moveTask.OnCompleted(() =>
+                        state.CompleteSourceMove(moveTask));
+                    return;
+                }
+                if (!moveTask.GetResult()) {
+                    CompleteMoveResult(false);
+                    return;
+                }
+                _candidate = _sourceEnumerator.Current;
+                Task<bool> predicateTask = _predicate(_candidate);
+                if (predicateTask == null) {
+                    throw new System.InvalidOperationException(
+                        "The async predicate returned no task.");
+                }
+                if (!predicateTask.IsCompleted) {
+                    AsyncFilterAsyncEnumerator<T> state = this;
+                    predicateTask.OnCompleted(() =>
+                        state.CompletePredicate(predicateTask));
+                    return;
+                }
+                if (predicateTask.GetResult()) {
+                    _current = _candidate;
+                    CompleteMoveResult(true);
+                    return;
+                }
+                _candidate = default;
+            } catch (System.Exception exception) {
+                CompleteMoveException(exception);
+                return;
+            }
+        }
+    }
+
+    private void CompleteSourceMove(Task<bool> moveTask) {
+        if (!_movePending) {
+            return;
+        }
+        try {
+            bool moved = moveTask.GetResult();
+            if (!moved || _disposed) {
+                CompleteMoveResult(false);
+                return;
+            }
+            _candidate = _sourceEnumerator.Current;
+            Task<bool> predicateTask = _predicate(_candidate);
+            if (predicateTask == null) {
+                throw new System.InvalidOperationException(
+                    "The async predicate returned no task.");
+            }
+            if (!predicateTask.IsCompleted) {
+                AsyncFilterAsyncEnumerator<T> state = this;
+                predicateTask.OnCompleted(() =>
+                    state.CompletePredicate(predicateTask));
+                return;
+            }
+            if (predicateTask.GetResult()) {
+                _current = _candidate;
+                CompleteMoveResult(true);
+            } else {
+                _candidate = default;
+                Advance();
+            }
+        } catch (System.Exception exception) {
+            CompleteMoveException(exception);
+        }
+    }
+
+    private void CompletePredicate(Task<bool> predicateTask) {
+        if (!_movePending) {
+            return;
+        }
+        try {
+            bool accepted = predicateTask.GetResult();
+            if (_disposed) {
+                CompleteMoveResult(false);
+            } else if (accepted) {
+                _current = _candidate;
+                CompleteMoveResult(true);
+            } else {
+                _candidate = default;
+                Advance();
+            }
+        } catch (System.Exception exception) {
+            CompleteMoveException(exception);
+        }
+    }
+
+    private void CompleteMoveResult(bool moved) {
+        if (!_movePending) {
+            return;
+        }
+        Task<bool> completion = _moveCompletion;
+        _moveCompletion = null;
+        _movePending = false;
+        _candidate = default;
+        completion.SetResult(moved);
+    }
+
+    private void CompleteMoveException(System.Exception exception) {
+        if (!_movePending) {
+            return;
+        }
+        Task<bool> completion = _moveCompletion;
+        _moveCompletion = null;
+        _movePending = false;
+        _candidate = default;
+        if (exception is OperationCanceledException) {
+            completion.SetCanceled();
+        } else {
+            completion.SetFault(exception);
+        }
+    }
+
+    private void DisposeAfterPendingMove(Task<bool> pendingMove) {
+        try {
+            pendingMove.GetResult();
+        } catch (System.Exception) {
+            // The move caller observes its failure; disposal still waits for it.
+        }
+        _source = default;
+        _predicate = default;
+        _current = default;
+        _candidate = default;
+        _cancellationToken = default;
+        TaskHandle upstreamDispose;
+        try {
+            upstreamDispose = _sourceEnumerator.DisposeAsync().AsTask();
+            _sourceEnumerator = default;
+        } catch (System.Exception exception) {
+            _sourceEnumerator = default;
+            _disposeCompletion.SetException(exception);
+            return;
+        }
+        if (upstreamDispose.IsCompleted) {
+            CompletePendingDispose(upstreamDispose);
+        } else {
+            AsyncFilterAsyncEnumerator<T> state = this;
+            upstreamDispose.OnCompleted(() =>
+                state.CompletePendingDispose(upstreamDispose));
+        }
+    }
+
+    private void CompletePendingDispose(TaskHandle upstreamDispose) {
+        try {
+            upstreamDispose.GetResult();
+            _disposeCompletion.SetResult();
+        } catch (OperationCanceledException) {
+            _disposeCompletion.SetCanceled();
+        } catch (System.Exception exception) {
+            _disposeCompletion.SetException(exception);
+        }
+    }
+
+    public ValueTask DisposeAsync() {
+        if (_disposeStarted) {
+            return new ValueTask(_disposeTask);
+        }
+        _disposeStarted = true;
+        _disposed = true;
+        if (_movePending) {
+            _disposeCompletion = new TaskCompletionSource();
+            _disposeTask = _disposeCompletion.Task;
+            Task<bool> pendingMove = _moveCompletion;
+            AsyncFilterAsyncEnumerator<T> state = this;
+            pendingMove.OnCompleted(() =>
+                state.DisposeAfterPendingMove(pendingMove));
+            return new ValueTask(_disposeTask);
+        }
+        _source = default;
+        _predicate = default;
+        _current = default;
+        _candidate = default;
+        _cancellationToken = default;
+        if (_sourceOpened) {
+            ValueTask disposeValueTask = _sourceEnumerator.DisposeAsync();
+            _sourceEnumerator = default;
+            _disposeTask = disposeValueTask.AsTask();
+        } else {
+            _disposeTask = new TaskHandle();
+        }
+        return new ValueTask(_disposeTask);
+    }
+}

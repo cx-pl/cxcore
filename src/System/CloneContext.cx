@@ -21,7 +21,7 @@ public final class CloneContext {
 
     public constructor(uint objectLimit, uint depthLimit) {
         if (objectLimit == 0u || depthLimit == 0u)
-            throw new Exception("Clone context limits must be greater than zero.");
+            throw new ArgumentOutOfRangeException("limits");
         _copies = new Dictionary<object, object>(new ReferenceIdentityComparer());
         this._constructing = new Dictionary<object, bool>(new ReferenceIdentityComparer());
         _depth = 0u;
@@ -35,23 +35,24 @@ public final class CloneContext {
     }
 
     public object RequireNonNull(object? value) {
-        if (value == null) throw new Exception("A non-null clone value was required.");
+        if (value == null) throw new ArgumentNullException("value");
         return value ?? new ReferenceIdentityComparer();
     }
 
     public void Register(object source, object copy) {
-        if (source == null || copy == null) throw new Exception("Clone context entries cannot be null.");
+        if (source == null) throw new ArgumentNullException("source");
+        if (copy == null) throw new ArgumentNullException("copy");
         if (!_copies.ContainsKey(source) && _copies.Count >= _objectLimit)
-            throw new Exception(CreateLimitError(_objectLimit, "object limit."));
+            throw new InvalidOperationException(CreateLimitError(_objectLimit, "object limit."));
         _copies.Set(source, copy);
         this._constructing.Remove(source);
     }
 
     public void BeginConstruction(object source) {
-        if (source == null) throw new Exception("Cannot construct a clone for a null value.");
+        if (source == null) throw new ArgumentNullException("source");
         if (_copies.ContainsKey(source)) return;
         if (this._constructing.ContainsKey(source))
-            throw new Exception("Clone graph contains a constructor-bound cycle.");
+            throw new InvalidOperationException("Clone graph contains a constructor-bound cycle.");
         this._constructing.Set(source, true);
     }
 
@@ -61,12 +62,12 @@ public final class CloneContext {
 
     public void Enter() {
         if (_depth >= _depthLimit)
-            throw new Exception(CreateLimitError(_depthLimit, "object depth limit."));
+            throw new InvalidOperationException(CreateLimitError(_depthLimit, "object depth limit."));
         _depth += 1u;
     }
 
     public void Exit() {
-        if (_depth == 0u) throw new Exception("Clone context depth is unbalanced.");
+        if (_depth == 0u) throw new InvalidOperationException("Clone context depth is unbalanced.");
         _depth -= 1u;
     }
 

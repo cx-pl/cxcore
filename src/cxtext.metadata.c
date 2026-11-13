@@ -4,14 +4,16 @@
 #include "cxruntime.h"
 #if defined(_MSC_VER)
 #pragma warning(disable:4100 4101) /* unused generated parameters and temporaries */
+#elif defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#pragma GCC diagnostic ignored "-Wclobbered"
+#pragma GCC diagnostic ignored "-Wmissing-braces"
 #endif
 #include <stdlib.h>
 #include <string.h>
-#if defined(_MSC_VER)
-__declspec(dllimport) __declspec(noreturn) void __cdecl abort(void);
-#elif defined(__GNUC__)
-__attribute__((noreturn)) void abort(void);
-#endif
 #if !defined(CX_RUNTIME_ABI_VERSION) || CX_RUNTIME_ABI_VERSION != 1
 #error This generated code requires cxcore runtime ABI version 1.
 #endif
@@ -62,8 +64,15 @@ extern struct cxcore_System_Reflection_TypeInfo cxcore_System_Interop_NativeLibr
 extern struct cxcore_System_Reflection_TypeInfo cxcore_System_WideString___typeinfo;
 
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_EncodingException)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_EncodingException___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_EncodingException, _position), &cxcore_System_UInt___typeinfo, "_position", (cx_uint)sizeof(((struct cxcore_System_EncodingException*)0)->_position) },
@@ -74,30 +83,67 @@ static struct cx_reflection_field cxcore_System_EncodingException___reflection_f
 static const cx_reflection_invoker cxcore_System_EncodingException___reflection_invokers[] = {
     CX_NULL,
     CX_NULL,
+    CX_NULL,
+    CX_NULL,
+    CX_NULL,
+    CX_NULL,
 };
 #if !defined(CX_DYNAMIC_MODULE)
-static const struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_0[] = {
+static const struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_1[] = {
     { 0, &cxcore_System_UInt___typeinfo, "position", CX_NULL },
 };
 #else
-static struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_0[1];
+static struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_1[1];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_2[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_2[1];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_3[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+    { 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_3[2];
+#endif
+#if !defined(CX_DYNAMIC_MODULE)
+static const struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_4[] = {
+    { 0, &cxcore_System_String___typeinfo, "message", CX_NULL },
+    { 0, &cxcore_System_UInt___typeinfo, "position", CX_NULL },
+};
+#else
+static struct cx_reflection_parameter cxcore_System_EncodingException___reflection_params_4[2];
 #endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_function cxcore_System_EncodingException___reflection_functions[] = {
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_0, 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", CX_NULL, 0 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_1, 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_2, 1 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_3, 2 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_4, 2 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_UInt___typeinfo, "Position", CX_NULL, 0 },
 };
 #else
-static struct cx_reflection_function cxcore_System_EncodingException___reflection_functions[2];
+static struct cx_reflection_function cxcore_System_EncodingException___reflection_functions[6];
 #endif
+static cx_ptr cxcore_System_EncodingException___reflection_create_instance(void) {
+    struct cxcore_System_EncodingException *__instance = (struct cxcore_System_EncodingException*)cxcore_System_Memory_Alloc((cx_uint)sizeof(struct cxcore_System_EncodingException));
+    cxcore_System_EncodingException___constructor(__instance);
+    CX_INIT_VTABLE(__instance, cxcore_System_EncodingException);
+    return __instance;
+}
 static const struct cx_runtime_type_info cxcore_System_EncodingException___runtime_type_info = {
     .interfaces = CX_NULL,
     .interfaceCount = 0,
     .fields = (const struct cx_reflection_field*)cxcore_System_EncodingException___reflection_fields,
     .fieldCount = 1,
     .functions = (const struct cx_reflection_function*)cxcore_System_EncodingException___reflection_functions,
-    .functionCount = 2,
-    .createInstance = CX_NULL,
+    .functionCount = 6,
+    .createInstance = cxcore_System_EncodingException___reflection_create_instance,
     .invokers = (const cx_reflection_invoker*)cxcore_System_EncodingException___reflection_invokers,
 };
 #if !defined(CX_DYNAMIC_MODULE)
@@ -126,8 +172,15 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_EncodingException___typei
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_WChar)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_WChar___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_WChar, _value), &cxcore_System_WChar___typeinfo, "_value", (cx_uint)sizeof(((struct cxcore_System_WChar*)0)->_value) },
@@ -175,11 +228,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_WChar___typeinfo = {
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Interop_NativeBuffer)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Interop_NativeBuffer___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Interop_NativeBuffer, _data), CX_NULL, "_data", (cx_uint)sizeof(((struct cxcore_System_Interop_NativeBuffer*)0)->_data) },
@@ -329,7 +389,7 @@ static const struct cx_reflection_function cxcore_System_Interop_NativeBuffer___
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE, CX_REFLECTION_NO_SLOT, &cxcore_System_String___typeinfo, "ToUtf8String", cxcore_System_Interop_NativeBuffer___reflection_params_9, 1 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE, CX_REFLECTION_NO_SLOT, &cxcore_System_WideString___typeinfo, "ToWideString", cxcore_System_Interop_NativeBuffer___reflection_params_10, 1 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "Dispose", CX_NULL, 0 },
-    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "Copy", cxcore_System_Interop_NativeBuffer___reflection_params_12, 3 },
+    { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "Copy", cxcore_System_Interop_NativeBuffer___reflection_params_12, 3 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "NativeBuffer", CX_NULL, 0 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, CX_NULL, "Data", CX_NULL, 0 },
     { CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_ULong___typeinfo, "ByteLength", CX_NULL, 0 },
@@ -379,11 +439,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Interop_NativeBuffer___ty
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Interop_NativeCallbackRegistration)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Interop_NativeCallbackRegistration___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Interop_NativeCallbackRegistration, _state), CX_NULL, "_state", (cx_uint)sizeof(((struct cxcore_System_Interop_NativeCallbackRegistration*)0)->_state) },
@@ -453,11 +520,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Interop_NativeCallbackReg
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_Interop_NativeLibrary)
 CX_VTABLE_ENTRY(cxcore_System_Object_ToString)
 CX_VTABLE_ENTRY(cxcore_System_Object_Equals)
 CX_VTABLE_ENTRY(cxcore_System_Object_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_Interop_NativeLibrary___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Interop_NativeLibrary, _handle), CX_NULL, "_handle", (cx_uint)sizeof(((struct cxcore_System_Interop_NativeLibrary*)0)->_handle) },
@@ -529,11 +603,18 @@ struct cxcore_System_Reflection_TypeInfo cxcore_System_Interop_NativeLibrary___t
 };
 #endif
 
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(push)
+#pragma warning(disable:4232) /* vtable imports are called, not identity-compared */
+#endif
 CX_BEGIN_VTABLE_DEF(cxcore_System_WideString)
 CX_VTABLE_ENTRY(cxcore_System_WideString_ToString)
 CX_VTABLE_ENTRY(cxcore_System_WideString_Equals)
 CX_VTABLE_ENTRY(cxcore_System_WideString_GetHashCode)
 CX_END_VTABLE_DEF;
+#if defined(_MSC_VER) && defined(CX_DYNAMIC_MODULE)
+#pragma warning(pop)
+#endif
 #if !defined(CX_DYNAMIC_MODULE)
 static const struct cx_reflection_field cxcore_System_WideString___reflection_fields[] = {
     { CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_WideString, _length), &cxcore_System_UInt___typeinfo, "_length", (cx_uint)sizeof(((struct cxcore_System_WideString*)0)->_length) },
@@ -697,9 +778,18 @@ void CX_API __cx_text_init_CXCORE(void)
         __text_namespace_System_Interop.__base.__vtable = cxcore_System_String___vtable;
         cx_gc_store_reference((cx_ptr*)&cxcore_System_EncodingException___typeinfo.BaseType._obj, (cx_ptr)&cxcore_System_Exception___typeinfo);
         cxcore_System_EncodingException___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_EncodingException, _position), &cxcore_System_UInt___typeinfo, "_position", (cx_uint)sizeof(((struct cxcore_System_EncodingException*)0)->_position) };
-        cxcore_System_EncodingException___reflection_params_0[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_UInt___typeinfo, "position", CX_NULL };
-        cxcore_System_EncodingException___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_0, 1 };
-        cxcore_System_EncodingException___reflection_functions[1] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_UInt___typeinfo, "Position", CX_NULL, 0 };
+        cxcore_System_EncodingException___reflection_functions[0] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", CX_NULL, 0 };
+        cxcore_System_EncodingException___reflection_params_1[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_UInt___typeinfo, "position", CX_NULL };
+        cxcore_System_EncodingException___reflection_functions[1] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_1, 1 };
+        cxcore_System_EncodingException___reflection_params_2[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_EncodingException___reflection_functions[2] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_2, 1 };
+        cxcore_System_EncodingException___reflection_params_3[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_EncodingException___reflection_params_3[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_Exception___typeinfo, "innerException", CX_NULL };
+        cxcore_System_EncodingException___reflection_functions[3] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_3, 2 };
+        cxcore_System_EncodingException___reflection_params_4[0] = (struct cx_reflection_parameter){ 0, &cxcore_System_String___typeinfo, "message", CX_NULL };
+        cxcore_System_EncodingException___reflection_params_4[1] = (struct cx_reflection_parameter){ 0, &cxcore_System_UInt___typeinfo, "position", CX_NULL };
+        cxcore_System_EncodingException___reflection_functions[4] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "EncodingException", cxcore_System_EncodingException___reflection_params_4, 2 };
+        cxcore_System_EncodingException___reflection_functions[5] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_UInt___typeinfo, "Position", CX_NULL, 0 };
         cxcore_System_WChar___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE, (cx_uint)offsetof(struct cxcore_System_WChar, _value), &cxcore_System_WChar___typeinfo, "_value", (cx_uint)sizeof(((struct cxcore_System_WChar*)0)->_value) };
         cx_gc_store_reference((cx_ptr*)&cxcore_System_Interop_NativeBuffer___typeinfo.BaseType._obj, (cx_ptr)&cxcore_System_Object___typeinfo);
         cxcore_System_Interop_NativeBuffer___reflection_fields[0] = (struct cx_reflection_field){ CX_REFLECTION_FLAG_VISIBILITY_PRIVATE | CX_REFLECTION_FLAG_FIELD_POINTER, (cx_uint)offsetof(struct cxcore_System_Interop_NativeBuffer, _data), CX_NULL, "_data", (cx_uint)sizeof(((struct cxcore_System_Interop_NativeBuffer*)0)->_data) };
@@ -740,7 +830,7 @@ void CX_API __cx_text_init_CXCORE(void)
         cxcore_System_Interop_NativeBuffer___reflection_params_12[0] = (struct cx_reflection_parameter){ 0, CX_NULL, "destination", CX_NULL };
         cxcore_System_Interop_NativeBuffer___reflection_params_12[1] = (struct cx_reflection_parameter){ 0, CX_NULL, "source", CX_NULL };
         cxcore_System_Interop_NativeBuffer___reflection_params_12[2] = (struct cx_reflection_parameter){ 0, &cxcore_System_ULong___typeinfo, "byteLength", CX_NULL };
-        cxcore_System_Interop_NativeBuffer___reflection_functions[12] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "Copy", cxcore_System_Interop_NativeBuffer___reflection_params_12, 3 };
+        cxcore_System_Interop_NativeBuffer___reflection_functions[12] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_STATIC | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_NO_ESCAPE, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "Copy", cxcore_System_Interop_NativeBuffer___reflection_params_12, 3 };
         cxcore_System_Interop_NativeBuffer___reflection_functions[13] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_FUNCTION_CONSTRUCTOR, CX_REFLECTION_NO_SLOT, &cxcore_System_Void___typeinfo, "NativeBuffer", CX_NULL, 0 };
         cxcore_System_Interop_NativeBuffer___reflection_functions[14] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, CX_NULL, "Data", CX_NULL, 0 };
         cxcore_System_Interop_NativeBuffer___reflection_functions[15] = (struct cx_reflection_function){ CX_REFLECTION_FLAG_VISIBILITY_PUBLIC | CX_REFLECTION_FLAG_CONST_CALL | CX_REFLECTION_FLAG_EXTERN | CX_REFLECTION_FLAG_FUNCTION_PROPERTY_GET, CX_REFLECTION_NO_SLOT, &cxcore_System_ULong___typeinfo, "ByteLength", CX_NULL, 0 };
@@ -837,7 +927,7 @@ static inline struct cxcore_System_Reflection_FunctionInfo __cx_delegate_get_met
 static inline struct cxcore_System_Collections_Array* __cx_delegate_get_invocation_list_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 value) {
     cx_uint count = __cx_delegate_count_CX_FN_136FFEE706DF35B2(value);
     const void *__cx_owner = value.__invocation_list != NULL ? (const void*)value.__invocation_list : (value.__environment != NULL ? (const void*)value.__environment : (const void*)value.__target);
-    struct cxcore_System_Collections_Array *result = (__cx_owner == NULL ? cx_array_with_type(cx_array_new((cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_bc403224c77282451242dec58318c2410acc3e72e356e3544f9443a3ceb4380b") : cx_array_with_type(cx_array_new_for_owner((cx_ptr)(__cx_owner), (cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_bc403224c77282451242dec58318c2410acc3e72e356e3544f9443a3ceb4380b"));
+    struct cxcore_System_Collections_Array *result = (__cx_owner == NULL ? cx_array_with_type(cx_array_new((cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_4b76b70773172fc4e64f4812706b11f0c4560cd8d96cfaaac737eb795a10b7b1") : cx_array_with_type(cx_array_new_for_owner((cx_ptr)(__cx_owner), (cx_uint)(count), (cx_uint)sizeof(CX_FN_136FFEE706DF35B2)), "cx_generic_4b76b70773172fc4e64f4812706b11f0c4560cd8d96cfaaac737eb795a10b7b1"));
     for (cx_uint index = 0; index < count; ++index)
     {
         CX_FN_136FFEE706DF35B2 __cx_item = __cx_delegate_item_CX_FN_136FFEE706DF35B2(value, index);
@@ -889,7 +979,7 @@ static inline CX_FN_136FFEE706DF35B2 __cx_delegate_combine_CX_FN_136FFEE706DF35B
     if (head == NULL) return (CX_FN_136FFEE706DF35B2){ 0 };
     if (head == tail) return head->value;
     CX_FN_136FFEE706DF35B2 result = { 0 };
-    result.__invocation_list = head;
+    cx_gc_store_reference((cx_ptr*)&result.__invocation_list, (cx_ptr)head);
     return result;
 }
 static inline CX_FN_136FFEE706DF35B2 __cx_delegate_remove_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 source, CX_FN_136FFEE706DF35B2 value) {
@@ -917,7 +1007,7 @@ static inline CX_FN_136FFEE706DF35B2 __cx_delegate_remove_CX_FN_136FFEE706DF35B2
     if (head == NULL) return (CX_FN_136FFEE706DF35B2){ 0 };
     if (head == tail) return head->value;
     CX_FN_136FFEE706DF35B2 result = { 0 };
-    result.__invocation_list = head;
+    cx_gc_store_reference((cx_ptr*)&result.__invocation_list, (cx_ptr)head);
     return result;
 }
 static inline cx_bool __cx_delegate_equal_CX_FN_136FFEE706DF35B2(CX_FN_136FFEE706DF35B2 left, CX_FN_136FFEE706DF35B2 right) {
@@ -947,7 +1037,7 @@ static inline cx_ptr __cx_delegate_dynamic_invoke_CX_FN_136FFEE706DF35B2(CX_FN_1
 #endif /* CX_FUNCTION_HELPERS_CX_FN_136FFEE706DF35B2 */
 
 
-#line 7 "C:\\workspace\\cx-pl\\.build\\text-metadata-050dcc17871b487388fd48d4da747a79\\sources\\NativeBuffer.cx"
+#line 7 "C:\\workspace\\cx-pl\\.build\\text-metadata-671ca01911dc4fa5988e737d86b8872d\\sources\\NativeBuffer.cx"
 void cxcore_System_Interop_NativeBuffer___constructor(struct cxcore_System_Interop_NativeBuffer* __this) {
     __cx_register_static_roots_CXCORE();
     __cx_text_init_CXCORE();

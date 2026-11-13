@@ -1,0 +1,159 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+internal final class AsyncAnyOperation<T, TLayout> {
+    private IAsyncEnumerable<T> _source;
+    private delegate(T) => bool _predicate;
+    private CancellationToken _cancellationToken;
+    private IAsyncEnumerator<T> _enumerator;
+    private Task<bool> _completion;
+    private bool _isDisposing;
+
+    internal constructor() { }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => bool predicate,
+        CancellationToken cancellationToken,
+        IAsyncEnumerator<T> enumerator,
+        Task<bool> completion) {
+        _source = source;
+        _predicate = predicate;
+        _cancellationToken = cancellationToken;
+        _enumerator = enumerator;
+        _completion = completion;
+    }
+
+    internal Task<bool> Start() {
+        try {
+            _enumerator = _source.GetAsyncEnumerator(_cancellationToken);
+            if (_enumerator == null) {
+                Complete(new System.InvalidOperationException(
+                    "The async source returned a null enumerator."), false);
+                return _completion;
+            }
+        } catch (System.Exception exception) {
+            Complete(exception, false);
+            return _completion;
+        }
+        Advance();
+        return _completion;
+    }
+
+    private void Advance() {
+        while (true) {
+            Task<bool> moveTask;
+            try {
+                moveTask = _enumerator.MoveNextAsync().AsTask();
+            } catch (System.Exception exception) {
+                BeginDispose(exception, false);
+                return;
+            }
+            if (!moveTask.IsCompleted) {
+                AsyncAnyOperation<T, TLayout> state = this;
+                moveTask.OnCompleted(() => state.CompleteMove(moveTask));
+                return;
+            }
+            bool moved;
+            try {
+                moved = moveTask.GetResult();
+            } catch (System.Exception exception) {
+                BeginDispose(exception, false);
+                return;
+            }
+            if (!moved) {
+                BeginDispose(null, false);
+                return;
+            }
+            bool matches;
+            try {
+                matches = _predicate == null ||
+                    _predicate(_enumerator.Current);
+            } catch (System.Exception exception) {
+                BeginDispose(exception, false);
+                return;
+            }
+            if (matches) {
+                BeginDispose(null, true);
+                return;
+            }
+        }
+    }
+
+    private void CompleteMove(Task<bool> moveTask) {
+        bool moved;
+        try {
+            moved = moveTask.GetResult();
+        } catch (System.Exception exception) {
+            BeginDispose(exception, false);
+            return;
+        }
+        if (!moved) {
+            BeginDispose(null, false);
+            return;
+        }
+        bool matches;
+        try {
+            matches = _predicate == null ||
+                _predicate(_enumerator.Current);
+        } catch (System.Exception exception) {
+            BeginDispose(exception, false);
+            return;
+        }
+        if (matches) {
+            BeginDispose(null, true);
+        } else {
+            Advance();
+        }
+    }
+
+    private void BeginDispose(
+        System.Exception failure,
+        bool found) {
+        if (_isDisposing) { return; }
+        _isDisposing = true;
+        TaskHandle disposeTask;
+        try {
+            disposeTask = _enumerator.DisposeAsync().AsTask();
+        } catch (System.Exception exception) {
+            Complete(exception, false);
+            return;
+        }
+        if (disposeTask.IsCompleted) {
+            CompleteDispose(disposeTask, failure, found);
+        } else {
+            AsyncAnyOperation<T, TLayout> state = this;
+            disposeTask.OnCompleted(() =>
+                state.CompleteDispose(disposeTask, failure, found));
+        }
+    }
+
+    private void CompleteDispose(
+        TaskHandle disposeTask,
+        System.Exception failure,
+        bool found) {
+        try {
+            disposeTask.GetResult();
+        } catch (System.Exception disposeException) {
+            failure = disposeException;
+        }
+        Complete(failure, found);
+    }
+
+    private void Complete(
+        System.Exception failure,
+        bool found) {
+        if (failure is OperationCanceledException) {
+            _completion.SetCanceled();
+        } else if (failure != null) {
+            _completion.SetFault(failure);
+        } else {
+            _completion.SetResult(found);
+        }
+        _source = default;
+        _predicate = default;
+        _cancellationToken = default;
+        _enumerator = default;
+    }
+}

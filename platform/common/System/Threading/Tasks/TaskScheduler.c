@@ -88,6 +88,7 @@ static const struct cx_gc_root_region cx_task_scheduler_roots[] = {
 };
 
 CX_STRING_DEF(cx_task_scheduler_null, "TaskScheduler.Post requires a non-null continuation");
+CX_STRING_DEF(cx_task_scheduler_continuation_parameter, "continuation");
 CX_STRING_DEF(cx_task_scheduler_event_wait_failed, "TaskScheduler failed while waiting for external events");
 CX_STRING_DEF(cx_task_scheduler_wrong_thread, "TaskScheduler may only be accessed from its owner thread");
 CX_STRING_DEF(cx_task_scheduler_reentrant, "TaskScheduler.Run and RunOne cannot be called from a scheduler callback");
@@ -326,7 +327,8 @@ static void cx_task_scheduler_post_ready(
         cx_threading_raise(&cx_task_scheduler_shutdown);
     }
     if (continuation.__function == NULL) {
-        cx_threading_raise(&cx_task_scheduler_null);
+        cx_threading_raise_argument_null(
+            &cx_task_scheduler_null, &cx_task_scheduler_continuation_parameter);
     }
     if (!cx_task_scheduler_roots_registered) {
         cx_gc_register_static_roots(
@@ -886,7 +888,7 @@ cx_bool cxcore_System_Threading_Tasks_TaskScheduler_RunOne(void) {
     cx_gc_check_thread();
     cx_task_scheduler_require_owner();
     if (cx_task_scheduler_dispatching) {
-        cx_threading_raise(&cx_task_scheduler_reentrant);
+        cx_threading_raise_invalid_operation(&cx_task_scheduler_reentrant);
     }
     while (cx_task_scheduler_head == NULL) {
         uint64_t now = cx_platform_monotonic_time_milliseconds();
@@ -964,7 +966,7 @@ CX_CXCORE_API void cxcore_System_Threading_Tasks_TaskScheduler_Shutdown(void) {
     cx_gc_check_thread();
     cx_task_scheduler_require_owner();
     if (cx_task_scheduler_dispatching) {
-        cx_threading_raise(&cx_task_scheduler_reentrant);
+        cx_threading_raise_invalid_operation(&cx_task_scheduler_reentrant);
     }
     if (cx_task_scheduler_shutdown_complete) {
         cx_task_report_unobserved_faults();

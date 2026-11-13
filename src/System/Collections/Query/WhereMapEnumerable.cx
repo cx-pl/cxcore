@@ -1,0 +1,27 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A fused map over a concrete filter.</summary>
+public final class WhereMapEnumerable<T, TResult> : IEnumerable<TResult> {
+    internal WhereEnumerable<T> Source;
+    internal delegate(T) => TResult Selector;
+
+    internal constructor(
+        WhereEnumerable<T> source,
+        delegate(T) => TResult selector) {
+        Source = source;
+        Selector = selector;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new WhereMapEnumerator<T, TResult>(
+            Source.Source, Source.Predicate, Selector);
+    }
+
+    public WhereMapTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new WhereMapTakeEnumerable<T, TResult>(this, count);
+    }
+}

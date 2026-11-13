@@ -1,0 +1,63 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred stable six-key ordering.</summary>
+/// <remarks>The sixth key is compared after the first five cached keys.</remarks>
+public final class ThenSort6Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey>
+    : IEnumerable<T> {
+    private ThenSort5Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey> _source;
+    private delegate(T) => TSixthKey _sixthKeySelector;
+    private delegate(TSixthKey, TSixthKey) => int _sixthComparer;
+    private bool _sixthDescending;
+
+    internal constructor(
+        ThenSort5Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey> source,
+        delegate(T) => TSixthKey sixthKeySelector,
+        delegate(TSixthKey, TSixthKey) => int sixthComparer,
+        bool sixthDescending) {
+        _source = source;
+        _sixthKeySelector = sixthKeySelector;
+        _sixthComparer = sixthComparer;
+        _sixthDescending = sixthDescending;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ThenSort6Enumerator<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey>(
+            _source._source._source,
+            _source._source._keySelector, _source._source._comparer, _source._source._descending,
+            _source._source._nextKeySelector, _source._source._nextComparer, _source._source._nextDescending,
+            _source._source._thirdKeySelector, _source._source._thirdComparer, _source._source._thirdDescending,
+            _source._source._fourthKeySelector, _source._source._fourthComparer, _source._source._fourthDescending,
+            _source._fifthKeySelector, _source._fifthComparer, _source._fifthDescending,
+            _sixthKeySelector, _sixthComparer, _sixthDescending);
+    }
+    /// <summary>Adds a stable seventh ordering key after the first six keys.</summary>
+    public ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey>
+    ThenSort<TSeventhKey>(
+        delegate(T) => TSeventhKey keySelector,
+        delegate(TSeventhKey, TSeventhKey) => int comparer) const {
+        if (keySelector == null) {
+            throw new System.ArgumentNullException("keySelector");
+        }
+        if (comparer == null) {
+            throw new System.ArgumentNullException("comparer");
+        }
+        return new ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey>(
+            this, keySelector, comparer, false);
+    }
+
+    /// <summary>Adds a stable descending seventh ordering key after the first six keys.</summary>
+    public ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey>
+    ThenSortDescending<TSeventhKey>(
+        delegate(T) => TSeventhKey keySelector,
+        delegate(TSeventhKey, TSeventhKey) => int comparer) const {
+        if (keySelector == null) {
+            throw new System.ArgumentNullException("keySelector");
+        }
+        if (comparer == null) {
+            throw new System.ArgumentNullException("comparer");
+        }
+        return new ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey>(
+            this, keySelector, comparer, true);
+    }
+}

@@ -1,0 +1,28 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ArrayWhereMapEnumerable<T, TResult> : IEnumerable<TResult> {
+    internal ArrayWhereEnumerable<T> _source;
+    internal delegate(T) => TResult _selector;
+
+    internal constructor(
+        ArrayWhereEnumerable<T> source,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new ArrayWhereMapEnumerator<T, TResult>(
+            _source._source, _source._predicate, _selector,
+            _source._source.Length, 4294967295u);
+    }
+
+    public ArrayWhereMapTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayWhereMapTakeEnumerable<T, TResult>(this, count);
+    }
+
+}

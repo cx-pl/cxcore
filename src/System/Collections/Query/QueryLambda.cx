@@ -1,0 +1,18 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A typed expression with one explicitly bound parameter.</summary>
+public final class QueryLambda<TParameter, TResult> {
+    private QueryExpression<TParameter> _parameter;
+    private QueryExpression<TResult> _body;
+
+    public QueryExpression<TParameter> Parameter { const get { return _parameter; } }
+    public QueryExpression<TResult> Body { const get { return _body; } }
+    public constructor(
+        QueryExpression<TParameter> parameter,
+        QueryExpression<TResult> body) {
+        _parameter = parameter;
+        _body = body;
+    }
+}

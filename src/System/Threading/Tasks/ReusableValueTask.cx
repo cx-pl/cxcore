@@ -1,0 +1,42 @@
+import System;
+
+namespace System.Threading.Tasks;
+// A reusable value source permits one continuation per generation. Reset is
+// valid only after consumption and scheduler acknowledgment of that callback.
+public struct ReusableValueTask<T> {
+    private ReusableValueTaskSource<T> _source;
+    private uint _version;
+
+    public bool IsCompleted {
+        const get => TaskRuntime.ReusableSourceIsCompleted(_source, _version);
+    }
+    public T GetResult() { return _source.GetResult(_version); }
+    public Task<T> AsTask() {
+        var completion = new TaskCompletionSource<T>();
+        var source = _source;
+        var version = _version;
+        source.OnCompleted(version, () => {
+            try {
+                completion.SetResult(source.GetResult(version));
+            } catch (OperationCanceledException) {
+                completion.SetCanceled();
+            } catch (Exception exception) {
+                completion.SetException(exception);
+            }
+        });
+        return completion.Task;
+    }
+    public void OnCompleted(delegate() => void continuation) {
+        _source.OnCompleted(_version, continuation);
+    }
+
+    public void SetSource(ReusableValueTaskSource<T> source, uint version) {
+        _source = source;
+        _version = version;
+    }
+
+    public constructor() {
+        _source = null;
+        _version = 0u;
+    }
+}

@@ -1,0 +1,8 @@
+namespace System.IO;
+public class InvalidDataException : System.Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The data is invalid.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The data is invalid.", innerException) { }
+}

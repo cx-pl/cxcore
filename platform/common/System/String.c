@@ -262,7 +262,7 @@ cx_wide_string *cxcore_System_String_ToWideString(
     cx_gc_check_thread();
     while (offset < self->_length) {
         if (!cx_utf8_decode(bytes + offset, self->_length - offset, &scalar, &count)) cx_encoding_error((cx_uint)offset);
-        if (length > UINT_MAX / sizeof(cx_wchar) - 2) cx_text_error();
+        if (length > UINT_MAX / sizeof(cx_wchar) - 2) cx_text_overflow();
         length += scalar > 0xFFFF ? 2 : 1;
         offset += count;
     }

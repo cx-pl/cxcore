@@ -1,0 +1,8 @@
+namespace System;
+public class NotSupportedException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The requested operation is not supported.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "The requested operation is not supported.", innerException) { }
+}

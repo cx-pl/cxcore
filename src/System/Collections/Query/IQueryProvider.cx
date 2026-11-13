@@ -1,0 +1,12 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>
+/// Provider execution is explicit and may perform I/O. Implementations can
+/// live in external libraries and own translation, parameter binding, and
+/// provider-specific execution behavior.
+/// </summary>
+public interface IQueryProvider {
+    public List<T> Execute<T>(QueryPlan<T> plan);
+}

@@ -14,6 +14,19 @@
 #endif
 #define CX_CURRENT_TYPE_API CX_CXCORE_DATA_API
 struct cxcore_System_Exception;
+struct cxcore_System_InvalidCastException;
+struct cxcore_System_IndexOutOfRangeException;
+struct cxcore_System_NullReferenceException;
+struct cxcore_System_OverflowException;
+struct cxcore_System_DivideByZeroException;
+struct cxcore_System_FormatException;
+struct cxcore_System_InvalidOperationException;
+struct cxcore_System_ObjectDisposedException;
+struct cxcore_System_IO_IOException;
+struct cxcore_System_IO_FileNotFoundException;
+struct cxcore_System_ArgumentOutOfRangeException;
+struct cxcore_System_ArgumentNullException;
+struct cxcore_System_ArgumentException;
 CX_API void cxcore_System_Exception___constructor__3(
     struct cxcore_System_Exception *self);
 
@@ -191,7 +204,89 @@ CX_TYPE_DEF(cxcore_System_Exception) {
     struct cxcore_System_Object __base;
     struct cxcore_System_String * _message;
     struct cxcore_System_Nullable _innerException;
+    struct cxcore_System_String * _stackTrace;
 };
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_InvalidCastException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_IndexOutOfRangeException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_NullReferenceException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_OverflowException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_DivideByZeroException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_FormatException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_ArgumentOutOfRangeException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_ArgumentException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_ArgumentNullException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_InvalidOperationException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_ObjectDisposedException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_IO_IOException___typeinfo;
+extern CX_CXCORE_DATA_API struct cxcore_System_Reflection_TypeInfo
+    cxcore_System_IO_FileNotFoundException___typeinfo;
+CX_API void cxcore_System_InvalidCastException___constructor(
+    struct cxcore_System_InvalidCastException *self);
+CX_API void cxcore_System_InvalidCastException___constructor__2(
+    struct cxcore_System_InvalidCastException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_ArgumentException___constructor__2(
+    struct cxcore_System_ArgumentException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_ArgumentException___constructor__3(
+    struct cxcore_System_ArgumentException *self,
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *paramName);
+CX_API void cxcore_System_IndexOutOfRangeException___constructor(
+    struct cxcore_System_IndexOutOfRangeException *self);
+CX_API void cxcore_System_NullReferenceException___constructor(
+    struct cxcore_System_NullReferenceException *self);
+CX_API void cxcore_System_OverflowException___constructor(
+    struct cxcore_System_OverflowException *self);
+CX_API void cxcore_System_DivideByZeroException___constructor(
+    struct cxcore_System_DivideByZeroException *self);
+CX_API void cxcore_System_FormatException___constructor(
+    struct cxcore_System_FormatException *self);
+CX_API void cxcore_System_OverflowException___constructor__2(
+    struct cxcore_System_OverflowException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_DivideByZeroException___constructor__2(
+    struct cxcore_System_DivideByZeroException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_FormatException___constructor__2(
+    struct cxcore_System_FormatException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_InvalidOperationException___constructor__2(
+    struct cxcore_System_InvalidOperationException *self,
+    const struct cxcore_System_String *message);
+CX_API void cxcore_System_ArgumentOutOfRangeException___constructor__3(
+    struct cxcore_System_ArgumentOutOfRangeException *self,
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *paramName);
+CX_API void cxcore_System_ArgumentNullException___constructor__3(
+    struct cxcore_System_ArgumentNullException *self,
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *paramName);
+CX_API void cxcore_System_ObjectDisposedException___constructor__3(
+    struct cxcore_System_ObjectDisposedException *self,
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *objectName);
+CX_API void cxcore_System_NullReferenceException___constructor__2(
+    struct cxcore_System_NullReferenceException *self,
+    const struct cxcore_System_String *message);
+CX_API struct cxcore_System_String *
+cxcore_System_ArgumentException_ParamName___const_get(
+    const struct cxcore_System_ArgumentException *self);
+CX_API struct cxcore_System_String *
+cxcore_System_ObjectDisposedException_ObjectName___const_get(
+    const struct cxcore_System_ObjectDisposedException *self);
 CX_TYPE_DEF(cxcore_System_Threading_Tasks_OperationCanceledException) {
     struct cxcore_System_Exception __base;
     struct cxcore_System_Threading_Tasks_CancellationToken _cancellationToken;

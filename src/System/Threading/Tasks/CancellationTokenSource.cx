@@ -1,0 +1,131 @@
+import System;
+
+namespace System.Threading.Tasks;
+public final class CancellationTokenSource {
+    private bool _isCancellationRequested;
+    private CancellationCallback[] _callbacks;
+    private uint[] _callbackIds;
+    private ptr[] _callbackArenas;
+    private uint _callbackCount;
+    private uint _nextCallbackId;
+
+    public bool IsCancellationRequested {
+        const get => _isCancellationRequested;
+    }
+
+    public CancellationToken Token { const get => new CancellationToken(this); }
+
+    public CancellationTokenRegistration Register(delegate() => void callback) {
+        if (_isCancellationRequested) {
+            callback();
+            return CancellationTokenRegistration.None;
+        }
+
+        TaskRuntime.RequireCancellationRegistrationAllowed();
+        ptr callbackArena = TaskRuntime.CaptureCancellationCallbackArena();
+
+        uint registrationId = _nextCallbackId;
+        _nextCallbackId += 1u;
+        if (_nextCallbackId == 0u) {
+            _nextCallbackId = 1u;
+        }
+        CancellationCallback[] callbacks = null;
+        uint[] callbackIds = null;
+        ptr[] callbackArenas = null;
+        bool registered = false;
+        try {
+            TaskRuntime.WithDurable(() => {
+                callbacks = new CancellationCallback[_callbackCount + 1u];
+                callbackIds = new uint[_callbackCount + 1u];
+                callbackArenas = new ptr[_callbackCount + 1u];
+                for (uint index = 0u; index < _callbackCount; index += 1u) {
+                    TaskRuntime.StoreCancellationCallback(
+                        callbacks, index, _callbacks[index], _callbackArenas[index]);
+                    callbackIds[index] = _callbackIds[index];
+                    callbackArenas[index] = _callbackArenas[index];
+                }
+                TaskRuntime.StoreCancellationCallback(
+                    callbacks, _callbackCount, callback, callbackArena);
+                callbackIds[_callbackCount] = registrationId;
+                callbackArenas[_callbackCount] = callbackArena;
+                _callbacks = callbacks;
+                _callbackIds = callbackIds;
+                _callbackArenas = callbackArenas;
+            });
+            registered = true;
+        } finally {
+            if (!registered && callbackArena != null) {
+                TaskRuntime.ReleaseCancellationCallbackArena(callbackArena);
+            }
+        }
+        _callbackCount += 1u;
+        return new CancellationTokenRegistration(this, registrationId);
+    }
+
+    internal void Unregister(uint registrationId) {
+        if (_isCancellationRequested || registrationId == 0u) {
+            return;
+        }
+        for (uint index = 0u; index < _callbackCount; index += 1u) {
+            if (_callbackIds[index] != registrationId) {
+                continue;
+            }
+            ptr callbackArena = _callbackArenas[index];
+            TaskRuntime.StoreCancellationCallback(
+                _callbacks, index, null, callbackArena);
+            _callbackIds[index] = 0u;
+            _callbackArenas[index] = null;
+            if (callbackArena != null) {
+                TaskRuntime.ReleaseCancellationCallbackArena(callbackArena);
+            }
+            return;
+        }
+    }
+
+    public void Cancel() {
+        if (_isCancellationRequested) {
+            return;
+        }
+        _isCancellationRequested = true;
+        CancellationCallback[] callbacks = _callbacks;
+        ptr[] callbackArenas = _callbackArenas;
+        uint callbackCount = _callbackCount;
+        _callbacks = null;
+        _callbackIds = null;
+        _callbackArenas = null;
+        _callbackCount = 0u;
+        Exception firstException = null;
+        for (uint index = 0u; index < callbackCount; index += 1u) {
+            try {
+                if (callbacks[index] != null) {
+                    TaskRuntime.InvokeCancellationCallback(
+                        callbacks[index], callbackArenas[index]);
+                }
+            } catch (Exception exception) {
+                if (firstException == null) {
+                    firstException = exception;
+                }
+            } finally {
+                ptr callbackArena = callbackArenas[index];
+                TaskRuntime.StoreCancellationCallback(
+                    callbacks, index, null, callbackArena);
+                callbackArenas[index] = null;
+                if (callbackArena != null) {
+                    TaskRuntime.ReleaseCancellationCallbackArena(callbackArena);
+                }
+            }
+        }
+        if (firstException != null) {
+            throw firstException;
+        }
+    }
+
+    public constructor() {
+        _isCancellationRequested = false;
+        _callbacks = new CancellationCallback[0u];
+        _callbackIds = new uint[0u];
+        _callbackArenas = new ptr[0u];
+        _callbackCount = 0u;
+        _nextCallbackId = 1u;
+    }
+}

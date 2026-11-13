@@ -1,0 +1,8 @@
+namespace System;
+public class DivideByZeroException : ArithmeticException {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "Attempted to divide by zero.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "Attempted to divide by zero.", innerException) { }
+}

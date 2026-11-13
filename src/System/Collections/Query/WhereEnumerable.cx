@@ -1,0 +1,18 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred filter over an enumerable source.</summary>
+public final class WhereEnumerable<T> : IEnumerable<T> {
+    internal IEnumerable<T> Source;
+    internal delegate(T) => bool Predicate;
+
+    internal constructor(IEnumerable<T> source, delegate(T) => bool predicate) {
+        Source = source;
+        Predicate = predicate;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new WhereEnumerator<T>(Source.GetEnumerator(), Predicate);
+    }
+
+}

@@ -1,0 +1,25 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Boolean expression composition with statically typed operands.</summary>
+public static class QueryExpressions {
+    public static QueryExpression<bool> AndAlso(
+        QueryExpression<bool> left,
+        QueryExpression<bool> right) {
+        return new QueryExpression<bool>(
+            "AndAlso", null, null, left, right);
+    }
+
+    public static QueryExpression<bool> OrElse(
+        QueryExpression<bool> left,
+        QueryExpression<bool> right) {
+        return new QueryExpression<bool>(
+            "OrElse", null, null, left, right);
+    }
+
+    public static QueryExpression<bool> Not(QueryExpression<bool> operand) {
+        return new QueryExpression<bool>(
+            "Not", null, null, operand, null);
+    }
+}

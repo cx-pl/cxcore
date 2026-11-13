@@ -1,0 +1,20 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A replayable asynchronous Take query.</summary>
+public final class AsyncTakeEnumerable<T> : IAsyncEnumerable<T> {
+    private IAsyncEnumerable<T> _source;
+    private uint _count;
+
+    internal constructor(IAsyncEnumerable<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IAsyncEnumerator<T> GetAsyncEnumerator(
+        CancellationToken cancellationToken) {
+        return new AsyncTakeEnumerator<T>(
+            _source, _count, cancellationToken);
+    }
+}

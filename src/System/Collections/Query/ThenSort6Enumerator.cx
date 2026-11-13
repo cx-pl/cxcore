@@ -1,0 +1,341 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ThenSort6Enumerator<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey>
+    : IEnumerator<T> {
+    private IEnumerable<T> _source;
+    private delegate(T) => TKey _keySelector;
+    private delegate(TKey, TKey) => int _comparer;
+    private bool _descending;
+    private delegate(T) => TNextKey _nextKeySelector;
+    private delegate(TNextKey, TNextKey) => int _nextComparer;
+    private bool _nextDescending;
+    private delegate(T) => TThirdKey _thirdKeySelector;
+    private delegate(TThirdKey, TThirdKey) => int _thirdComparer;
+    private bool _thirdDescending;
+    private delegate(T) => TFourthKey _fourthKeySelector;
+    private delegate(TFourthKey, TFourthKey) => int _fourthComparer;
+    private bool _fourthDescending;
+    private delegate(T) => TFifthKey _fifthKeySelector;
+    private delegate(TFifthKey, TFifthKey) => int _fifthComparer;
+    private bool _fifthDescending;
+    private delegate(T) => TSixthKey _sixthKeySelector;
+    private delegate(TSixthKey, TSixthKey) => int _sixthComparer;
+    private bool _sixthDescending;
+    private List<T> _items;
+    private List<TKey> _keys;
+    private List<TNextKey> _nextKeys;
+    private List<TThirdKey> _thirdKeys;
+    private List<TFourthKey> _fourthKeys;
+    private List<TFifthKey> _fifthKeys;
+    private List<TSixthKey> _sixthKeys;
+    private uint _index;
+    private T _current;
+    private bool _started;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(
+        IEnumerable<T> source,
+        delegate(T) => TKey keySelector,
+        delegate(TKey, TKey) => int comparer,
+        bool descending,
+        delegate(T) => TNextKey nextKeySelector,
+        delegate(TNextKey, TNextKey) => int nextComparer,
+        bool nextDescending,
+        delegate(T) => TThirdKey thirdKeySelector,
+        delegate(TThirdKey, TThirdKey) => int thirdComparer,
+        bool thirdDescending,
+        delegate(T) => TFourthKey fourthKeySelector,
+        delegate(TFourthKey, TFourthKey) => int fourthComparer,
+        bool fourthDescending,
+        delegate(T) => TFifthKey fifthKeySelector,
+        delegate(TFifthKey, TFifthKey) => int fifthComparer,
+        bool fifthDescending,
+        delegate(T) => TSixthKey sixthKeySelector,
+        delegate(TSixthKey, TSixthKey) => int sixthComparer,
+        bool sixthDescending) {
+        _source = source;
+        _keySelector = keySelector;
+        _comparer = comparer;
+        _descending = descending;
+        _nextKeySelector = nextKeySelector;
+        _nextComparer = nextComparer;
+        _nextDescending = nextDescending;
+        _thirdKeySelector = thirdKeySelector;
+        _thirdComparer = thirdComparer;
+        _thirdDescending = thirdDescending;
+        _fourthKeySelector = fourthKeySelector;
+        _fourthComparer = fourthComparer;
+        _fourthDescending = fourthDescending;
+        _fifthKeySelector = fifthKeySelector;
+        _fifthComparer = fifthComparer;
+        _fifthDescending = fifthDescending;
+        _sixthKeySelector = sixthKeySelector;
+        _sixthComparer = sixthComparer;
+        _sixthDescending = sixthDescending;
+        _items = new List<T>();
+        _keys = new List<TKey>();
+        _nextKeys = new List<TNextKey>();
+        _thirdKeys = new List<TThirdKey>();
+        _fourthKeys = new List<TFourthKey>();
+        _fifthKeys = new List<TFifthKey>();
+        _sixthKeys = new List<TSixthKey>();
+        _index = 0u;
+        _started = false;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            return false;
+        }
+        if (!_started) {
+            _started = true;
+            try {
+                LoadAndSort();
+            } catch (System.Exception) {
+                Dispose();
+                throw;
+            }
+        }
+        if (_index >= _items.Count) {
+            Dispose();
+            return false;
+        }
+        _current = _items.Get(_index);
+        _index += 1u;
+        return true;
+    }
+
+    private void LoadAndSort() {
+        Array<T> arraySource = _source as Array<T>;
+        List<T> listSource = _source as List<T>;
+        ArrayEnumerator<T> indexedEnumerator = default;
+        if (arraySource != null) {
+            indexedEnumerator = arraySource.GetEnumerator(arraySource.Length);
+        } else if (listSource != null) {
+            Array<T> listStorage = listSource.GetQueryStorage();
+            indexedEnumerator = listStorage.GetEnumerator(listSource.Count);
+        }
+        if (indexedEnumerator != null) {
+            try {
+                while (indexedEnumerator.MoveNext()) {
+                    T item = indexedEnumerator.Current;
+                    TKey key = _keySelector(item);
+                    TNextKey nextKey = _nextKeySelector(item);
+                    TThirdKey thirdKey = _thirdKeySelector(item);
+                    TFourthKey fourthKey = _fourthKeySelector(item);
+                    TFifthKey fifthKey = _fifthKeySelector(item);
+                    TSixthKey sixthKey = _sixthKeySelector(item);
+                    _items.Add(item);
+                    _keys.Add(key);
+                    _nextKeys.Add(nextKey);
+                    _thirdKeys.Add(thirdKey);
+                    _fourthKeys.Add(fourthKey);
+                    _fifthKeys.Add(fifthKey);
+                    _sixthKeys.Add(sixthKey);
+                }
+            } finally {
+                indexedEnumerator.Dispose();
+            }
+        } else {
+            IEnumerator<T> enumerator = _source.GetEnumerator();
+            try {
+                while (enumerator.MoveNext()) {
+                    T item = enumerator.Current;
+                    TKey key = _keySelector(item);
+                    TNextKey nextKey = _nextKeySelector(item);
+                    TThirdKey thirdKey = _thirdKeySelector(item);
+                    TFourthKey fourthKey = _fourthKeySelector(item);
+                    TFifthKey fifthKey = _fifthKeySelector(item);
+                    TSixthKey sixthKey = _sixthKeySelector(item);
+                    _items.Add(item);
+                    _keys.Add(key);
+                    _nextKeys.Add(nextKey);
+                    _thirdKeys.Add(thirdKey);
+                    _fourthKeys.Add(fourthKey);
+                    _fifthKeys.Add(fifthKey);
+                    _sixthKeys.Add(sixthKey);
+                }
+            } finally {
+                enumerator.Dispose();
+            }
+        }
+        SortBufferedItems();
+    }
+
+    private void SortBufferedItems() {
+        uint count = _items.Count;
+        if (count < 2u) {
+            return;
+        }
+        List<T> scratchItems = new List<T>();
+        List<TKey> scratchKeys = new List<TKey>();
+        List<TNextKey> scratchNextKeys = new List<TNextKey>();
+        List<TThirdKey> scratchThirdKeys = new List<TThirdKey>();
+        List<TFourthKey> scratchFourthKeys = new List<TFourthKey>();
+        List<TFifthKey> scratchFifthKeys = new List<TFifthKey>();
+        List<TSixthKey> scratchSixthKeys = new List<TSixthKey>();
+        T emptyItem = default;
+        TKey emptyKey = default;
+        TNextKey emptyNextKey = default;
+        TThirdKey emptyThirdKey = default;
+        TFourthKey emptyFourthKey = default;
+        TFifthKey emptyFifthKey = default;
+        TSixthKey emptySixthKey = default;
+        for (uint index = 0u; index < count; index += 1u) {
+            scratchItems.Add(emptyItem);
+            scratchKeys.Add(emptyKey);
+            scratchNextKeys.Add(emptyNextKey);
+            scratchThirdKeys.Add(emptyThirdKey);
+            scratchFourthKeys.Add(emptyFourthKey);
+            scratchFifthKeys.Add(emptyFifthKey);
+            scratchSixthKeys.Add(emptySixthKey);
+        }
+        uint width = 1u;
+        while (width < count) {
+            uint start = 0u;
+            while (start < count) {
+                uint mid = width > count - start ? count : start + width;
+                uint remaining = count - mid;
+                uint end = width > remaining ? count : mid + width;
+                uint left = start;
+                uint right = mid;
+                uint destination = start;
+                while (left < mid && right < end) {
+                    int comparison = _comparer(_keys.Get(left), _keys.Get(right));
+                    bool takeLeft = (!_descending && comparison <= 0) ||
+                        (_descending && comparison >= 0);
+                    if (comparison == 0) {
+                        comparison = _nextComparer(
+                            _nextKeys.Get(left), _nextKeys.Get(right));
+                        takeLeft = (!_nextDescending && comparison <= 0) ||
+                            (_nextDescending && comparison >= 0);
+                        if (comparison == 0) {
+                            comparison = _thirdComparer(
+                                _thirdKeys.Get(left), _thirdKeys.Get(right));
+                            takeLeft = (!_thirdDescending && comparison <= 0) ||
+                                (_thirdDescending && comparison >= 0);
+                            if (comparison == 0) {
+                                comparison = _fourthComparer(
+                                    _fourthKeys.Get(left), _fourthKeys.Get(right));
+                                takeLeft = (!_fourthDescending && comparison <= 0) ||
+                                    (_fourthDescending && comparison >= 0);
+                                if (comparison == 0) {
+                                    comparison = _fifthComparer(
+                                        _fifthKeys.Get(left), _fifthKeys.Get(right));
+                                    takeLeft = (!_fifthDescending && comparison <= 0) ||
+                                        (_fifthDescending && comparison >= 0);
+                                    if (comparison == 0) {
+                                        comparison = _sixthComparer(
+                                            _sixthKeys.Get(left), _sixthKeys.Get(right));
+                                        takeLeft = (!_sixthDescending && comparison <= 0) ||
+                                            (_sixthDescending && comparison >= 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (takeLeft) {
+                        scratchItems.Set(destination, _items.Get(left));
+                        scratchKeys.Set(destination, _keys.Get(left));
+                        scratchNextKeys.Set(destination, _nextKeys.Get(left));
+                        scratchThirdKeys.Set(destination, _thirdKeys.Get(left));
+                        scratchFourthKeys.Set(destination, _fourthKeys.Get(left));
+                        scratchFifthKeys.Set(destination, _fifthKeys.Get(left));
+                        scratchSixthKeys.Set(destination, _sixthKeys.Get(left));
+                        left += 1u;
+                    } else {
+                        scratchItems.Set(destination, _items.Get(right));
+                        scratchKeys.Set(destination, _keys.Get(right));
+                        scratchNextKeys.Set(destination, _nextKeys.Get(right));
+                        scratchThirdKeys.Set(destination, _thirdKeys.Get(right));
+                        scratchFourthKeys.Set(destination, _fourthKeys.Get(right));
+                        scratchFifthKeys.Set(destination, _fifthKeys.Get(right));
+                        scratchSixthKeys.Set(destination, _sixthKeys.Get(right));
+                        right += 1u;
+                    }
+                    destination += 1u;
+                }
+                while (left < mid) {
+                    scratchItems.Set(destination, _items.Get(left));
+                    scratchKeys.Set(destination, _keys.Get(left));
+                    scratchNextKeys.Set(destination, _nextKeys.Get(left));
+                    scratchThirdKeys.Set(destination, _thirdKeys.Get(left));
+                    scratchFourthKeys.Set(destination, _fourthKeys.Get(left));
+                    scratchFifthKeys.Set(destination, _fifthKeys.Get(left));
+                    scratchSixthKeys.Set(destination, _sixthKeys.Get(left));
+                    left += 1u;
+                    destination += 1u;
+                }
+                while (right < end) {
+                    scratchItems.Set(destination, _items.Get(right));
+                    scratchKeys.Set(destination, _keys.Get(right));
+                    scratchNextKeys.Set(destination, _nextKeys.Get(right));
+                    scratchThirdKeys.Set(destination, _thirdKeys.Get(right));
+                    scratchFourthKeys.Set(destination, _fourthKeys.Get(right));
+                    scratchFifthKeys.Set(destination, _fifthKeys.Get(right));
+                    scratchSixthKeys.Set(destination, _sixthKeys.Get(right));
+                    right += 1u;
+                    destination += 1u;
+                }
+                start = end;
+            }
+            List<T> previousItems = _items;
+            List<TKey> previousKeys = _keys;
+            List<TNextKey> previousNextKeys = _nextKeys;
+            List<TThirdKey> previousThirdKeys = _thirdKeys;
+            List<TFourthKey> previousFourthKeys = _fourthKeys;
+            List<TFifthKey> previousFifthKeys = _fifthKeys;
+            List<TSixthKey> previousSixthKeys = _sixthKeys;
+            _items = scratchItems;
+            _keys = scratchKeys;
+            _nextKeys = scratchNextKeys;
+            _thirdKeys = scratchThirdKeys;
+            _fourthKeys = scratchFourthKeys;
+            _fifthKeys = scratchFifthKeys;
+            _sixthKeys = scratchSixthKeys;
+            scratchItems = previousItems;
+            scratchKeys = previousKeys;
+            scratchNextKeys = previousNextKeys;
+            scratchThirdKeys = previousThirdKeys;
+            scratchFourthKeys = previousFourthKeys;
+            scratchFifthKeys = previousFifthKeys;
+            scratchSixthKeys = previousSixthKeys;
+            if (width > count - width) {
+                width = count;
+            } else {
+                width += width;
+            }
+        }
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = default;
+            _keySelector = default;
+            _comparer = default;
+            _nextKeySelector = default;
+            _nextComparer = default;
+            _thirdKeySelector = default;
+            _thirdComparer = default;
+            _fourthKeySelector = default;
+            _fifthKeySelector = default;
+            _sixthKeySelector = default;
+            _sixthComparer = default;
+            _fifthComparer = default;
+            _fourthComparer = default;
+            _items = default;
+            _keys = default;
+            _nextKeys = default;
+            _thirdKeys = default;
+            _fourthKeys = default;
+            _fifthKeys = default;
+            _sixthKeys = default;
+            _current = default;
+        }
+    }
+}

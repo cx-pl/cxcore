@@ -1,0 +1,27 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred page over a fixed array source.</summary>
+public final class ArrayPageEnumerable<T> : IEnumerable<T> {
+    internal Array<T> _source;
+    internal uint _offset;
+    internal uint _pageSize;
+
+    internal constructor(Array<T> source, uint offset, uint pageSize) {
+        _source = source;
+        _offset = offset;
+        _pageSize = pageSize;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ArrayRangeEnumerator<T>(
+            _source,
+            _offset < _source.Length ? _offset : _source.Length,
+            (_offset < _source.Length ? _offset : _source.Length) +
+                (_pageSize < _source.Length -
+                    (_offset < _source.Length ? _offset : _source.Length)
+                    ? _pageSize
+                    : _source.Length -
+                        (_offset < _source.Length ? _offset : _source.Length)));
+    }
+}

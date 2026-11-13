@@ -1,0 +1,40 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+// The value-type layout marker keeps per-T fields concrete when T is a class.
+internal final class AsyncArrayMaterializer<T, TLayout> {
+    private Task<List<T>> _listTask;
+    private Task<T[]> _completion;
+
+    internal constructor() {
+    }
+
+    internal constructor(
+        Task<List<T>> listTask,
+        Task<T[]> completion) {
+        _listTask = listTask;
+        _completion = completion;
+    }
+
+    internal Task<T[]> Start() {
+        if (_listTask.IsCompleted) {
+            Complete();
+        } else {
+            AsyncArrayMaterializer<T, TLayout> state = this;
+            _listTask.OnCompleted(() => state.Complete());
+        }
+        return _completion;
+    }
+
+    private void Complete() {
+        try {
+            _completion.SetResult(_listTask.GetResult().ToArray());
+        } catch (OperationCanceledException) {
+            _completion.SetCanceled();
+        } catch (System.Exception exception) {
+            _completion.SetFault(exception);
+        }
+        _listTask = default;
+    }
+}

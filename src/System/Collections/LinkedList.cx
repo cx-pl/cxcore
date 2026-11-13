@@ -1,18 +1,4 @@
 namespace System.Collections;
-
-internal class LinkedListNode<T> {
-    internal T Value;
-    internal LinkedListNode<T> Previous;
-    internal LinkedListNode<T> Next;
-
-    internal constructor(T value) {
-        Value = value;
-        Previous = null;
-        Next = null;
-    }
-
-}
-
 public final class LinkedList<T> : ICollection<T> {
     private LinkedListNode<T> _first;
     private LinkedListNode<T> _last;
@@ -76,30 +62,5 @@ public final class LinkedList<T> : ICollection<T> {
 
     public IEnumerator<T> GetEnumerator() const {
         return new LinkedListEnumerator<T>(_first);
-    }
-}
-
-public final class LinkedListEnumerator<T> : IEnumerator<T> {
-    private LinkedListNode<T> _next;
-    private T _current;
-
-    public constructor(LinkedListNode<T> first) {
-        _next = first;
-    }
-
-    public T Current { const get { return _current; } }
-
-    public bool MoveNext() {
-        if (_next == null) {
-            return false;
-        }
-        _current = _next.Value;
-        _next = _next.Next;
-        return true;
-    }
-
-    public void Dispose() {
-        _next = default;
-        _current = default;
     }
 }

@@ -1,0 +1,87 @@
+import System;
+
+namespace System.Threading.Tasks;
+public final class TaskHandle {
+    private TaskState _state;
+
+    public bool IsCompleted { const get => _state.IsCompleted; }
+    public bool IsCanceled { const get => _state.IsCanceled; }
+    public void GetResult() const {
+        TaskState.ThrowIfNotCompleted(_state.IsCompleted);
+        _state.MarkFaultObserved();
+        OperationCanceledException.ThrowIfCanceled(
+            _state.IsCanceled, CancellationToken.None);
+        VoidTask.ThrowIfFaulted(_state.IsFaulted, _state.Exception);
+    }
+
+    public static TaskHandle Faulted(Exception exception) {
+        var task = new TaskHandle(false);
+        task.SetFault(exception);
+        return task;
+    }
+
+    public static TaskHandle Delay(uint milliseconds) {
+        var completion = new TaskCompletionSourceVoid();
+        TaskScheduler.PostAfter(milliseconds, () => completion.SetResult());
+        return completion.Task;
+    }
+
+    public static TaskHandle Delay(
+        uint milliseconds,
+        CancellationToken cancellationToken) {
+        var completion = new TaskCompletionSourceVoid();
+        if (cancellationToken.IsCancellationRequested) {
+            completion.SetCanceled();
+            return completion.Task;
+        }
+
+        CancellationTokenRegistration cancellationRegistration =
+            CancellationTokenRegistration.None;
+        cancellationRegistration = cancellationToken.Register(() => {
+            if (!completion.Task.IsCompleted) {
+                completion.SetCanceled();
+            }
+        });
+        TaskScheduler.PostAfter(milliseconds, () => {
+            if (!completion.Task.IsCompleted) {
+                completion.SetResult();
+            }
+            cancellationRegistration.Dispose();
+        });
+        return completion.Task;
+    }
+
+    // Completes only after every input completes, even when a child faults or
+    // is canceled. This keeps a scoped async parent from finishing while a
+    // sibling child still owns arena references.
+    public static TaskHandle WhenAll(TaskHandle first, TaskHandle second) {
+        TaskHandle[] children = new TaskHandle[2u];
+        children[0u] = first;
+        children[1u] = second;
+        return WhenAll(children);
+    }
+
+    // A variable-size overload lets an async arena join every child started by
+    // an operation, rather than relying on pairwise completion as a lifetime
+    // proof.
+    public static TaskHandle WhenAll(TaskHandle[] children) {
+        TaskHandleWhenAllState state = new TaskHandleWhenAllState(children);
+        state.Start();
+        return state.Task;
+    }
+
+    public void SetResult() { _state.SetResult(null); }
+    public void SetFault(Exception exception) { _state.SetFault(exception); }
+    public void SetCanceled() { _state.SetCanceled(); }
+    public extern void OnCompleted(delegate() => void continuation);
+
+    public constructor() {
+        _state = new TaskState();
+        _state.SetResult(null);
+    }
+
+    internal constructor(bool completed) {
+        _state = new TaskState();
+        if (completed) _state.SetResult(null);
+    }
+}

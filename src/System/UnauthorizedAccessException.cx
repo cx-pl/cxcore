@@ -1,0 +1,8 @@
+namespace System;
+public class UnauthorizedAccessException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "Access to the requested resource was denied.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "Access to the requested resource was denied.", innerException) { }
+}

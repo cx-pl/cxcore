@@ -22,8 +22,10 @@ void cxcore_System_WideString___constructor(cx_wide_string *self) {
 }
 void cxcore_System_WideString___constructor__2(
     cx_wide_string *self, const cx_wchar *data, cx_uint length) {
+    if (self == NULL) cx_text_null_reference();
     cxcore_System_WideString___constructor(self);
-    if ((length != 0 && data == NULL) || length > UINT_MAX / sizeof(cx_wchar)) cx_text_error();
+    if (length != 0 && data == NULL) cx_text_argument_null("data");
+    if (length > UINT_MAX / sizeof(cx_wchar)) cx_text_overflow();
     if (length != 0) {
         cx_gc_store_reference(
             &self->_data,
@@ -37,7 +39,8 @@ void cxcore_System_WideString___constructor__2(
 cx_wide_string *cxcore_System_WideString_Empty___const_get(void) { return &cx_wide_empty; }
 cx_uint cxcore_System_WideString_Length___const_get(const cx_wide_string *self) { return self->_length; }
 cx_wchar cxcore_System_WideString_Item___const_get(const cx_wide_string *self, cx_uint index) {
-    if (index >= self->_length) cx_text_error();
+    if (self == NULL) cx_text_null_reference();
+    if (index >= self->_length) cx_text_index_range();
     return ((const cx_wchar *)self->_data)[index];
 }
 
@@ -84,7 +87,7 @@ struct cxcore_System_String *cxcore_System_WideString_ToString(const cx_wide_str
     cx_gc_check_thread();
     while (offset < self->_length) {
         count = cx_utf8_encode(cx_wide_decode(self, &offset), encoded);
-        if (length > UINT_MAX - count) cx_text_error();
+        if (length > UINT_MAX - count) cx_text_overflow();
         length += (cx_uint)count;
     }
     data = length == 0 ? NULL : cxcore_System_Memory_Alloc(length);

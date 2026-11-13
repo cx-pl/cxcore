@@ -1,0 +1,66 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class TakeEnumerator<T> : IEnumerator<T> {
+    private IEnumerable<T> _source;
+    private IEnumerator<T> _enumerator;
+    private uint _remaining;
+    private T _current;
+    private bool _disposed;
+    private bool _started;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(IEnumerable<T> source, uint count) {
+        _source = source;
+        _remaining = count;
+        _disposed = false;
+        _started = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        if (_remaining == 0u) {
+            ReleaseSource();
+            return false;
+        }
+        try {
+            if (!_started) {
+                _enumerator = _source.GetEnumerator();
+                _started = true;
+            }
+            if (!_enumerator.MoveNext()) {
+                Dispose();
+                return false;
+            }
+            _current = _enumerator.Current;
+            _remaining -= 1u;
+            if (_remaining == 0u) {
+                ReleaseSource();
+            }
+            return true;
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+    }
+
+    private void ReleaseSource() {
+        if (!_disposed) {
+            _disposed = true;
+            if (_started) {
+                _enumerator.Dispose();
+            }
+        }
+        _source = default;
+        _enumerator = default;
+    }
+
+    public void Dispose() {
+        ReleaseSource();
+        _current = default;
+    }
+}

@@ -1,0 +1,16 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses mapping directly into an indexed concrete-list page.</summary>
+public extension ListPageMapExtensions<T> : ListPageEnumerable<T> {
+    public ListPageMapEnumerable<T, TResult> Map<TResult>(
+        delegate(T) => TResult selector) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (selector == null) {
+            throw new System.ArgumentNullException("selector");
+        }
+        return new ListPageMapEnumerable<T, TResult>(this, selector);
+    }
+}

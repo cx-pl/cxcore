@@ -1,0 +1,20 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A typed scalar terminal over a provider query plan.</summary>
+public final class QueryScalarPlan<TResult> : IQueryScalarPlanNode {
+    private string _kind;
+    private object _source;
+    private uint _index;
+
+    public string Kind { const get { return _kind; } }
+    public IQueryPlanNode Source { const get { return _source as IQueryPlanNode; } }
+    public uint Index { const get { return _index; } }
+
+    public constructor(string kind, object source, uint index) {
+        _kind = kind;
+        _source = source;
+        _index = index;
+    }
+}

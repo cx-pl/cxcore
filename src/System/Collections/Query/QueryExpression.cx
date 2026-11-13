@@ -1,0 +1,102 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>A typed, inspectable query expression node.</summary>
+/// <remarks>
+/// Provider lambda block locals use a Let node whose Name is the local name,
+/// Left is its initializer, and Right is the body that can reference it through
+/// a Variable node. Providers that support Let evaluate its initializer once
+/// and bind that value only while evaluating the body.
+/// A Conditional node stores its bool condition in ConstantValue and its true
+/// and false branches in Left and Right, respectively.
+/// </remarks>
+public final class QueryExpression<T> {
+    private string _kind;
+    private string _name;
+    private object _constantValue;
+    private object _left;
+    private object _right;
+
+    public string Kind { const get { return _kind; } }
+    public string Name { const get { return _name; } }
+    public object ConstantValue { const get { return _constantValue; } }
+    public object Left { const get { return _left; } }
+    public object Right { const get { return _right; } }
+
+    public constructor(
+        string kind,
+        string name,
+        object constantValue,
+        object left,
+        object right) {
+        _kind = kind;
+        _name = name;
+        _constantValue = constantValue;
+        _left = left;
+        _right = right;
+    }
+
+    public QueryExpression<bool> Equal(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "Equal", null, null, this, right);
+    }
+
+    public QueryExpression<bool> NotEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "NotEqual", null, null, this, right);
+    }
+
+    public QueryExpression<bool> GreaterThan(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "GreaterThan", null, null, this, right);
+    }
+
+    public QueryExpression<bool> GreaterThanOrEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "GreaterThanOrEqual", null, null, this, right);
+    }
+
+    public QueryExpression<bool> LessThan(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "LessThan", null, null, this, right);
+    }
+
+    public QueryExpression<bool> LessThanOrEqual(QueryExpression<T> right) const {
+        return new QueryExpression<bool>(
+            "LessThanOrEqual", null, null, this, right);
+    }
+
+    public QueryExpression<T> Add(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Add", null, null, this, right);
+    }
+
+    public QueryExpression<T> Subtract(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Subtract", null, null, this, right);
+    }
+
+    public QueryExpression<T> Multiply(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Multiply", null, null, this, right);
+    }
+
+    public QueryExpression<T> Divide(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Divide", null, null, this, right);
+    }
+
+    public QueryExpression<T> Modulo(QueryExpression<T> right) const {
+        return new QueryExpression<T>(
+            "Modulo", null, null, this, right);
+    }
+
+    public QueryExpression<TResult> Member<TResult>(string name) const {
+        if (name == null) {
+            throw new System.ArgumentNullException("name");
+        }
+        return new QueryExpression<TResult>(
+            "MemberAccess", name, null, this, null);
+    }
+}

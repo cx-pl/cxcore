@@ -1,0 +1,11 @@
+namespace System.IO;
+public class DriveNotFoundException : IOException {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The specified drive was not found.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The specified drive was not found.", innerException) { }
+    public constructor(const string message, const string path)
+        : base(message ?? "The specified drive was not found.", null,
+            path, null, 0) { }
+}

@@ -1,0 +1,47 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Uses direct list indexing for concrete list filters.</summary>
+public extension ListQueryExtensions<T> : List<T> {
+    public ListMapEnumerable<T, TResult> Map<TResult>(
+        delegate(T) => TResult selector) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (selector == null) {
+            throw new System.ArgumentNullException("selector");
+        }
+        return new ListMapEnumerable<T, TResult>(this, selector);
+    }
+
+    public ListWhereEnumerable<T> Filter(
+        delegate(T) => bool predicate) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (predicate == null) {
+            throw new System.ArgumentNullException("predicate");
+        }
+        return new ListWhereEnumerable<T>(this, predicate);
+    }
+
+    public ListSkipEnumerable<T> Skip(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ListSkipEnumerable<T>(this, count);
+    }
+
+    public ListPageEnumerable<T> Page(uint pageIndex, uint pageSize) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (pageSize != 0u && pageIndex > 4294967295u / pageSize) {
+            throw new System.ArgumentOutOfRangeException("pageIndex");
+        }
+        uint offset = 0u;
+        if (pageSize != 0u) { offset = pageIndex * pageSize; }
+        return new ListPageEnumerable<T>(this, offset, pageSize);
+    }
+
+}

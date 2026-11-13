@@ -1,0 +1,6 @@
+namespace System.Interop;
+public static class NativeCallback {
+    public static extern System.Exception GetLastException();
+    public static extern void ClearLastException();
+    public static unsafe extern NativeCallbackRegistration Register<T>(ptr callback);
+}

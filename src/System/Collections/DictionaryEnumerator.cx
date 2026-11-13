@@ -1,0 +1,37 @@
+import System;
+
+namespace System.Collections;
+public final class DictionaryEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>> {
+    private Array<TKey> _keys;
+    private Array<TValue> _values;
+    private uint _count;
+    private uint _nextIndex;
+
+    public constructor(Array<TKey> keys, Array<TValue> values, uint count) {
+        _keys = keys;
+        _values = values;
+        _count = count;
+        _nextIndex = 0u;
+    }
+
+    public KeyValuePair<TKey, TValue> Current {
+        const get {
+        return new KeyValuePair<TKey, TValue>(
+            _keys.Get(_nextIndex - 1u), _values.Get(_nextIndex - 1u));
+        }
+    }
+
+    public bool MoveNext() {
+        if (_nextIndex >= _count) {
+            return false;
+        }
+        _nextIndex += 1u;
+        return true;
+    }
+
+    public void Dispose() {
+        _keys = default;
+        _values = default;
+        _nextIndex = _count;
+    }
+}

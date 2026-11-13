@@ -1,0 +1,5 @@
+namespace System.Collections;
+public interface IAsyncEnumerator<T> : System.IAsyncDisposable {
+    T Current { const get; }
+    System.Threading.Tasks.ValueTask<bool> MoveNextAsync();
+}

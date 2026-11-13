@@ -1,0 +1,26 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses indexed mapping with a skipped prefix and bounded output.</summary>
+public final class ArrayMapSkipEnumerable<T, TResult> : IEnumerable<TResult> {
+    private ArrayMapEnumerable<T, TResult> _source;
+    private uint _skip;
+
+    internal constructor(ArrayMapEnumerable<T, TResult> source, uint skip) {
+        _source = source;
+        _skip = skip;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapSkipTakeEnumerator<T, TResult>(
+            _source._source, _source._selector, _source._source.Length,
+            _skip, 4294967295u);
+    }
+
+    public ArrayMapSkipTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayMapSkipTakeEnumerable<T, TResult>(this, count);
+    }
+}

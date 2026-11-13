@@ -1,0 +1,19 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses indexed list mapping with a bounded output prefix.</summary>
+public final class ListMapTakeEnumerable<T, TResult> : IEnumerable<TResult> {
+    private ListMapEnumerable<T, TResult> _source;
+    private uint _count;
+
+    internal constructor(ListMapEnumerable<T, TResult> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapTakeEnumerator<T, TResult>(
+            _source._source.GetQueryStorage(), _source._selector,
+            _source._source.Count, _count);
+    }
+}

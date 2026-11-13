@@ -22,23 +22,28 @@ struct cxcore_System_Collections_Array *cxcore_System_Reflection_TypeInfo_GetInt
 
 CX_STRING_DEF(cx_reflection_invalid_invocation, "The reflected function, target, or arguments are not invocable.");
 static void cx_reflection_reject_invocation(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &cx_reflection_invalid_invocation);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    struct cxcore_System_ArgumentException *error =
+        cx_exception_allocate_durable(cxcore_System_ArgumentException___typeinfo.Size);
+    cxcore_System_ArgumentException___constructor__2(
+        error, &cx_reflection_invalid_invocation);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 CX_STRING_DEF(cx_reflection_invalid_conversion, "The value cannot be converted to the reflected type.");
 static void cx_reflection_reject_conversion(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &cx_reflection_invalid_conversion);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    struct cxcore_System_InvalidCastException *error =
+        cx_exception_allocate_durable(cxcore_System_InvalidCastException___typeinfo.Size);
+    cxcore_System_InvalidCastException___constructor__2(
+        error, &cx_reflection_invalid_conversion);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 CX_STRING_DEF(cx_reflection_invalid_array, "The reflected array has an incompatible type or exceeds the requested length limit.");
 static void cx_reflection_reject_array(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &cx_reflection_invalid_array);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    struct cxcore_System_ArgumentException *error =
+        cx_exception_allocate_durable(cxcore_System_ArgumentException___typeinfo.Size);
+    cxcore_System_ArgumentException___constructor__2(error, &cx_reflection_invalid_array);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 struct cxcore_System_Collections_Array *cx_reflection_array_values(cx_ptr value, const char *typeKey,

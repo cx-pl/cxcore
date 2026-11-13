@@ -1,0 +1,19 @@
+namespace System.IO;
+public class FileNotFoundException : IOException {
+    private string _fileName;
+    public string FileName { const get { return _fileName; } }
+
+    public constructor() : this(null, null, null) { }
+    public constructor(const string message) : this(message, null, null) { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The specified file was not found.", innerException) { }
+    public constructor(const string message, const string fileName)
+        : base(message ?? "The specified file was not found.") {
+        _fileName = fileName;
+    }
+    public constructor(const string message, const string fileName,
+        const System.Exception innerException)
+        : base(message ?? "The specified file was not found.", innerException) {
+        _fileName = fileName;
+    }
+}

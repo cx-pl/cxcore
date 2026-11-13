@@ -5,6 +5,8 @@
 typedef struct cxcore_System_WideString wide;
 typedef struct cxcore_System_String string;
 typedef struct cxcore_System_Interop_NativeBuffer buffer;
+extern void cxcore_System_String___constructor__2(
+    string *self, cx_uint length, cx_ptr data);
 
 static void round_trip(const cx_byte *bytes, cx_uint length, cx_uint units, cx_uint scalars) {
     string input, *output;
@@ -92,6 +94,73 @@ int main(void) {
                    cxcore_System_EncodingException___typeinfo.Hash);
         }
         cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cxcore_System_WideString_Item___const_get(&value, 2);
+            assert(!"WideString indexer must throw IndexOutOfRangeException");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_IndexOutOfRangeException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        static CX_STRING_DEF(expected_alignment, "alignment");
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cxcore_System_Interop_NativeBuffer_AllocateAligned(8, 3);
+            assert(!"Invalid NativeBuffer alignment must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_ArgumentOutOfRangeException___typeinfo));
+        assert(cxcore_System_String___cx_operator_equal(
+            cxcore_System_ArgumentException_ParamName___const_get(
+                (const struct cxcore_System_ArgumentException *)
+                    cx_exception_current()),
+            &expected_alignment));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        static CX_STRING_DEF(expected_value, "value");
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cxcore_System_Interop_NativeBuffer_FromUtf8(CX_NULL, CX_TRUE);
+            assert(!"Null NativeBuffer input must throw ArgumentNullException");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_ArgumentNullException___typeinfo));
+        assert(cxcore_System_String___cx_operator_equal(
+            cxcore_System_ArgumentException_ParamName___const_get(
+                (const struct cxcore_System_ArgumentException *)
+                    cx_exception_current()),
+            &expected_value));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        buffer *disposed = cxcore_System_Interop_NativeBuffer_Allocate(1);
+        struct cx_exception_frame frame;
+        cxcore_System_Interop_NativeBuffer_Dispose(disposed);
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cxcore_System_Interop_NativeBuffer_ReadByte(disposed, 0);
+            assert(!"Reading a disposed NativeBuffer must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_ObjectDisposedException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
     }
     assert(cxcore_System_WideString___cx_operator_equal(&value, &copy));
     assert(cxcore_System_WideString_GetHashCode(&value) == cxcore_System_WideString_GetHashCode(&copy));

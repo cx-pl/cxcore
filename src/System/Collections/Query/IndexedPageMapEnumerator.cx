@@ -1,0 +1,49 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class IndexedPageMapEnumerator<T, TResult> : IEnumerator<TResult> {
+    private Array<T> _source;
+    private delegate(T) => TResult _selector;
+    private uint _index;
+    private uint _end;
+    private TResult _current;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => TResult selector,
+        uint start,
+        uint end) {
+        _source = source;
+        _selector = selector;
+        _index = start;
+        _end = end;
+    }
+
+    public bool MoveNext() {
+        if (_disposed || _index >= _end) {
+            Dispose();
+            return false;
+        }
+        try {
+            T value = _source.Get(_index);
+            _index += 1u;
+            _current = _selector(value);
+            return true;
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _selector = default;
+            _current = default;
+        }
+    }
+}

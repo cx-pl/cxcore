@@ -1,0 +1,32 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListWhereEnumerable<T> : IEnumerable<T> {
+    internal List<T> _source;
+    internal delegate(T) => bool _predicate;
+    internal constructor(
+        List<T> source,
+        delegate(T) => bool predicate) {
+        _source = source;
+        _predicate = predicate;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ListWhereEnumerator<T>(
+            _source.GetQueryStorage(), _predicate, _source.Count);
+    }
+
+    public ListWhereTakeEnumerable<T> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ListWhereTakeEnumerable<T>(this, count);
+    }
+
+    public ListWhereSkipEnumerable<T> Skip(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ListWhereSkipEnumerable<T>(this, count);
+    }
+}

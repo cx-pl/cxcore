@@ -1,0 +1,32 @@
+namespace System.IO;
+public class IOException : System.Exception {
+    private string _operation;
+    private string _path;
+    private string _nativeErrorDomain;
+    private int _nativeErrorCode;
+
+    public string Operation { const get { return _operation; } }
+    public string Path { const get { return _path; } }
+    public string NativeErrorDomain { const get { return _nativeErrorDomain; } }
+    public int NativeErrorCode { const get { return _nativeErrorCode; } }
+
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "An I/O error occurred.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "An I/O error occurred.", innerException) { }
+
+    public constructor(const string message, const string operation,
+        const string path, const string nativeErrorDomain,
+        int nativeErrorCode, const System.Exception innerException)
+        : base(message ?? "An I/O error occurred.", innerException) {
+        _operation = operation;
+        _path = path;
+        _nativeErrorDomain = nativeErrorDomain;
+        _nativeErrorCode = nativeErrorCode;
+    }
+
+    public constructor(const string message, const string operation,
+        const string path, const string nativeErrorDomain, int nativeErrorCode)
+        : this(message, operation, path, nativeErrorDomain, nativeErrorCode, null) { }
+}

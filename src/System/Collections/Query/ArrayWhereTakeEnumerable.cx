@@ -1,0 +1,19 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses indexed array filtering with a bounded output prefix.</summary>
+public final class ArrayWhereTakeEnumerable<T> : IEnumerable<T> {
+    private ArrayWhereEnumerable<T> _source;
+    private uint _count;
+
+    internal constructor(ArrayWhereEnumerable<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new IndexedWhereTakeEnumerator<T>(
+            _source._source, _source._predicate,
+            _source._source.Length, 0u, _count);
+    }
+}

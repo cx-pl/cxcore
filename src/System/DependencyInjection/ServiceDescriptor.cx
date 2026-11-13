@@ -51,34 +51,34 @@ public final class ServiceDescriptor {
     public void Validate() const {
         TypeInfo serviceType = ServiceType;
         if (!IsServiceType(serviceType)) {
-            throw new Exception("A service key must be a class or interface type.");
+            throw new ArgumentException("A service key must be a class or interface type.", "serviceType");
         }
         if (IsOpenGeneric(serviceType)) {
-            throw new Exception("Open generic service registrations are not supported.");
+            throw new NotSupportedException("Open generic service registrations are not supported.");
         }
         if (serviceType.IsSameType(typeof(IServiceProvider)) ||
             serviceType.IsSameType(typeof(IServiceScopeFactory))) {
-            throw new Exception("The IServiceProvider and IServiceScopeFactory service keys are reserved.");
+            throw new ArgumentException("The IServiceProvider and IServiceScopeFactory service keys are reserved.", "serviceType");
         }
         if (_lifetime != ServiceLifetime.Transient &&
             _lifetime != ServiceLifetime.Scoped &&
             _lifetime != ServiceLifetime.Singleton) {
-            throw new Exception("A service descriptor has an invalid lifetime.");
+            throw new ArgumentOutOfRangeException("lifetime");
         }
 
         if (_activationKind < 1u || _activationKind > 3u) {
-            throw new Exception("A service descriptor must have exactly one activation form.");
+            throw new InvalidOperationException("A service descriptor must have exactly one activation form.");
         }
 
         if (_activationKind == 3u) {
             if (_lifetime != ServiceLifetime.Singleton) {
-                throw new Exception("A supplied service instance must use singleton lifetime.");
+                throw new ArgumentException("A supplied service instance must use singleton lifetime.", "lifetime");
             }
             if (_instance == null) {
-                throw new Exception("A supplied service instance cannot be null.");
+                throw new ArgumentNullException("instance");
             }
             if (!serviceType.IsAssignableFrom(_instance.Type)) {
-                throw new Exception("The supplied instance is not assignable to the service type.");
+                throw new ArgumentException("The supplied instance is not assignable to the service type.", "instance");
             }
             return;
         }
@@ -90,15 +90,15 @@ public final class ServiceDescriptor {
                 (implementationType.Flags & 0x00020000u) != 0u ||
                 (implementationType.Flags & 0x00080000u) != 0u ||
                 IsOpenGeneric(implementationType)) {
-                throw new Exception("An implementation type must be a concrete class.");
+                throw new ArgumentException("An implementation type must be a concrete class.", "implementationType");
             }
             if (!serviceType.IsAssignableFrom(implementationType)) {
-                throw new Exception("The implementation type is not assignable to the service type.");
+                throw new ArgumentException("The implementation type is not assignable to the service type.", "implementationType");
             }
         }
 
         if (_activationKind == 2u && _factory == null) {
-            throw new Exception("A service factory cannot be null.");
+            throw new ArgumentNullException("factory");
         }
     }
 

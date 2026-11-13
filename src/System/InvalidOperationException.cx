@@ -1,0 +1,7 @@
+namespace System;
+public class InvalidOperationException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message) : base(message ?? "The operation is invalid in the current state.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "The operation is invalid in the current state.", innerException) { }
+}

@@ -1,0 +1,14 @@
+namespace System;
+public class ArgumentNullException : ArgumentException {
+    public constructor() : this(null) { }
+
+    public constructor(const string paramName)
+        : base("Value cannot be null.", paramName) { }
+
+    public constructor(const string message, const string paramName)
+        : base(message ?? "Value cannot be null.", paramName) { }
+
+    public constructor(const string message, const string paramName,
+        const Exception innerException)
+        : base(message ?? "Value cannot be null.", paramName, innerException) { }
+}

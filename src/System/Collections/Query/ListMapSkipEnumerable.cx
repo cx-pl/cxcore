@@ -1,0 +1,25 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ListMapSkipEnumerable<T, TResult> : IEnumerable<TResult> {
+    private ListMapEnumerable<T, TResult> _source;
+    private uint _skip;
+
+    internal constructor(ListMapEnumerable<T, TResult> source, uint skip) {
+        _source = source;
+        _skip = skip;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapSkipTakeEnumerator<T, TResult>(
+            _source._source.GetQueryStorage(), _source._selector,
+            _source._source.Count, _skip, 4294967295u);
+    }
+
+    public ListMapSkipTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ListMapSkipTakeEnumerable<T, TResult>(this, count);
+    }
+}

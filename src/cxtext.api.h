@@ -54,7 +54,7 @@ CX_TYPE_DEF(cxcore_System_Interop_NativeBuffer) {
 CX_TYPE_DEF(cxcore_System_Interop_NativeCallbackRegistration) {
     struct cxcore_System_Object __base;
     cx_ptr _state;
-    struct cxcore_System_Exception* _lastException;
+    void* _lastException;
 };
 CX_TYPE_DEF(cxcore_System_Interop_NativeLibrary) {
     struct cxcore_System_Object __base;
@@ -78,7 +78,24 @@ extern CX_CXCORE_API cx_uint cxcore_System_EncodingException_Position___const_ge
     const struct cxcore_System_EncodingException* __this
 );
 extern CX_CXCORE_API void cxcore_System_EncodingException___constructor(
+    struct cxcore_System_EncodingException* __this
+);
+extern CX_CXCORE_API void cxcore_System_EncodingException___constructor__2(
     struct cxcore_System_EncodingException* __this,
+    cx_uint position
+);
+extern CX_CXCORE_API void cxcore_System_EncodingException___constructor__3(
+    struct cxcore_System_EncodingException* __this,
+    const struct cxcore_System_String* message
+);
+extern CX_CXCORE_API void cxcore_System_EncodingException___constructor__4(
+    struct cxcore_System_EncodingException* __this,
+    const struct cxcore_System_String* message,
+    const struct cxcore_System_Exception* innerException
+);
+extern CX_CXCORE_API void cxcore_System_EncodingException___constructor__5(
+    struct cxcore_System_EncodingException* __this,
+    const struct cxcore_System_String* message,
     cx_uint position
 );
 extern CX_CXCORE_API cx_ptr cxcore_System_Interop_NativeBuffer_Data___const_get(

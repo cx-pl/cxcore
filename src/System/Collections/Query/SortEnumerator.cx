@@ -1,0 +1,171 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class SortEnumerator<T, TKey> : IEnumerator<T> {
+    private IEnumerable<T> _source;
+    private delegate(T) => TKey _keySelector;
+    private delegate(TKey, TKey) => int _comparer;
+    private bool _descending;
+    private List<T> _items;
+    private List<TKey> _keys;
+    private uint _index;
+    private T _current;
+    private bool _started;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(
+        IEnumerable<T> source,
+        delegate(T) => TKey keySelector,
+        delegate(TKey, TKey) => int comparer,
+        bool descending) {
+        _source = source;
+        _keySelector = keySelector;
+        _comparer = comparer;
+        _descending = descending;
+        _items = new List<T>();
+        _keys = new List<TKey>();
+        _index = 0u;
+        _started = false;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            return false;
+        }
+        if (!_started) {
+            _started = true;
+            try {
+                LoadAndSort();
+            } catch (System.Exception) {
+                Dispose();
+                throw;
+            }
+        }
+        if (_index >= _items.Count) {
+            Dispose();
+            return false;
+        }
+        _current = _items.Get(_index);
+        _index += 1u;
+        return true;
+    }
+
+    private void LoadAndSort() {
+        Array<T> arraySource = _source as Array<T>;
+        List<T> listSource = _source as List<T>;
+        ArrayEnumerator<T> indexedEnumerator = default;
+        if (arraySource != null) {
+            indexedEnumerator = arraySource.GetEnumerator(arraySource.Length);
+        } else if (listSource != null) {
+            Array<T> listStorage = listSource.GetQueryStorage();
+            indexedEnumerator = listStorage.GetEnumerator(listSource.Count);
+        }
+        if (indexedEnumerator != null) {
+            try {
+                while (indexedEnumerator.MoveNext()) {
+                    T item = indexedEnumerator.Current;
+                    TKey key = _keySelector(item);
+                    _items.Add(item);
+                    _keys.Add(key);
+                }
+            } finally {
+                indexedEnumerator.Dispose();
+            }
+        } else {
+            IEnumerator<T> enumerator = _source.GetEnumerator();
+            try {
+                while (enumerator.MoveNext()) {
+                    T item = enumerator.Current;
+                    TKey key = _keySelector(item);
+                    _items.Add(item);
+                    _keys.Add(key);
+                }
+            } finally {
+                enumerator.Dispose();
+            }
+        }
+        SortBufferedItems();
+    }
+
+    private void SortBufferedItems() {
+        uint count = _items.Count;
+        if (count < 2u) {
+            return;
+        }
+        List<T> scratchItems = new List<T>();
+        List<TKey> scratchKeys = new List<TKey>();
+        T emptyItem = default;
+        TKey emptyKey = default;
+        for (uint index = 0u; index < count; index += 1u) {
+            scratchItems.Add(emptyItem);
+            scratchKeys.Add(emptyKey);
+        }
+        uint width = 1u;
+        while (width < count) {
+            uint start = 0u;
+            while (start < count) {
+                uint mid = width > count - start ? count : start + width;
+                uint remaining = count - mid;
+                uint end = width > remaining ? count : mid + width;
+                uint left = start;
+                uint right = mid;
+                uint destination = start;
+                while (left < mid && right < end) {
+                    int comparison = _comparer(
+                        _keys.Get(left), _keys.Get(right));
+                    bool takeLeft = (!_descending && comparison <= 0) ||
+                        (_descending && comparison >= 0);
+                    if (takeLeft) {
+                        scratchItems.Set(destination, _items.Get(left));
+                        scratchKeys.Set(destination, _keys.Get(left));
+                        left += 1u;
+                    } else {
+                        scratchItems.Set(destination, _items.Get(right));
+                        scratchKeys.Set(destination, _keys.Get(right));
+                        right += 1u;
+                    }
+                    destination += 1u;
+                }
+                while (left < mid) {
+                    scratchItems.Set(destination, _items.Get(left));
+                    scratchKeys.Set(destination, _keys.Get(left));
+                    left += 1u;
+                    destination += 1u;
+                }
+                while (right < end) {
+                    scratchItems.Set(destination, _items.Get(right));
+                    scratchKeys.Set(destination, _keys.Get(right));
+                    right += 1u;
+                    destination += 1u;
+                }
+                start = end;
+            }
+            List<T> previousItems = _items;
+            List<TKey> previousKeys = _keys;
+            _items = scratchItems;
+            _keys = scratchKeys;
+            scratchItems = previousItems;
+            scratchKeys = previousKeys;
+            if (width > count - width) {
+                width = count;
+            } else {
+                width += width;
+            }
+        }
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = default;
+            _keySelector = default;
+            _comparer = default;
+            _items = default;
+            _keys = default;
+            _current = default;
+        }
+    }
+}

@@ -1,0 +1,16 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses mapping directly into an indexed array page.</summary>
+public extension ArrayPageMapExtensions<T> : ArrayPageEnumerable<T> {
+    public ArrayPageMapEnumerable<T, TResult> Map<TResult>(
+        delegate(T) => TResult selector) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        if (selector == null) {
+            throw new System.ArgumentNullException("selector");
+        }
+        return new ArrayPageMapEnumerable<T, TResult>(this, selector);
+    }
+}

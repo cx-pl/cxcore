@@ -1,0 +1,8 @@
+namespace System;
+public class OverflowException : ArithmeticException {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The arithmetic operation overflowed.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "The arithmetic operation overflowed.", innerException) { }
+}

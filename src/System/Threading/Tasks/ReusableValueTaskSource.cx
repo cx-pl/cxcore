@@ -1,0 +1,115 @@
+import System;
+
+namespace System.Threading.Tasks;
+public final class ReusableValueTaskSource<T> {
+    private uint _version;
+    private bool _isCompleted;
+    private bool _isConsumed;
+    private bool _isRetired;
+    private uint _pendingCallbacks;
+    private bool _continuationRegistered;
+    private ReusableValueTaskContinuationState _continuationState;
+    // A library can retain opaque native wait state across source generations.
+    // It is shared with the source owner, not a single native operation.
+    private object _nativeWaitState;
+    private T _result;
+    private Exception _exception;
+    private bool _isFaulted;
+    private bool _isCanceled;
+
+    private void ThrowIfStale(uint version) {
+        TaskState.ThrowIfAlreadyCompleted(_isRetired || version != _version);
+    }
+
+    public T GetResult(uint version) {
+        ThrowIfStale(version);
+        TaskState.ThrowIfNotCompleted(_isCompleted);
+        TaskState.ThrowIfAlreadyCompleted(_isConsumed);
+        _isConsumed = true;
+        OperationCanceledException.ThrowIfCanceled(
+            _isCanceled, CancellationToken.None);
+        VoidTask.ThrowIfFaulted(_isFaulted, _exception);
+        return _result;
+    }
+
+    public bool IsCompleted { const get => _isCompleted; }
+
+    public void SetResult(T result) {
+        SetResult(_version, result);
+    }
+
+    // Native callbacks capture their generation when the operation is armed.
+    // They must complete that generation rather than whichever operation now
+    // occupies this reusable source.
+    public void SetResult(uint version, T result) {
+        ThrowIfStale(version);
+        TaskState.ThrowIfAlreadyCompleted(_isRetired || _isCompleted);
+        _result = result;
+        _exception = null;
+        _isFaulted = false;
+        _isCanceled = false;
+        _isCompleted = true;
+        TaskRuntime.ScheduleReusableSourceContinuation(this, _version);
+    }
+
+    public void SetException(Exception exception) {
+        SetException(_version, exception);
+    }
+
+    public void SetException(uint version, Exception exception) {
+        ThrowIfStale(version);
+        TaskState.ThrowIfAlreadyCompleted(_isRetired || _isCompleted);
+        _result = default;
+        _exception = exception;
+        _isFaulted = true;
+        _isCanceled = false;
+        _isCompleted = true;
+        TaskRuntime.ScheduleReusableSourceContinuation(this, _version);
+    }
+
+    public void SetCanceled() {
+        SetCanceled(_version);
+    }
+
+    public void SetCanceled(uint version) {
+        ThrowIfStale(version);
+        TaskState.ThrowIfAlreadyCompleted(_isRetired || _isCompleted);
+        _result = default;
+        _exception = null;
+        _isFaulted = false;
+        _isCanceled = true;
+        _isCompleted = true;
+        TaskRuntime.ScheduleReusableSourceContinuation(this, _version);
+    }
+
+    public void OnCompleted(uint version, delegate() => void continuation) {
+        ThrowIfStale(version);
+        TaskState.ThrowIfAlreadyCompleted(_isConsumed || _continuationRegistered);
+        if (_continuationState == null) {
+            _continuationState = new ReusableValueTaskContinuationState();
+        }
+        TaskRuntime.RegisterReusableSourceContinuation(this, version, continuation);
+    }
+
+    public void Reset() {
+        TaskState.ThrowIfAlreadyCompleted(
+            _isRetired || !_isCompleted || !_isConsumed || _pendingCallbacks != 0u);
+        _result = default;
+        _exception = null;
+        _isFaulted = false;
+        _isCanceled = false;
+        _isCompleted = false;
+        _isConsumed = false;
+        _continuationRegistered = false;
+        if (_continuationState != null) { _continuationState.Clear(); }
+        if (_version == 4294967295u) {
+            _isRetired = true;
+            return;
+        }
+        _version += 1u;
+    }
+
+    public uint GetVersion() { return _version; }
+
+    public constructor() { }
+}

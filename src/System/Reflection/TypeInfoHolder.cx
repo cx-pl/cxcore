@@ -1,0 +1,9 @@
+import System.Interop;
+
+namespace System.Reflection;
+internal final class TypeInfoHolder {
+    private TypeInfo _value;
+
+    public extern constructor(TypeInfo value);
+    public extern TypeInfo GetValue() const;
+}

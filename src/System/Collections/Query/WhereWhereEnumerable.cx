@@ -1,0 +1,21 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred pair of filters executed in one iterator.</summary>
+public final class WhereWhereEnumerable<T> : IEnumerable<T> {
+    private WhereEnumerable<T> _source;
+    private delegate(T) => bool _predicate;
+
+    internal constructor(
+        WhereEnumerable<T> source,
+        delegate(T) => bool predicate) {
+        _source = source;
+        _predicate = predicate;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new WhereWhereEnumerator<T>(
+            _source.Source.GetEnumerator(), _source.Predicate, _predicate);
+    }
+
+}

@@ -287,6 +287,27 @@ int main(void) {
     assert(!cx_is_object(CX_NULL, &derived_type));
     assert(cx_checked_cast_object(&object, &derived_type) == &object);
     assert(cx_checked_cast_object(CX_NULL, &derived_type) == CX_NULL);
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cx_checked_cast_object(
+                &object, &cxcore_System_String___typeinfo);
+            assert(0 && "a failed checked cast must throw");
+        } else {
+            struct cxcore_System_Exception *exception = cx_exception_current();
+            struct cxcore_System_String *trace;
+            cx_exception_pop(&frame);
+            assert(cxcore_System_Exception_Matches(
+                exception, cxcore_System_InvalidCastException___typeinfo));
+            assert(CX_GET_TYPEINFO(exception).Hash ==
+                   cxcore_System_InvalidCastException___typeinfo.Hash);
+            trace = cxcore_System_Exception_StackTrace___const_get(exception);
+            assert(trace != CX_NULL &&
+                   cxcore_System_String_Length___const_get(trace) != 0u);
+            cx_exception_clear();
+        }
+    }
     assert(cx_safe_cast_object(&object, &base_type) == &object);
     assert(cx_safe_cast_object(&object, &cxcore_System_String___typeinfo) == CX_NULL);
     assert(cx_safe_cast_object(CX_NULL, &derived_type) == CX_NULL);

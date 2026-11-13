@@ -1,4 +1,5 @@
 import System.Collections;
+import System;
 
 namespace System.DependencyInjection;
 
@@ -13,7 +14,7 @@ public final class ServiceCollection : IServiceCollection {
 
     public void Add(ServiceDescriptor descriptor) {
         if (descriptor == null) {
-            throw new Exception("A service descriptor cannot be null.");
+            throw new ArgumentNullException("descriptor");
         }
         descriptor.Validate();
         _descriptors.Add(descriptor);

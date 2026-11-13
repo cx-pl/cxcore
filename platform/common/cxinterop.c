@@ -17,14 +17,18 @@ cx_uint cx_interop_last_error(void) { return cx_saved_last_error; }
 cx_int cx_interop_errno(void) { return cx_saved_errno; }
 
 CX_STRING_DEF(cx_native_null_function, "Native function symbol is null");
-CX_STRING_DEF(cx_native_context_failure, "Unable to allocate native call context");
 CX_STRING_DEF(cx_native_stack_failure, "Native stack allocation count is invalid or exceeds 1 MiB");
+CX_STRING_DEF(cx_native_argument_parameter, "function");
+CX_STRING_DEF(cx_native_count_parameter, "count");
+CX_STRING_DEF(cx_native_element_size_parameter, "elementSize");
 
 void cx_interop_require_function(cx_bool nonnull) {
     if (!nonnull) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_native_null_function);
-        cx_exception_throw(error, __FILE__, __LINE__);
+        struct cxcore_System_ArgumentException *error =
+            cx_exception_allocate_durable(cxcore_System_ArgumentException___typeinfo.Size);
+        cxcore_System_ArgumentException___constructor__3(
+            error, &cx_native_null_function, &cx_native_argument_parameter);
+        cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
     }
 }
 
@@ -55,19 +59,27 @@ void cx_interop_callback_leave(struct cx_native_callback_scope *scope) {
 
 void *cx_interop_context_alloc(size_t size) {
     void *context = malloc(size);
-    if (context == NULL) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_native_context_failure);
-        cx_exception_throw(error, __FILE__, __LINE__);
-    }
+    if (context == NULL) abort();
     return context;
 }
 
 cx_ulong cx_interop_stack_size(cx_long count, cx_ulong elementSize) {
-    if (count < 0 || elementSize == 0 || (cx_ulong)count > 1024u * 1024u / elementSize) {
-        struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-        cxcore_System_Exception___constructor(error, &cx_native_stack_failure);
-        cx_exception_throw(error, __FILE__, __LINE__);
+    if (count < 0 || (elementSize != 0u &&
+        (cx_ulong)count > 1024u * 1024u / elementSize)) {
+        struct cxcore_System_ArgumentOutOfRangeException *error =
+            cx_exception_allocate_durable(
+                cxcore_System_ArgumentOutOfRangeException___typeinfo.Size);
+        cxcore_System_ArgumentOutOfRangeException___constructor__3(
+            error, &cx_native_stack_failure, &cx_native_count_parameter);
+        cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+    }
+    if (elementSize == 0u) {
+        struct cxcore_System_ArgumentOutOfRangeException *error =
+            cx_exception_allocate_durable(
+                cxcore_System_ArgumentOutOfRangeException___typeinfo.Size);
+        cxcore_System_ArgumentOutOfRangeException___constructor__3(
+            error, &cx_native_stack_failure, &cx_native_element_size_parameter);
+        cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
     }
     return count == 0 ? 1 : (cx_ulong)count * elementSize;
 }

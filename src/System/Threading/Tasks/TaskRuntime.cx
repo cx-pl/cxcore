@@ -1,0 +1,40 @@
+import System;
+
+namespace System.Threading.Tasks;
+// Shared native plumbing keeps forwarding independent of the generic result ABI.
+public static class TaskRuntime {
+    public static extern void RequireAsyncUseAllowed();
+    internal static extern void WithDurable(delegate() => void action);
+    internal static extern void RequireCancellationRegistrationAllowed();
+    internal static extern ptr CaptureCancellationCallbackArena();
+    internal static extern void StoreCancellationCallback(
+        CancellationCallback[] callbacks,
+        uint index,
+        CancellationCallback callback,
+        ptr logicalArena);
+    internal static extern void InvokeCancellationCallback(
+        CancellationCallback callback,
+        ptr logicalArena);
+    internal static extern void ReleaseCancellationCallbackArena(ptr logicalArena);
+    public static extern void OnCompleted(object task, delegate() => void continuation);
+    public static extern void ThrowIfAlreadyCompleted(object task);
+    public static extern void ScheduleContinuations(object task);
+    public static extern void MarkFaultObserved(object task);
+    public static extern void SetFault(object task, Exception exception);
+    public static extern void SetCanceled(object task);
+    public static extern void ForwardVoid(object source, object destination);
+    public static extern bool ReusableSourceIsCompleted(object source, uint version);
+    public static extern void RegisterReusableSourceContinuation(
+        object source,
+        uint version,
+        delegate() => void continuation);
+    public static extern void ScheduleReusableSourceContinuation(
+        object source,
+        uint version);
+    internal static extern object GetReusableSourceNativeWaitState(object source);
+    internal static extern void SetReusableSourceNativeWaitState(
+        object source,
+        object item);
+    public static extern object GetVoidTask(object source);
+
+}

@@ -1,0 +1,30 @@
+import System;
+
+namespace System.Threading.Tasks;
+public struct CancellationToken {
+    private CancellationTokenSource _source;
+
+    public static CancellationToken None {
+        const get { return new CancellationToken(null); }
+    }
+
+    public bool IsCancellationRequested {
+        const get => _source != null && _source.IsCancellationRequested;
+    }
+
+    public void ThrowIfCancellationRequested() {
+        OperationCanceledException.ThrowIfCanceled(
+            IsCancellationRequested, new CancellationToken(_source));
+    }
+
+    public CancellationTokenRegistration Register(delegate() => void callback) {
+        if (_source != null) {
+            return _source.Register(callback);
+        }
+        return CancellationTokenRegistration.None;
+    }
+
+    internal constructor(CancellationTokenSource source) {
+        _source = source;
+    }
+}

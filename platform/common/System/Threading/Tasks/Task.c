@@ -9,11 +9,15 @@ CX_STRING_DEF(cx_task_faulted, "The asynchronous operation failed");
 CX_STRING_DEF(cx_task_not_completed, "The asynchronous operation has not completed");
 CX_STRING_DEF(cx_task_already_completed, "The task has already completed");
 CX_STRING_DEF(cx_task_null_continuation, "Task.OnCompleted requires a non-null continuation");
+CX_STRING_DEF(cx_task_continuation_parameter, "continuation");
 CX_STRING_DEF(cx_task_invalid_forward, "Task.ForwardTo requires valid source and destination tasks");
 CX_STRING_DEF(cx_task_null_fault, "Task.SetFault requires a non-null exception");
+CX_STRING_DEF(cx_task_invalid_fault_state, "Task.SetFault requires a valid task state");
+CX_STRING_DEF(cx_task_exception_parameter, "exception");
 CX_STRING_DEF(cx_task_scoped_suspend, "A synchronous allocation arena cannot retain a task continuation unless it is logically retained");
 CX_STRING_DEF(cx_task_scoped_cancellation, "Cancellation callback registration requires a durable or retained arena");
 CX_STRING_DEF(cx_task_null_durable_action, "TaskRuntime.WithDurable requires a non-null action");
+CX_STRING_DEF(cx_task_action_parameter, "action");
 
 extern cx_ptr cx_array_at(
     struct cxcore_System_Collections_Array *array,
@@ -131,7 +135,8 @@ CX_API void cxcore_System_Threading_Tasks_TaskRuntime_WithDurable(
     cx_action action) {
     struct cx_exception_frame frame;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_threading_raise(&cx_task_null_durable_action);
+        cx_threading_raise_argument_null(
+            &cx_task_null_durable_action, &cx_task_action_parameter);
     }
     cx_exception_push(&frame);
     if (setjmp(frame.environment) == 0) {
@@ -304,8 +309,12 @@ CX_API void cxcore_System_Threading_Tasks_TaskState_SetFault(
     struct cxcore_System_Threading_Tasks_TaskState *state,
     struct cxcore_System_Exception *exception) {
     cx_gc_check_thread();
-    if (state == NULL || exception == NULL) {
-        cx_threading_raise(&cx_task_null_fault);
+    if (state == NULL) {
+        cx_threading_raise(&cx_task_invalid_fault_state);
+    }
+    if (exception == NULL) {
+        cx_threading_raise_argument_null(
+            &cx_task_null_fault, &cx_task_exception_parameter);
     }
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(
         state->_isCompleted);
@@ -342,7 +351,8 @@ static void cx_task_on_completed(
     struct cx_arena *logical_arena;
     cx_gc_check_thread();
     if (action.__function == NULL) {
-        cx_threading_raise(&cx_task_null_continuation);
+        cx_threading_raise_argument_null(
+            &cx_task_null_continuation, &cx_task_continuation_parameter);
     }
     if (isCompleted) {
         if (completion != NULL) {
@@ -528,8 +538,10 @@ CX_API void cxcore_System_Threading_Tasks_TaskRuntime_SetFault(
     struct cx_task_generic_state *state =
         (struct cx_task_generic_state *)taskObject;
     cx_gc_check_thread();
-    if (state == NULL || exception == NULL) {
-        cx_threading_raise(&cx_task_null_fault);
+    if (state == NULL) cx_threading_raise(&cx_task_invalid_fault_state);
+    if (exception == NULL) {
+        cx_threading_raise_argument_null(
+            &cx_task_null_fault, &cx_task_exception_parameter);
     }
     cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(
         state->_isCompleted);
@@ -833,21 +845,21 @@ void cxcore_System_Threading_Tasks_VoidTask_ThrowIfFaulted(
         if (exception != NULL) {
             cx_exception_throw((cx_ptr)exception, __FILE__, __LINE__);
         }
-        cx_threading_raise(&cx_task_faulted);
+        cx_threading_raise_invalid_operation(&cx_task_faulted);
     }
 }
 
 void cxcore_System_Threading_Tasks_TaskState_ThrowIfNotCompleted(
     cx_bool isCompleted) {
     if (!isCompleted) {
-        cx_threading_raise(&cx_task_not_completed);
+        cx_threading_raise_invalid_operation(&cx_task_not_completed);
     }
 }
 
 void cxcore_System_Threading_Tasks_TaskState_ThrowIfAlreadyCompleted(
     cx_bool isCompleted) {
     if (isCompleted) {
-        cx_threading_raise(&cx_task_already_completed);
+        cx_threading_raise_invalid_operation(&cx_task_already_completed);
     }
 }
 

@@ -1,0 +1,57 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class SkipEnumerator<T> : IEnumerator<T> {
+    private IEnumerator<T> _source;
+    private uint _remaining;
+    private T _current;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(IEnumerator<T> source, uint count) {
+        _source = source;
+        _remaining = count;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_remaining > 0u) {
+                if (!_source.MoveNext()) {
+                    Dispose();
+                    return false;
+                }
+                _remaining -= 1u;
+            }
+            if (!_source.MoveNext()) {
+                Dispose();
+                return false;
+            }
+            _current = _source.Current;
+            return true;
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            IEnumerator<T> source = _source;
+            _source = default;
+            try {
+                source.Dispose();
+            } finally {
+                _current = default;
+            }
+        } else {
+            _current = default;
+        }
+    }
+}

@@ -67,7 +67,7 @@ static void throw_arena_owned_derived_exception(
     error = (struct cxcore_System_EncodingException *)cx_arena_allocate_current(
         sizeof(*error), _Alignof(struct cxcore_System_EncodingException));
     assert(error != NULL);
-    cxcore_System_EncodingException___constructor(error, 37u);
+    cxcore_System_EncodingException___constructor__2(error, 37u);
     (void)cx_gc_store_reference(
         (cx_ptr *)&error->__base._innerException._obj,
         innerException);

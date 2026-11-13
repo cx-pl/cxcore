@@ -1,0 +1,17 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred prefix over an enumerable source.</summary>
+public final class TakeEnumerable<T> : IEnumerable<T> {
+    private IEnumerable<T> _source;
+    private uint _count;
+
+    internal constructor(IEnumerable<T> source, uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new TakeEnumerator<T>(_source, _count);
+    }
+}

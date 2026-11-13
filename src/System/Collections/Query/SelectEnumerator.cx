@@ -1,0 +1,53 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class SelectEnumerator<T, TResult> : IEnumerator<TResult> {
+    private IEnumerator<T> _source;
+    private delegate(T) => TResult _selector;
+    private TResult _current;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    public constructor(
+        IEnumerator<T> source,
+        delegate(T) => TResult selector) {
+        _source = source;
+        _selector = selector;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        try {
+            if (!_source.MoveNext()) {
+                Dispose();
+                return false;
+            }
+            _current = _selector(_source.Current);
+            return true;
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            IEnumerator<T> source = _source;
+            _source = default;
+            _selector = default;
+            try {
+                source.Dispose();
+            } finally {
+                _current = default;
+            }
+        } else {
+            _current = default;
+        }
+    }
+}

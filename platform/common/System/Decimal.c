@@ -14,20 +14,62 @@ typedef struct { uint32_t word[LIMBS]; } wide;
 CX_STRING_DEF(cx_decimal_overflow, "Decimal overflow");
 CX_STRING_DEF(cx_decimal_zero_divisor, "Decimal division by zero");
 CX_STRING_DEF(cx_decimal_invalid, "Invalid decimal value");
+CX_STRING_DEF(cx_decimal_significant_digits, "significantDigits");
+
+typedef enum {
+    CX_DECIMAL_FAILURE_OVERFLOW,
+    CX_DECIMAL_FAILURE_DIVIDE_BY_ZERO,
+    CX_DECIMAL_FAILURE_FORMAT,
+    CX_DECIMAL_FAILURE_ARGUMENT_RANGE
+} cx_decimal_failure;
 
 cx_decimal cxcore_System_Decimal_MaxValue = {UINT_MAX, UINT_MAX, UINT_MAX, 0};
 cx_decimal cxcore_System_Decimal_MinValue = {UINT_MAX, UINT_MAX, UINT_MAX, 0x80000000u};
 
-static CX_NORETURN void fail(const struct cxcore_System_String *message) {
-    struct cxcore_System_Exception *error =
-        cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, message);
+static CX_NORETURN void fail(cx_decimal_failure failure,
+                             const struct cxcore_System_String *message) {
+    struct cxcore_System_Reflection_TypeInfo *typeInfo;
+    cx_ptr error;
+    switch (failure) {
+    case CX_DECIMAL_FAILURE_OVERFLOW:
+        typeInfo = &cxcore_System_OverflowException___typeinfo;
+        break;
+    case CX_DECIMAL_FAILURE_DIVIDE_BY_ZERO:
+        typeInfo = &cxcore_System_DivideByZeroException___typeinfo;
+        break;
+    case CX_DECIMAL_FAILURE_FORMAT:
+        typeInfo = &cxcore_System_FormatException___typeinfo;
+        break;
+    default:
+        typeInfo = &cxcore_System_ArgumentOutOfRangeException___typeinfo;
+        break;
+    }
+    error = cx_exception_allocate_durable(typeInfo->Size);
+    switch (failure) {
+    case CX_DECIMAL_FAILURE_OVERFLOW:
+        cxcore_System_OverflowException___constructor__2(
+            (struct cxcore_System_OverflowException *)error, message);
+        break;
+    case CX_DECIMAL_FAILURE_DIVIDE_BY_ZERO:
+        cxcore_System_DivideByZeroException___constructor__2(
+            (struct cxcore_System_DivideByZeroException *)error, message);
+        break;
+    case CX_DECIMAL_FAILURE_FORMAT:
+        cxcore_System_FormatException___constructor__2(
+            (struct cxcore_System_FormatException *)error, message);
+        break;
+    default:
+        cxcore_System_ArgumentOutOfRangeException___constructor__3(
+            (struct cxcore_System_ArgumentOutOfRangeException *)error,
+            message, &cx_decimal_significant_digits);
+        break;
+    }
     cx_exception_throw(error, __FILE__, __LINE__);
 }
 
 static unsigned scale(cx_decimal value) {
     if ((value.flags & 0x7F00FFFFu) != 0 || ((value.flags >> 16) & 255u) > 28)
-        fail(&cx_decimal_invalid);
+        fail(CX_DECIMAL_FAILURE_FORMAT, &cx_decimal_invalid);
     return (value.flags >> 16) & 255u;
 }
 static wide coefficient(cx_decimal value) {
@@ -51,7 +93,7 @@ static wide add(wide a, wide b) {
         a.word[i] = (uint32_t)sum;
         carry = sum >> 32;
     }
-    if (carry) fail(&cx_decimal_overflow);
+    if (carry) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     return a;
 }
 static wide subtract(wide a, wide b) {
@@ -71,7 +113,7 @@ static void multiply_small(wide *a, unsigned factor) {
         a->word[i] = (uint32_t)product;
         carry = product >> 32;
     }
-    if (carry) fail(&cx_decimal_overflow);
+    if (carry) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
 }
 static void power10(wide *a, unsigned count) {
     while (count--) multiply_small(a, 10);
@@ -87,7 +129,7 @@ static unsigned divide10(wide *a) {
 }
 static wide quotient(wide a, wide b, wide *remainder) {
     wide q = {{0}}, r = {{0}};
-    if (zero(b)) fail(&cx_decimal_zero_divisor);
+    if (zero(b)) fail(CX_DECIMAL_FAILURE_DIVIDE_BY_ZERO, &cx_decimal_zero_divisor);
     for (int bit = LIMBS * 32 - 1; bit >= 0; --bit) {
         uint32_t carry = (a.word[bit / 32] >> (bit % 32)) & 1u;
         for (int i = 0; i < LIMBS; ++i) {
@@ -134,7 +176,8 @@ static int try_finish(wide n, unsigned digits, unsigned sign, int sticky, cx_dec
 
 static cx_decimal finish(wide n, unsigned digits, unsigned sign, int sticky) {
     cx_decimal result;
-    if (!try_finish(n, digits, sign, sticky, &result)) fail(&cx_decimal_overflow);
+    if (!try_finish(n, digits, sign, sticky, &result))
+        fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     return result;
 }
 
@@ -279,7 +322,7 @@ CX_API cx_decimal cx_decimal_parse(const char *text) {
     if (*text == '-' || *text == '+') { sign = *text == '-'; ++text; }
     while ((*text >= '0' && *text <= '9') || *text == '.') {
         if (*text == '.') {
-            if (fractional) fail(&cx_decimal_invalid);
+            if (fractional) fail(CX_DECIMAL_FAILURE_FORMAT, &cx_decimal_invalid);
             fractional = 1;
         } else {
             multiply_small(&n, 10);
@@ -292,13 +335,13 @@ CX_API cx_decimal cx_decimal_parse(const char *text) {
     if (*text == 'e' || *text == 'E') {
         ++text;
         if (*text == '-' || *text == '+') { exponentSign = *text == '-' ? -1 : 1; ++text; }
-        if (*text < '0' || *text > '9') fail(&cx_decimal_invalid);
+        if (*text < '0' || *text > '9') fail(CX_DECIMAL_FAILURE_FORMAT, &cx_decimal_invalid);
         while (*text >= '0' && *text <= '9') {
-            if (exponent > 10000) fail(&cx_decimal_overflow);
+            if (exponent > 10000) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
             exponent = exponent * 10 + *text++ - '0';
         }
     }
-    if (*text != 0 || !found) fail(&cx_decimal_invalid);
+    if (*text != 0 || !found) fail(CX_DECIMAL_FAILURE_FORMAT, &cx_decimal_invalid);
     int finalScale = (int)digits - exponentSign * exponent;
     if (finalScale < 0) { if (!zero(n)) power10(&n, (unsigned)-finalScale); finalScale = 0; }
     return finish(n, (unsigned)finalScale, sign, 0);
@@ -311,8 +354,9 @@ CX_API cx_double cx_decimal_to_double(cx_decimal value) {
 }
 CX_API cx_decimal cx_decimal_from_double(cx_double value, cx_int significantDigits) {
     char text[64];
-    if (!isfinite(value)) fail(&cx_decimal_overflow);
-    if (significantDigits != 7 && significantDigits != 15) fail(&cx_decimal_invalid);
+    if (!isfinite(value)) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
+    if (significantDigits != 7 && significantDigits != 15)
+        fail(CX_DECIMAL_FAILURE_ARGUMENT_RANGE, &cx_decimal_invalid);
     snprintf(text, sizeof(text), "%.*g", significantDigits, value);
     // snprintf follows the process locale; the decimal parser deliberately does not.
     for (char *p = text; *p; ++p) if (*p == ',') *p = '.';
@@ -326,21 +370,22 @@ static wide truncate(cx_decimal value) {
 }
 CX_API cx_ulong cx_decimal_to_u64(cx_decimal value, cx_ulong maximum) {
     wide n = truncate(value);
-    if (n.word[2] != 0 || !fits(n) || ((value.flags >> 31) && !zero(n))) fail(&cx_decimal_overflow);
+    if (n.word[2] != 0 || !fits(n) || ((value.flags >> 31) && !zero(n)))
+        fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     cx_ulong result = ((cx_ulong)n.word[1] << 32) | n.word[0];
-    if (result > maximum) fail(&cx_decimal_overflow);
+    if (result > maximum) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     return result;
 }
 CX_API cx_long cx_decimal_to_i64(cx_decimal value, cx_ulong maximum) {
     wide n = truncate(value);
-    if (n.word[2] != 0 || !fits(n)) fail(&cx_decimal_overflow);
+    if (n.word[2] != 0 || !fits(n)) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     cx_ulong result = ((cx_ulong)n.word[1] << 32) | n.word[0];
     if (value.flags >> 31) {
-        if (result > maximum + 1) fail(&cx_decimal_overflow);
+        if (result > maximum + 1) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
         if (result == 0x8000000000000000ULL) return LLONG_MIN;
         return -(cx_long)result;
     }
-    if (result > maximum) fail(&cx_decimal_overflow);
+    if (result > maximum) fail(CX_DECIMAL_FAILURE_OVERFLOW, &cx_decimal_overflow);
     return (cx_long)result;
 }
 CX_API cx_uint cx_decimal_format(cx_decimal value, char *buffer, cx_uint capacity) {

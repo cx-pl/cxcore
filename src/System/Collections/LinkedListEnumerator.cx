@@ -1,0 +1,25 @@
+namespace System.Collections;
+public final class LinkedListEnumerator<T> : IEnumerator<T> {
+    private LinkedListNode<T> _next;
+    private T _current;
+
+    public constructor(LinkedListNode<T> first) {
+        _next = first;
+    }
+
+    public T Current { const get { return _current; } }
+
+    public bool MoveNext() {
+        if (_next == null) {
+            return false;
+        }
+        _current = _next.Value;
+        _next = _next.Next;
+        return true;
+    }
+
+    public void Dispose() {
+        _next = default;
+        _current = default;
+    }
+}

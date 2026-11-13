@@ -1,0 +1,212 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+internal final class AsyncPositionOperation<T, TLayout> {
+    private IAsyncEnumerable<T> _source;
+    private string _kind;
+    private uint _index;
+    private bool _orDefault;
+    private delegate(T) => bool _predicate;
+    private CancellationToken _cancellationToken;
+    private IAsyncEnumerator<T> _enumerator;
+    private bool _hasValue;
+    private T _value;
+    private bool _isDisposing;
+    private Task<T> _completion;
+
+    internal constructor() { }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        string kind,
+        uint index,
+        bool orDefault,
+        delegate(T) => bool predicate,
+        CancellationToken cancellationToken,
+        IAsyncEnumerator<T> enumerator,
+        bool hasValue,
+        Task<T> completion) {
+        _source = source;
+        _kind = kind;
+        _index = index;
+        _orDefault = orDefault;
+        _predicate = predicate;
+        _cancellationToken = cancellationToken;
+        _enumerator = enumerator;
+        _hasValue = hasValue;
+        _completion = completion;
+    }
+
+    internal Task<T> Start() {
+        try {
+            _enumerator = _source.GetAsyncEnumerator(_cancellationToken);
+            if (_enumerator == null) {
+                Complete(new System.InvalidOperationException(
+                    "The async source returned a null enumerator."));
+                return _completion;
+            }
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return _completion;
+        }
+        Advance();
+        return _completion;
+    }
+
+    private void Advance() {
+        while (true) {
+            Task<bool> moveTask;
+            try {
+                moveTask = _enumerator.MoveNextAsync().AsTask();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moveTask.IsCompleted) {
+                AsyncPositionOperation<T, TLayout> state = this;
+                moveTask.OnCompleted(() => state.CompleteMove(moveTask));
+                return;
+            }
+            bool moved;
+            try {
+                moved = moveTask.GetResult();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moved) {
+                FinishAtEnd();
+                return;
+            }
+            if (ProcessCurrent()) { return; }
+        }
+    }
+
+    private void CompleteMove(Task<bool> moveTask) {
+        bool moved;
+        try {
+            moved = moveTask.GetResult();
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return;
+        }
+        if (!moved) {
+            FinishAtEnd();
+            return;
+        }
+        if (!ProcessCurrent()) { Advance(); }
+    }
+
+    private bool ProcessCurrent() {
+        T current;
+        try {
+            current = _enumerator.Current;
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return true;
+        }
+        if (_predicate != null) {
+            bool matches;
+            try {
+                matches = _predicate(current);
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return true;
+            }
+            if (!matches) { return false; }
+        }
+        return ProcessValue(current);
+    }
+
+    private bool ProcessValue(T current) {
+        if (_kind == "First") {
+            _value = current;
+            _hasValue = true;
+            BeginDispose(null);
+            return true;
+        }
+        if (_kind == "ElementAt") {
+            if (_index == 0u) {
+                _value = current;
+                _hasValue = true;
+                BeginDispose(null);
+                return true;
+            }
+            _index -= 1u;
+            return false;
+        }
+        if (_kind == "Last") {
+            _value = current;
+            _hasValue = true;
+            return false;
+        }
+        if (!_hasValue) {
+            _value = current;
+            _hasValue = true;
+            return false;
+        }
+        BeginDispose(new System.InvalidOperationException(
+            "Sequence contains more than one element."));
+        return true;
+    }
+
+    private void FinishAtEnd() {
+        if (_hasValue) {
+            BeginDispose(null);
+        } else if (_orDefault) {
+            BeginDispose(null);
+        } else if (_kind == "ElementAt") {
+            BeginDispose(new System.ArgumentOutOfRangeException("index"));
+        } else {
+            BeginDispose(new System.InvalidOperationException(
+                "Sequence contains no elements."));
+        }
+    }
+
+    private void BeginDispose(System.Exception failure) {
+        if (_isDisposing) { return; }
+        _isDisposing = true;
+        TaskHandle disposeTask;
+        try {
+            disposeTask = _enumerator.DisposeAsync().AsTask();
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return;
+        }
+        if (disposeTask.IsCompleted) {
+            CompleteDispose(disposeTask, failure);
+        } else {
+            AsyncPositionOperation<T, TLayout> state = this;
+            disposeTask.OnCompleted(() =>
+                state.CompleteDispose(disposeTask, failure));
+        }
+    }
+
+    private void CompleteDispose(
+        TaskHandle disposeTask,
+        System.Exception failure) {
+        try {
+            disposeTask.GetResult();
+        } catch (System.Exception disposeException) {
+            failure = disposeException;
+        }
+        Complete(failure);
+    }
+
+    private void Complete(System.Exception failure) {
+        if (failure is OperationCanceledException) {
+            _completion.SetCanceled();
+        } else if (failure != null) {
+            _completion.SetFault(failure);
+        } else {
+            _completion.SetResult(_value);
+        }
+        _source = default;
+        _kind = default;
+        _predicate = null;
+        _cancellationToken = default;
+        _enumerator = default;
+        _value = default;
+    }
+}

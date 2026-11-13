@@ -31,6 +31,12 @@ CX_API struct cxcore_System_Collections_Array *cx_array_new_for_owner(
 CX_API cx_ptr cx_memory_alloc_for_owner(const void *owner, cx_uint size);
 CX_API cx_ptr cx_array_at(struct cxcore_System_Collections_Array *array, cx_uint index,
                           cx_uint elementSize);
+CX_API cx_ptr cx_array_at_checked(
+    struct cxcore_System_Collections_Array *array,
+    cx_uint index,
+    cx_uint elementSize,
+    const char *fileName,
+    int line);
 
 //
 // External event waits

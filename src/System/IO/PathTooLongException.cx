@@ -1,0 +1,11 @@
+namespace System.IO;
+public class PathTooLongException : IOException {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The specified path is too long.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The specified path is too long.", innerException) { }
+    public constructor(const string message, const string path)
+        : base(message ?? "The specified path is too long.", null,
+            path, null, 0) { }
+}

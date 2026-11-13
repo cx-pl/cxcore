@@ -1,0 +1,15 @@
+import System;
+
+namespace System.Threading.Tasks;
+internal final class ReusableValueTaskContinuationState {
+    private delegate() => void _continuation;
+    // Keep the acknowledged scheduler node with this reusable source state.
+    private object _schedulerItem;
+    // Lease captured when the continuation is registered. The scheduler takes
+    // ownership when the completed source queues its reusable callback.
+    private ptr _logicalArena;
+
+    public extern void Clear();
+
+    public extern constructor();
+}

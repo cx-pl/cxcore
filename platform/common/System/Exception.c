@@ -10,6 +10,63 @@
 static CX_THREAD_LOCAL struct cx_exception_frame *cx_current_exception_frame;
 static CX_THREAD_LOCAL struct cx_exception cx_current_exception;
 
+static void cx_exception_write_string(const struct cxcore_System_String *value) {
+    if (value == CX_NULL) {
+        fputs("<no message>", stderr);
+        return;
+    }
+    if (value->_length == 0) {
+        return;
+    }
+    if (value->_data == CX_NULL) {
+        fputs("<invalid string>", stderr);
+        return;
+    }
+    (void)fwrite(value->_data, 1, value->_length, stderr);
+}
+
+static void cx_exception_write_description(
+    const struct cxcore_System_Exception *exception) {
+    struct cxcore_System_Reflection_TypeInfo typeInfo;
+    const struct cxcore_System_String *name;
+    if (exception == CX_NULL) {
+        fputs("<null exception>", stderr);
+        return;
+    }
+    typeInfo = cxcore_System_Exception_RuntimeType___const_get(exception);
+    name = typeInfo.Name;
+    if (typeInfo.Namespace != CX_NULL && typeInfo.Namespace->_length != 0) {
+        cx_exception_write_string(typeInfo.Namespace);
+        fputc('.', stderr);
+    }
+    cx_exception_write_string(name);
+    fputs(": ", stderr);
+    cx_exception_write_string(exception->_message);
+}
+
+static struct cxcore_System_String *cx_exception_make_stack_trace(
+    const char *fileName, int line) {
+    char buffer[1024];
+    int formattedLength = snprintf(buffer, sizeof(buffer), "%s:%d",
+                                   fileName == NULL ? "<unknown>" : fileName,
+                                   line);
+    cx_uint length;
+    cx_byte *data;
+    struct cxcore_System_String *trace;
+    if (formattedLength <= 0) {
+        return CX_NULL;
+    }
+    length = (cx_uint)((size_t)formattedLength < sizeof(buffer)
+                           ? (size_t)formattedLength
+                           : sizeof(buffer) - 1u);
+    data = (cx_byte *)cx_exception_allocate_durable(length);
+    memcpy(data, buffer, length);
+    trace = (struct cxcore_System_String *)cx_exception_allocate_durable(
+        (cx_uint)sizeof(*trace));
+    cxcore_System_String___constructor__2(trace, length, data);
+    return trace;
+}
+
 cx_ptr *cx_exception_thread_root(void) {
     return &cx_current_exception.exceptionObject;
 }
@@ -37,12 +94,37 @@ cx_bool cx_exception_thread_detach(void) {
     return CX_TRUE;
 }
 
+struct cxcore_System_String *
+cxcore_System_Exception_StackTrace___const_get(
+    const struct cxcore_System_Exception *self) {
+    return self == CX_NULL ? CX_NULL : self->_stackTrace;
+}
+
 static CX_NORETURN void cx_exception_dispatch(void) {
     if (cx_current_exception_frame != CX_NULL) {
         cx_platform_exception_jump(cx_current_exception_frame->environment);
     }
 
-    fprintf(stderr, "Uncaught exception thrown at %s:%d\n",
+    fputs("Uncaught ", stderr);
+    cx_exception_write_description(
+        (const struct cxcore_System_Exception *)cx_current_exception.exceptionObject);
+    {
+        const struct cxcore_System_Exception *inner =
+            (const struct cxcore_System_Exception *)
+                ((const struct cxcore_System_Exception *)
+                    cx_current_exception.exceptionObject)->_innerException._obj;
+        cx_uint depth = 0;
+        while (inner != CX_NULL && depth < 16) {
+            fputs("\n  caused by ", stderr);
+            cx_exception_write_description(inner);
+            inner = (const struct cxcore_System_Exception *)inner->_innerException._obj;
+            ++depth;
+        }
+        if (inner != CX_NULL) {
+            fputs("\n  caused by <inner exception chain truncated>", stderr);
+        }
+    }
+    fprintf(stderr, "\nThrown at %s:%d\n",
             cx_current_exception.thrownFileName == CX_NULL ? "<unknown>"
                                                            : cx_current_exception.thrownFileName,
             cx_current_exception.thrownLine);
@@ -68,10 +150,23 @@ void cx_exception_pop(struct cx_exception_frame *frame) {
 }
 
 void cx_exception_throw(cx_ptr exceptionObject, const char *fileName, int line) {
+    struct cxcore_System_Exception *exception;
+    struct cxcore_System_String *stackTrace;
     cx_gc_check_thread();
     if (exceptionObject == CX_NULL) {
         fputs("Cannot throw a null exception\n", stderr);
         abort();
+    }
+    exception = (struct cxcore_System_Exception *)exceptionObject;
+    if (cxcore_System_Exception_Matches(
+            exception, cxcore_System_Exception___typeinfo)) {
+        if (exception->_stackTrace == CX_NULL) {
+            stackTrace = cx_exception_make_stack_trace(fileName, line);
+            if (stackTrace != CX_NULL) {
+                (void)cx_gc_store_reference((cx_ptr *)&exception->_stackTrace,
+                                            (cx_ptr)stackTrace);
+            }
+        }
     }
     // An exception crossing a handler boundary must outlive any arena scope
     // that the handler unwinds. Durable exceptions retain identity; scoped or
@@ -332,7 +427,14 @@ static cx_bool cx_exception_copy_class_fields(
             cx_exception_copy_durable_inner(innerSource, depth + 1u);
         const struct cxcore_System_String *message =
             cx_exception_make_message_durable(sourceException->_message);
+        const struct cxcore_System_String *stackTrace =
+            cx_exception_make_message_durable(sourceException->_stackTrace);
         cxcore_System_Exception___constructor(destinationException, message);
+        if (stackTrace != NULL) {
+            (void)cx_gc_store_reference(
+                (cx_ptr *)&destinationException->_stackTrace,
+                (cx_ptr)stackTrace);
+        }
         if (innerCopy != NULL) {
             (void)cx_gc_store_reference(
                 (cx_ptr *)&destinationException->_innerException._obj,

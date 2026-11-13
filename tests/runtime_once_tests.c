@@ -27,6 +27,7 @@ static test_flag worker_has_exception;
 static test_flag release_exception;
 static int initialized_value;
 static int worker_failed;
+static cx_ptr expected_exception;
 
 static void wait_for_release(void *context) {
     (void)context;
@@ -40,9 +41,12 @@ __declspec(noinline)
 __attribute__((noinline))
 #endif
 static void throw_managed_value(void) {
-    cx_uint *value = (cx_uint *)cxcore_System_Memory_Alloc(sizeof(cx_uint));
-    *value = 0xabcdef;
-    cx_exception_throw(value, __FILE__, __LINE__);
+    struct cxcore_System_Exception *exception =
+        (struct cxcore_System_Exception *)cxcore_System_Memory_Alloc(
+            (cx_uint)sizeof(*exception));
+    cxcore_System_Exception___constructor__3(exception);
+    expected_exception = exception;
+    cx_exception_throw(exception, __FILE__, __LINE__);
 }
 
 static void worker_body(void) {
@@ -61,7 +65,10 @@ static void worker_body(void) {
     // No exception value has been read into the caller's stack yet: only TLS
     // retains it across this parked interval and the parent's collection.
     cx_gc_run_blocking(wait_for_release, NULL);
-    if (*(cx_uint *)cx_exception_current() != 0xabcdef) worker_failed = 2;
+    if (cx_exception_current() != expected_exception ||
+        !cxcore_System_Exception_Matches(
+            (struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_Exception___typeinfo)) worker_failed = 2;
     if (!cx_runtime_once_begin(&failed)) worker_failed = 3;
     cx_runtime_once_fail(&failed, cx_exception_current());
     cx_exception_clear();
@@ -111,7 +118,10 @@ int main(void) {
         return 4;
     }
     cx_exception_pop(&frame);
-    if (*(cx_uint *)cx_exception_current() != 0xabcdef) return 5;
+    if (cx_exception_current() != expected_exception ||
+        !cxcore_System_Exception_Matches(
+            (struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_Exception___typeinfo)) return 5;
     cx_exception_clear();
     cx_gc_detach_thread();
     return 0;

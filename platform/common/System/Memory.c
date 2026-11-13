@@ -163,6 +163,7 @@ CX_STRING_DEF(cx_memory_arena_disposed,
               "MemoryArena has been disposed");
 CX_STRING_DEF(cx_memory_arena_running,
               "MemoryArena is already running");
+CX_STRING_DEF(cx_memory_null_instance, "MemoryArena instance is null");
 CX_STRING_DEF(cx_memory_null_async_arena_action,
               "Memory.WithArenaAsync requires a non-null action");
 CX_STRING_DEF(cx_memory_null_async_arena_task,
@@ -171,6 +172,61 @@ CX_STRING_DEF(cx_memory_async_arena_capture_failed,
               "Memory.WithArenaAsync could not retain its operation state");
 CX_STRING_DEF(cx_memory_async_arena_multicast_action,
               "Memory.WithArenaAsync requires a single action");
+CX_STRING_DEF(cx_memory_param_action, "action");
+CX_STRING_DEF(cx_memory_param_capacity, "capacity");
+CX_STRING_DEF(cx_memory_param_initial_capacity, "initialCapacity");
+CX_STRING_DEF(cx_memory_param_maximum_capacity, "maximumCapacity");
+CX_STRING_DEF(cx_memory_param_instance, "MemoryArena");
+
+static void cx_memory_raise_invalid_operation(
+    const struct cxcore_System_String *message) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_InvalidOperationException___typeinfo.Size);
+    cxcore_System_InvalidOperationException___constructor__2(
+        (struct cxcore_System_InvalidOperationException *)exception, message);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
+
+static void cx_memory_raise_argument_null(
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *paramName) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_ArgumentNullException___typeinfo.Size);
+    cxcore_System_ArgumentNullException___constructor__3(
+        (struct cxcore_System_ArgumentNullException *)exception,
+        message, paramName);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
+
+static void cx_memory_raise_argument_out_of_range(
+    const struct cxcore_System_String *message,
+    const struct cxcore_System_String *paramName) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_ArgumentOutOfRangeException___typeinfo.Size);
+    cxcore_System_ArgumentOutOfRangeException___constructor__3(
+        (struct cxcore_System_ArgumentOutOfRangeException *)exception,
+        message, paramName);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
+
+static void cx_memory_raise_object_disposed(
+    const struct cxcore_System_String *message) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_ObjectDisposedException___typeinfo.Size);
+    cxcore_System_ObjectDisposedException___constructor__3(
+        (struct cxcore_System_ObjectDisposedException *)exception,
+        message, &cx_memory_param_instance);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
+
+static void cx_memory_raise_null_reference(
+    const struct cxcore_System_String *message) {
+    cx_ptr exception = cx_exception_allocate_durable(
+        cxcore_System_NullReferenceException___typeinfo.Size);
+    cxcore_System_NullReferenceException___constructor__2(
+        (struct cxcore_System_NullReferenceException *)exception, message);
+    cx_exception_throw(exception, __FILE__, __LINE__);
+}
 
 struct CX_FN_6FE0127D873E5D22_invocation {
     CX_FN_6FE0127D873E5D22 value;
@@ -237,8 +293,7 @@ cx_memory_async_arena_invoke(CX_FN_6FE0127D873E5D22 action) {
         operation = action.__function(action.__environment);
     }
     if (operation == NULL) {
-        cx_exception_raise_message(&cx_memory_null_async_arena_task,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_invalid_operation(&cx_memory_null_async_arena_task);
     }
     return operation;
 }
@@ -260,8 +315,7 @@ static void cx_memory_async_arena_start(void *context) {
     values[0] = (cx_ptr)operation;
     if (!cx_gc_store_references_retained_arena(
             destinations, values, 1u, start->state->arena)) {
-        cx_exception_raise_message(&cx_memory_async_arena_capture_failed,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_invalid_operation(&cx_memory_async_arena_capture_failed);
     }
     continuation.__function = cx_memory_async_arena_complete;
     continuation.__environment = start->state;
@@ -326,17 +380,18 @@ cx_memory_run_async_arena(
     struct cx_exception_frame frame;
     cx_ptr failure;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_exception_raise_message(&cx_memory_null_async_arena_action,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_null(&cx_memory_null_async_arena_action,
+                                      &cx_memory_param_action);
     }
     if (action.__invocation_list != NULL &&
         action.__invocation_list->next != NULL) {
-        cx_exception_raise_message(&cx_memory_async_arena_multicast_action,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_out_of_range(
+            &cx_memory_async_arena_multicast_action,
+            &cx_memory_param_action);
     }
     if (fixed_capacity && maximum_capacity == 0) {
-        cx_exception_raise_message(&cx_memory_invalid_arena_capacity,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_out_of_range(
+            &cx_memory_invalid_arena_capacity, &cx_memory_param_capacity);
     }
     arena = cx_arena_create((size_t)initial_capacity,
                             (size_t)maximum_capacity,
@@ -395,12 +450,12 @@ static void cx_memory_run_arena(
     struct cx_arena *arena;
     struct cx_exception_frame frame;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_exception_raise_message(&cx_memory_null_arena_action,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_null(&cx_memory_null_arena_action,
+                                      &cx_memory_param_action);
     }
     if (fixed_capacity && maximum_capacity == 0) {
-        cx_exception_raise_message(&cx_memory_invalid_arena_capacity,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_out_of_range(
+            &cx_memory_invalid_arena_capacity, &cx_memory_param_capacity);
     }
     arena = cx_arena_create((size_t)initial_capacity,
                             (size_t)maximum_capacity,
@@ -432,11 +487,12 @@ void cxcore_System_MemoryArena___constructor(
     struct cxcore_System_MemoryArena *self, cx_uint initial_capacity) {
     struct cx_arena *arena;
     if (self == NULL) {
-        cx_memory_fail("MemoryArena constructor requires an instance");
+        cx_memory_raise_null_reference(&cx_memory_null_instance);
     }
     if (initial_capacity == 0u) {
-        cx_exception_raise_message(&cx_memory_arena_invalid_initial_capacity,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_out_of_range(
+            &cx_memory_arena_invalid_initial_capacity,
+            &cx_memory_param_initial_capacity);
     }
     arena = cx_arena_create((size_t)initial_capacity, 0u, 0);
     (void)cx_gc_store_native_pointer((cx_ptr *)&self->_nativeArena,
@@ -450,11 +506,13 @@ void cxcore_System_MemoryArena___constructor__2(
     cx_uint maximum_capacity) {
     struct cx_arena *arena;
     if (self == NULL) {
-        cx_memory_fail("MemoryArena constructor requires an instance");
+        cx_memory_raise_null_reference(&cx_memory_null_instance);
     }
     if (initial_capacity == 0u || maximum_capacity < initial_capacity) {
-        cx_exception_raise_message(&cx_memory_arena_invalid_capacity_range,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_out_of_range(
+            &cx_memory_arena_invalid_capacity_range,
+            initial_capacity == 0u ? &cx_memory_param_initial_capacity
+                                   : &cx_memory_param_maximum_capacity);
     }
     arena = cx_arena_create((size_t)initial_capacity,
                             (size_t)maximum_capacity,
@@ -470,22 +528,20 @@ void cxcore_System_MemoryArena_Run(
     struct cx_arena *arena;
     struct cx_exception_frame frame;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_exception_raise_message(&cx_memory_null_arena_action,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_null(&cx_memory_null_arena_action,
+                                      &cx_memory_param_action);
     }
     if (self == NULL) {
-        cx_memory_fail("MemoryArena.Run requires an instance");
+        cx_memory_raise_null_reference(&cx_memory_param_instance);
     }
     cx_gc_runtime_lock();
     if (self->_disposed || self->_nativeArena == NULL) {
         cx_gc_runtime_unlock();
-        cx_exception_raise_message(&cx_memory_arena_disposed,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_object_disposed(&cx_memory_arena_disposed);
     }
     if (self->_running) {
         cx_gc_runtime_unlock();
-        cx_exception_raise_message(&cx_memory_arena_running,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_invalid_operation(&cx_memory_arena_running);
     }
     self->_running = CX_TRUE;
     arena = (struct cx_arena *)self->_nativeArena;
@@ -520,8 +576,7 @@ void cxcore_System_MemoryArena_Dispose(
     cx_gc_runtime_lock();
     if (self->_running) {
         cx_gc_runtime_unlock();
-        cx_exception_raise_message(&cx_memory_arena_running,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_invalid_operation(&cx_memory_arena_running);
     }
     if (self->_disposed) {
         cx_gc_runtime_unlock();
@@ -549,8 +604,8 @@ cxcore_System_Memory_WithArenaAsync__2(
 void cxcore_System_Memory_WithDurable(cx_action action) {
     struct cx_exception_frame frame;
     if (action.__function == NULL && action.__invocation_list == NULL) {
-        cx_exception_raise_message(&cx_memory_null_durable_action,
-                                   __FILE__, __LINE__);
+        cx_memory_raise_argument_null(&cx_memory_null_durable_action,
+                                      &cx_memory_param_action);
     }
     cx_exception_push(&frame);
     if (setjmp(frame.environment) == 0) {

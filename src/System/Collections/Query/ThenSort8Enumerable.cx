@@ -1,0 +1,37 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred stable eight-key ordering.</summary>
+public final class ThenSort8Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey, TEighthKey>
+    : IEnumerable<T> {
+    private ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey> _source;
+    private delegate(T) => TEighthKey _eighthKeySelector;
+    private delegate(TEighthKey, TEighthKey) => int _eighthComparer;
+    private bool _eighthDescending;
+
+    internal constructor(
+        ThenSort7Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey> source,
+        delegate(T) => TEighthKey eighthKeySelector,
+        delegate(TEighthKey, TEighthKey) => int eighthComparer,
+        bool eighthDescending) {
+        _source = source;
+        _eighthKeySelector = eighthKeySelector;
+        _eighthComparer = eighthComparer;
+        _eighthDescending = eighthDescending;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ThenSort8Enumerator<T, TKey, TNextKey, TThirdKey, TFourthKey, TFifthKey, TSixthKey, TSeventhKey, TEighthKey>(
+            _source._source._source._source._source,
+            _source._source._source._source._keySelector, _source._source._source._source._comparer, _source._source._source._source._descending,
+            _source._source._source._source._nextKeySelector, _source._source._source._source._nextComparer, _source._source._source._source._nextDescending,
+            _source._source._source._source._thirdKeySelector, _source._source._source._source._thirdComparer, _source._source._source._source._thirdDescending,
+            _source._source._source._source._fourthKeySelector, _source._source._source._source._fourthComparer, _source._source._source._source._fourthDescending,
+            _source._source._source._fifthKeySelector, _source._source._source._fifthComparer, _source._source._source._fifthDescending,
+            _source._source._sixthKeySelector, _source._source._sixthComparer, _source._source._sixthDescending,
+            _source._seventhKeySelector, _source._seventhComparer, _source._seventhDescending,
+            _eighthKeySelector, _eighthComparer, _eighthDescending);
+    }
+
+
+}

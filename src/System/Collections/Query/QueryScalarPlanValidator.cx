@@ -1,0 +1,36 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Validates provider scalar terminals before execution.</summary>
+public static class QueryScalarPlanValidator {
+    public static void Validate(IQueryScalarPlanNode plan) {
+        if (plan == null) {
+            throw new System.ArgumentNullException("plan");
+        }
+        if (plan.Kind != "Any" && plan.Kind != "Count" &&
+            plan.Kind != "First" && plan.Kind != "FirstOrDefault" &&
+            plan.Kind != "Last" && plan.Kind != "LastOrDefault" &&
+            plan.Kind != "Single" && plan.Kind != "SingleOrDefault" &&
+            plan.Kind != "ElementAt" &&
+            plan.Kind != "ElementAtOrDefault") {
+            throw new System.InvalidOperationException(
+                "Unsupported query scalar terminal '" + plan.Kind + "'.");
+        }
+        if (plan.Source == null) {
+            throw new System.InvalidOperationException(
+                "Query scalar terminal '" + plan.Kind +
+                "' requires a preceding query plan.");
+        }
+        QueryPlanValidator.Validate(plan.Source);
+        if ((plan.Kind == "First" || plan.Kind == "FirstOrDefault" ||
+            plan.Kind == "Last" || plan.Kind == "LastOrDefault" ||
+            plan.Kind == "ElementAt" ||
+            plan.Kind == "ElementAtOrDefault") &&
+            !QueryPlanValidator.HasPrimaryOrdering(plan.Source)) {
+            throw new System.InvalidOperationException(
+                "Query scalar terminal '" + plan.Kind +
+                "' requires an explicit ordering.");
+        }
+    }
+}

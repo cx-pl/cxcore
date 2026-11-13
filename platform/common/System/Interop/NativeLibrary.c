@@ -10,24 +10,44 @@ typedef struct cxcore_System_String cx_string;
 CX_STRING_DEF(cx_library_failed, "Unable to load native library: ");
 CX_STRING_DEF(cx_symbol_failed, "Unable to resolve native symbol: ");
 CX_STRING_DEF(cx_library_invalid, "Native library/symbol names cannot be null or contain embedded zeros");
+CX_STRING_DEF(cx_library_null_name, "The native library or symbol name cannot be null.");
+CX_STRING_DEF(cx_library_name_parameter, "name");
+
+static CX_NORETURN void cx_library_invalid_name(void) {
+    struct cxcore_System_ArgumentException *error =
+        cx_exception_allocate_durable(cxcore_System_ArgumentException___typeinfo.Size);
+    cxcore_System_ArgumentException___constructor__2(error, &cx_library_invalid);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+}
 
 static CX_NORETURN void cx_library_error(const cx_string *prefix, const cx_string *name) {
     struct cx_arena_durable_scope scope;
     cx_string *message;
-    struct cxcore_System_Exception *error;
+    struct cxcore_System_InvalidOperationException *error;
     cx_arena_enter_durable(&scope);
     message = name == NULL ? (cx_string *)prefix
         : cxcore_System_String___cx_operator_plus(prefix, name);
-    error = (struct cxcore_System_Exception *)cxcore_System_Memory_Alloc(
-        (cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, message);
+    error = (struct cxcore_System_InvalidOperationException *)
+        cx_exception_allocate_durable(
+            cxcore_System_InvalidOperationException___typeinfo.Size);
+    cxcore_System_InvalidOperationException___constructor__2(error, message);
     cx_arena_leave_durable(&scope);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 static void cx_library_validate_name(const cx_string *name) {
-    if (name == NULL || (name->_length != 0 && memchr(name->_data, 0, name->_length) != NULL))
-        cx_library_error(&cx_library_invalid, NULL);
+    if (name == NULL) {
+        struct cxcore_System_ArgumentNullException *error =
+            cx_exception_allocate_durable(
+                cxcore_System_ArgumentNullException___typeinfo.Size);
+        cxcore_System_ArgumentNullException___constructor__3(
+            error, &cx_library_null_name, &cx_library_name_parameter);
+        cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
+    }
+    if ((name->_length != 0 &&
+         (name->_data == NULL || memchr(name->_data, 0, name->_length) != NULL)) ||
+        name->_length == 0)
+        cx_library_invalid_name();
 }
 
 struct cx_library_open_context { const void *path; cx_ptr handle; };

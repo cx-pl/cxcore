@@ -1,0 +1,27 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred page over a captured list storage snapshot.</summary>
+public final class ListPageEnumerable<T> : IEnumerable<T> {
+    internal List<T> _source;
+    internal uint _offset;
+    internal uint _pageSize;
+
+    internal constructor(List<T> source, uint offset, uint pageSize) {
+        _source = source;
+        _offset = offset;
+        _pageSize = pageSize;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ArrayRangeEnumerator<T>(
+            _source.GetQueryStorage(),
+            _offset < _source.Count ? _offset : _source.Count,
+            (_offset < _source.Count ? _offset : _source.Count) +
+                (_pageSize < _source.Count -
+                    (_offset < _source.Count ? _offset : _source.Count)
+                    ? _pageSize
+                    : _source.Count -
+                        (_offset < _source.Count ? _offset : _source.Count)));
+    }
+}

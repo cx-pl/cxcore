@@ -1,0 +1,21 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ArrayMapFilterTakeEnumerable<T, TResult>
+    : IEnumerable<TResult> {
+    private ArrayMapFilterEnumerable<T, TResult> _source;
+    private uint _count;
+
+    internal constructor(
+        ArrayMapFilterEnumerable<T, TResult> source,
+        uint count) {
+        _source = source;
+        _count = count;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapFilterEnumerator<T, TResult>(
+            _source._source._source, _source._source._selector,
+            _source._predicate, _source._source._source.Length, _count);
+    }
+}

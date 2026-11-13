@@ -135,9 +135,11 @@ Concrete interface vtables identify the dynamic class in slot zero. Runtime
 type tests and casts use these tables to recover the original object pointer
 and the correct interface dispatch table.
 
-Checked casts preserve null. A failed non-null checked cast calls `abort()`;
-type tests return false for null. Safe casts use the separate helpers described
-below and return null on failure.
+Checked casts preserve null. A failed non-null checked cast raises
+`System.InvalidCastException` at the managed boundary; type tests return false
+for null. Safe casts use the separate helpers described below and return null
+on failure. This checked-cast behavior is part of Milestone 24's source
+migration; it does not recover from arbitrary native memory faults.
 
 The canonical `TypeInfo` address, hash, flags, size, base-type link, and generic
 arity form the read-only identity layer. Type hashes derive from the
@@ -203,6 +205,12 @@ so a catch transfer can unwind allocation scopes entered after the frame.
 Reflected native-layout field descriptors include pointer offsets that are
 checked by the native-value copy barrier; incomplete projections use a
 conservative stack-only copy and cannot be published into longer-lived storage.
+
+The current in-development ABI 1 exception layout adds a managed `_stackTrace`
+reference to the base `System.Exception` layout. The CX project is unpublished;
+the numeric ABI remains 1 while compiler, generated core, and dependent
+artifacts are rebuilt together. This layout is not a compatibility promise for
+external binaries.
 
 The collector uses explicit native worker attachment and cooperative
 collection. Native C static roots must be registered, and modules with

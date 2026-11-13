@@ -1,0 +1,69 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Scans indexed storage until a filtered output prefix is complete.</summary>
+public final class IndexedWhereTakeEnumerator<T> : IEnumerator<T> {
+    private Array<T> _source;
+    private delegate(T) => bool _predicate;
+    private uint _index;
+    private uint _length;
+    private uint _skip;
+    private uint _remaining;
+    private T _current;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => bool predicate,
+        uint length,
+        uint skip,
+        uint count) {
+        _source = source;
+        _predicate = predicate;
+        _length = length;
+        _skip = skip;
+        _remaining = count;
+    }
+
+    public bool MoveNext() {
+        if (_disposed || _remaining == 0u) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_index < _length) {
+                T value = _source.Get(_index);
+                _index += 1u;
+                if (!_predicate(value)) { continue; }
+                if (_skip > 0u) {
+                    _skip -= 1u;
+                    continue;
+                }
+                _current = value;
+                _remaining -= 1u;
+                if (_remaining == 0u) { ReleaseSource(); }
+                return true;
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    private void ReleaseSource() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _predicate = default;
+        }
+    }
+
+    public void Dispose() {
+        ReleaseSource();
+        _current = default;
+    }
+}

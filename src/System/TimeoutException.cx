@@ -1,0 +1,8 @@
+namespace System;
+public class TimeoutException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The operation timed out.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "The operation timed out.", innerException) { }
+}

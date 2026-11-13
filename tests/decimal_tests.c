@@ -46,12 +46,21 @@ static void check_failure(int mode) {
         case 0: (void)cx_decimal_divide(cx_decimal_from_i64(1), cx_decimal_from_i64(0)); break;
         case 1: (void)cx_decimal_add(cx_decimal_parse("79228162514264337593543950335"), cx_decimal_from_i64(1)); break;
         case 2: (void)cx_decimal_to_i64(cx_decimal_parse("2147483648"), 2147483647); break;
-        default: (void)cx_decimal_to_u64(cx_decimal_from_i64(-1), ULLONG_MAX); break;
+        case 3: (void)cx_decimal_to_u64(cx_decimal_from_i64(-1), ULLONG_MAX); break;
+        case 4: (void)cx_decimal_parse("not a decimal"); break;
+        default: (void)cx_decimal_from_double(1.0, 6); break;
         }
         assert(0);
     } else {
         cx_exception_pop(&frame);
-        assert(cx_exception_current() != CX_NULL);
+        struct cxcore_System_Exception *exception = cx_exception_current();
+        struct cxcore_System_Reflection_TypeInfo expected =
+            mode == 0 ? cxcore_System_DivideByZeroException___typeinfo
+            : mode == 4 ? cxcore_System_FormatException___typeinfo
+            : mode == 5 ? cxcore_System_ArgumentOutOfRangeException___typeinfo
+                        : cxcore_System_OverflowException___typeinfo;
+        assert(exception != CX_NULL);
+        assert(cxcore_System_Exception_Matches(exception, expected));
         cx_exception_clear();
     }
 }
@@ -77,7 +86,9 @@ int main(void) {
     equal(cx_decimal_increment(&value, 1, CX_TRUE), "5"); equal(value, "6");
     equal(cx_decimal_add_assign(&value, cx_decimal_parse("0.2")), "6.2");
     assert(cxcore_System_Decimal___typeinfo.Size == 16);
-    for (int mode = 0; mode < 4; ++mode) check_failure(mode);
+    cx_decimal parsed;
+    assert(!cx_decimal_try_parse("not a decimal", &parsed));
+    for (int mode = 0; mode < 6; ++mode) check_failure(mode);
     check_vectors();
     return 0;
 }

@@ -1,0 +1,81 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred stable three-key ordering.</summary>
+public final class ThenSort3Enumerable<T, TKey, TNextKey, TThirdKey> : IEnumerable<T> {
+    private IEnumerable<T> _source;
+    private delegate(T) => TKey _keySelector;
+    private delegate(TKey, TKey) => int _comparer;
+    private bool _descending;
+    private delegate(T) => TNextKey _nextKeySelector;
+    private delegate(TNextKey, TNextKey) => int _nextComparer;
+    private bool _nextDescending;
+    private delegate(T) => TThirdKey _thirdKeySelector;
+    private delegate(TThirdKey, TThirdKey) => int _thirdComparer;
+    private bool _thirdDescending;
+
+    internal constructor(
+        IEnumerable<T> source,
+        delegate(T) => TKey keySelector,
+        delegate(TKey, TKey) => int comparer,
+        bool descending,
+        delegate(T) => TNextKey nextKeySelector,
+        delegate(TNextKey, TNextKey) => int nextComparer,
+        bool nextDescending,
+        delegate(T) => TThirdKey thirdKeySelector,
+        delegate(TThirdKey, TThirdKey) => int thirdComparer,
+        bool thirdDescending) {
+        _source = source;
+        _keySelector = keySelector;
+        _comparer = comparer;
+        _descending = descending;
+        _nextKeySelector = nextKeySelector;
+        _nextComparer = nextComparer;
+        _nextDescending = nextDescending;
+        _thirdKeySelector = thirdKeySelector;
+        _thirdComparer = thirdComparer;
+        _thirdDescending = thirdDescending;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ThenSort3Enumerator<T, TKey, TNextKey, TThirdKey>(
+            _source, _keySelector, _comparer, _descending,
+            _nextKeySelector, _nextComparer, _nextDescending,
+            _thirdKeySelector, _thirdComparer, _thirdDescending);
+    }
+
+    public ThenSort4Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey>
+    ThenSort<TFourthKey>(
+        delegate(T) => TFourthKey keySelector,
+        delegate(TFourthKey, TFourthKey) => int comparer) const {
+        if (keySelector == null) {
+            throw new System.ArgumentNullException("keySelector");
+        }
+        if (comparer == null) {
+            throw new System.ArgumentNullException("comparer");
+        }
+        return new ThenSort4Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey>(
+            this._source, this._keySelector, this._comparer, this._descending,
+            this._nextKeySelector, this._nextComparer, this._nextDescending,
+            this._thirdKeySelector, this._thirdComparer, this._thirdDescending,
+            keySelector, comparer, false);
+    }
+
+    public ThenSort4Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey>
+    ThenSortDescending<TFourthKey>(
+        delegate(T) => TFourthKey keySelector,
+        delegate(TFourthKey, TFourthKey) => int comparer) const {
+        if (keySelector == null) {
+            throw new System.ArgumentNullException("keySelector");
+        }
+        if (comparer == null) {
+            throw new System.ArgumentNullException("comparer");
+        }
+        return new ThenSort4Enumerable<T, TKey, TNextKey, TThirdKey, TFourthKey>(
+            this._source, this._keySelector, this._comparer, this._descending,
+            this._nextKeySelector, this._nextComparer, this._nextDescending,
+            this._thirdKeySelector, this._thirdComparer, this._thirdDescending,
+            keySelector, comparer, true);
+    }
+
+}

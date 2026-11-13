@@ -1,0 +1,28 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Fuses mapping before filtering for concrete arrays.</summary>
+public final class ArrayMapFilterEnumerable<T, TResult> : IEnumerable<TResult> {
+    internal ArrayMapEnumerable<T, TResult> _source;
+    internal delegate(TResult) => bool _predicate;
+
+    internal constructor(
+        ArrayMapEnumerable<T, TResult> source,
+        delegate(TResult) => bool predicate) {
+        _source = source;
+        _predicate = predicate;
+    }
+
+    public IEnumerator<TResult> GetEnumerator() const {
+        return new IndexedMapFilterEnumerator<T, TResult>(
+            _source._source, _source._selector, _predicate,
+            _source._source.Length, 4294967295u);
+    }
+
+    public ArrayMapFilterTakeEnumerable<T, TResult> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayMapFilterTakeEnumerable<T, TResult>(this, count);
+    }
+}

@@ -1,0 +1,60 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class WhereWhereEnumerator<T> : IEnumerator<T> {
+    private IEnumerator<T> _source;
+    private delegate(T) => bool _firstPredicate;
+    private delegate(T) => bool _secondPredicate;
+    private T _current;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    public constructor(
+        IEnumerator<T> source,
+        delegate(T) => bool firstPredicate,
+        delegate(T) => bool secondPredicate) {
+        _source = source;
+        _firstPredicate = firstPredicate;
+        _secondPredicate = secondPredicate;
+        _disposed = false;
+    }
+
+    public bool MoveNext() {
+        if (_disposed) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_source.MoveNext()) {
+                T value = _source.Current;
+                if (_firstPredicate(value) && _secondPredicate(value)) {
+                    _current = value;
+                    return true;
+                }
+            }
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+        Dispose();
+        return false;
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            IEnumerator<T> source = _source;
+            _source = default;
+            _firstPredicate = default;
+            _secondPredicate = default;
+            try {
+                source.Dispose();
+            } finally {
+                _current = default;
+            }
+        } else {
+            _current = default;
+        }
+    }
+}

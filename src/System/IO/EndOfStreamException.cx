@@ -1,0 +1,8 @@
+namespace System.IO;
+public class EndOfStreamException : IOException {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The stream ended before the required data was read.") { }
+    public constructor(const string message, const System.Exception innerException)
+        : base(message ?? "The stream ended before the required data was read.", innerException) { }
+}

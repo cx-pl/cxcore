@@ -1,0 +1,32 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>A deferred filter that scans concrete array storage by index.</summary>
+public final class ArrayWhereEnumerable<T> : IEnumerable<T> {
+    internal Array<T> _source;
+    internal delegate(T) => bool _predicate;
+
+    internal constructor(Array<T> source, delegate(T) => bool predicate) {
+        _source = source;
+        _predicate = predicate;
+    }
+
+    public IEnumerator<T> GetEnumerator() const {
+        return new ArrayWhereEnumerator<T>(
+            _source, _predicate, _source.Length);
+    }
+
+    public ArrayWhereTakeEnumerable<T> Take(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayWhereTakeEnumerable<T>(this, count);
+    }
+
+    public ArrayWhereSkipEnumerable<T> Skip(uint count) const {
+        if (this == null) {
+            throw new System.ArgumentNullException("source");
+        }
+        return new ArrayWhereSkipEnumerable<T>(this, count);
+    }
+}

@@ -1,0 +1,8 @@
+namespace System;
+public class InvalidCastException : Exception {
+    public constructor() : this(null) { }
+    public constructor(const string message)
+        : base(message ?? "The requested cast is not valid.") { }
+    public constructor(const string message, const Exception innerException)
+        : base(message ?? "The requested cast is not valid.", innerException) { }
+}

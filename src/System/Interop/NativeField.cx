@@ -1,0 +1,4 @@
+namespace System.Interop;
+public final class NativeField : System.Annotation {
+    public extern constructor(int offset);
+}

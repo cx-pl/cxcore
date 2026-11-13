@@ -1,0 +1,10 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Non-generic view of a scalar provider terminal.</summary>
+public interface IQueryScalarPlanNode {
+    public string Kind { const get; }
+    public IQueryPlanNode Source { const get; }
+    public uint Index { const get; }
+}

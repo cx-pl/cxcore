@@ -1,0 +1,36 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+public final class ArrayRangeEnumerator<T> : IEnumerator<T> {
+    private Array<T> _source;
+    private uint _nextIndex;
+    private uint _endIndex;
+    private T _current;
+    private bool _disposed;
+
+    public T Current { const get { return _current; } }
+
+    internal constructor(Array<T> source, uint nextIndex, uint endIndex) {
+        _source = source;
+        _nextIndex = nextIndex;
+        _endIndex = endIndex;
+    }
+
+    public bool MoveNext() {
+        if (_disposed || _nextIndex >= _endIndex) {
+            Dispose();
+            return false;
+        }
+        _current = _source.Get(_nextIndex);
+        _nextIndex += 1u;
+        return true;
+    }
+
+    public void Dispose() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _current = default;
+        }
+    }
+}

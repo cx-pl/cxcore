@@ -1,0 +1,85 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+/// <summary>Validation helpers for provider plans built through public constructors.</summary>
+/// <remarks>A source node may carry an opaque provider payload; only operator nodes link to parent plans.</remarks>
+public static class QueryPlanValidator {
+    /// <summary>
+    /// Validates plan structure before provider execution. Each primary
+    /// ordering may use at most eight keys total: one primary and seven secondary.
+    /// </summary>
+    public static void Validate(IQueryPlanNode plan) {
+        if (plan == null) {
+            throw new System.ArgumentNullException("plan");
+        }
+        IQueryPlanNode current = plan;
+        uint secondaryOrderingCount = 0u;
+        while (current != null) {
+            if (current.Kind != "Source" && current.Kind != "Filter" &&
+                current.Kind != "Select" && current.Kind != "OrderBy" &&
+                current.Kind != "OrderByDescending" &&
+                current.Kind != "ThenOrderBy" &&
+                current.Kind != "ThenOrderByDescending" &&
+                current.Kind != "Skip" && current.Kind != "Take" &&
+                current.Kind != "Page") {
+                throw new System.InvalidOperationException(
+                    "Unsupported query-plan node '" + current.Kind + "'.");
+            }
+            if (current.Kind != "Source" &&
+                (current.Source as IQueryPlanNode) == null) {
+                throw new System.InvalidOperationException(
+                    "Query-plan node '" + current.Kind +
+                    "' requires a preceding query-plan source.");
+            }
+            if (current.Kind == "Source" &&
+                current.Source as IQueryPlanNode != null) {
+                throw new System.InvalidOperationException(
+                    "A query-plan source node cannot have a preceding node.");
+            }
+            if (current.Kind == "Source" &&
+                (current.SourceName == null || current.SourceName.Length == 0u)) {
+                throw new System.InvalidOperationException(
+                    "A query-plan source node requires a source name.");
+            }
+            if ((current.Kind == "Filter" || current.Kind == "Select" ||
+                current.Kind == "OrderBy" ||
+                current.Kind == "OrderByDescending" ||
+                current.Kind == "ThenOrderBy" ||
+                current.Kind == "ThenOrderByDescending") &&
+                current.Expression == null) {
+                throw new System.InvalidOperationException(
+                    "Query-plan node '" + current.Kind +
+                    "' requires a typed expression.");
+            }
+            if (current.Kind == "ThenOrderBy" ||
+                current.Kind == "ThenOrderByDescending") {
+                secondaryOrderingCount++;
+                if (secondaryOrderingCount > 7u) {
+                    throw new System.InvalidOperationException(
+                        "A query plan supports at most eight ordering keys.");
+                }
+                if (!HasPrimaryOrdering(current.Source as IQueryPlanNode)) {
+                    throw new System.InvalidOperationException(
+                        "A secondary ordering requires a preceding primary ordering.");
+                }
+            } else if (current.Kind == "OrderBy" ||
+                current.Kind == "OrderByDescending") {
+                secondaryOrderingCount = 0u;
+            }
+            current = current.Source as IQueryPlanNode;
+        }
+    }
+
+    public static bool HasPrimaryOrdering(IQueryPlanNode source) {
+        IQueryPlanNode current = source;
+        while (current != null) {
+            if (current.Kind == "OrderBy" || current.Kind == "OrderByDescending") {
+                return true;
+            }
+            current = current.Source as IQueryPlanNode;
+        }
+        return false;
+    }
+
+}

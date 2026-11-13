@@ -1,0 +1,70 @@
+import System.Collections;
+
+namespace System.Collections.Query;
+/// <summary>Maps every skipped value, then maps only the requested indexed prefix.</summary>
+public final class IndexedMapSkipTakeEnumerator<T, TResult>
+    : IEnumerator<TResult> {
+    private Array<T> _source;
+    private delegate(T) => TResult _selector;
+    private uint _index;
+    private uint _length;
+    private uint _skip;
+    private uint _remaining;
+    private TResult _current;
+    private bool _disposed;
+
+    public TResult Current { const get { return _current; } }
+
+    internal constructor(
+        Array<T> source,
+        delegate(T) => TResult selector,
+        uint length,
+        uint skip,
+        uint count) {
+        _source = source;
+        _selector = selector;
+        _length = length;
+        _skip = skip;
+        _remaining = count;
+    }
+
+    public bool MoveNext() {
+        if (_disposed || _remaining == 0u) {
+            Dispose();
+            return false;
+        }
+        try {
+            while (_index < _skip && _index < _length) {
+                T skipped = _source.Get(_index);
+                _index += 1u;
+                _selector(skipped);
+            }
+            if (_index >= _length) {
+                Dispose();
+                return false;
+            }
+            T value = _source.Get(_index);
+            _index += 1u;
+            _current = _selector(value);
+            _remaining -= 1u;
+            if (_remaining == 0u) { ReleaseSource(); }
+            return true;
+        } catch (System.Exception) {
+            Dispose();
+            throw;
+        }
+    }
+
+    private void ReleaseSource() {
+        if (!_disposed) {
+            _disposed = true;
+            _source = null;
+            _selector = default;
+        }
+    }
+
+    public void Dispose() {
+        ReleaseSource();
+        _current = default;
+    }
+}

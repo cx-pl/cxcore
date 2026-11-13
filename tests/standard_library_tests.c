@@ -1,6 +1,8 @@
 #include <assert.h>
+#include <limits.h>
 #include <string.h>
 #include "../src/cxcore.h"
+#include "../include/cxruntime.h"
 
 static void test_char_utf8_lengths(void) {
     struct cxcore_System_Char value;
@@ -130,6 +132,29 @@ static void test_string_utf8_indexing(void) {
     }
 }
 
+static void test_math_typed_failures(void) {
+    int mode;
+    for (mode = 0; mode < 4; ++mode) {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            switch (mode) {
+            case 0: (void)cxcore_System_Math_Abs(INT_MIN); break;
+            case 1: (void)cxcore_System_Math_Clamp(0, 2, 1); break;
+            case 2: (void)cxcore_System_Math_Round__2(1.0f, -1); break;
+            default: (void)cxcore_System_Math_Round__4(1.0, 16); break;
+            }
+            assert(0 && "invalid Math operation must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            mode == 0 ? cxcore_System_OverflowException___typeinfo
+                      : cxcore_System_ArgumentOutOfRangeException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+}
+
 static void test_array(void) {
     struct cxcore_System_Collections_Array *array = cx_array_new(3, (cx_uint)sizeof(cx_int));
     cx_int *first = (cx_int *)cx_array_at(array, 0, (cx_uint)sizeof(cx_int));
@@ -141,6 +166,38 @@ static void test_array(void) {
     assert(cx_array_at(array, 3, (cx_uint)sizeof(cx_int)) == CX_NULL);
     assert(cx_array_at(array, 2, 0) == CX_NULL);
     assert(cx_array_at(CX_NULL, 0, (cx_uint)sizeof(cx_int)) == CX_NULL);
+    assert(*(cx_int *)cx_array_at_checked(
+        array, 2u, (cx_uint)sizeof(cx_int), __FILE__, __LINE__) == 42);
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cx_array_at_checked(
+                CX_NULL, 0u, (cx_uint)sizeof(cx_int), __FILE__, __LINE__);
+            assert(0 && "checked null array access must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_NullReferenceException___typeinfo));
+        assert(cxcore_System_Exception_StackTrace___const_get(
+            (const struct cxcore_System_Exception *)cx_exception_current()) != CX_NULL);
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cx_array_at_checked(
+                array, 3u, (cx_uint)sizeof(cx_int), __FILE__, __LINE__);
+            assert(0 && "checked out-of-range access must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_IndexOutOfRangeException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
     {
         struct cxcore_System_Collections_Array *empty = cx_array_new(0, 0);
         assert(empty->_data == CX_NULL);
@@ -251,6 +308,20 @@ static void test_reflection_function_info(void) {
 
     assert(empty.Flags == 0 && empty.Offset == 0 && empty.Name == CX_NULL &&
            empty.Params == CX_NULL && empty.ReturnType.Hash == 0);
+
+    {
+        struct cx_exception_frame frame;
+        cx_exception_push(&frame);
+        if (setjmp(frame.environment) == 0) {
+            (void)cxcore_System_Reflection_TypeInfo_ConvertValue(CX_NULL, CX_NULL);
+            assert(0 && "invalid reflected conversion must throw");
+        }
+        assert(cxcore_System_Exception_Matches(
+            (const struct cxcore_System_Exception *)cx_exception_current(),
+            cxcore_System_InvalidCastException___typeinfo));
+        cx_exception_pop(&frame);
+        cx_exception_clear();
+    }
 
     {
         const struct cx_reflection_function *builder_to_string =
@@ -378,6 +449,8 @@ int main(int argc, char **argv) {
         test_char_utf8_lengths();
     else if (strcmp(argv[1], "memory") == 0)
         test_memory_helpers();
+    else if (strcmp(argv[1], "math_typed") == 0)
+        test_math_typed_failures();
     else if (strcmp(argv[1], "nullable") == 0)
         test_nullable();
     else if (strcmp(argv[1], "object") == 0) {

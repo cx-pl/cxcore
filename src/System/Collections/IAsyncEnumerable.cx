@@ -1,11 +1,5 @@
 namespace System.Collections;
-
 public interface IAsyncEnumerable<T> {
     IAsyncEnumerator<T> GetAsyncEnumerator(
         System.Threading.Tasks.CancellationToken cancellationToken);
-}
-
-public interface IAsyncEnumerator<T> : System.IAsyncDisposable {
-    T Current { const get; }
-    System.Threading.Tasks.ValueTask<bool> MoveNextAsync();
 }

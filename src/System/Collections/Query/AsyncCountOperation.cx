@@ -1,0 +1,159 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+internal final class AsyncCountOperation<T, TLayout> {
+    private IAsyncEnumerable<T> _source;
+    private delegate(T) => bool _predicate;
+    private CancellationToken _cancellationToken;
+    private IAsyncEnumerator<T> _enumerator;
+    private uint _count;
+    private Task<uint> _completion;
+    private bool _isDisposing;
+
+    internal constructor() { }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => bool predicate,
+        CancellationToken cancellationToken,
+        IAsyncEnumerator<T> enumerator,
+        uint count,
+        Task<uint> completion) {
+        _source = source;
+        _predicate = predicate;
+        _cancellationToken = cancellationToken;
+        _enumerator = enumerator;
+        _count = count;
+        _completion = completion;
+    }
+
+    internal Task<uint> Start() {
+        try {
+            _enumerator = _source.GetAsyncEnumerator(_cancellationToken);
+            if (_enumerator == null) {
+                Complete(new System.InvalidOperationException(
+                    "The async source returned a null enumerator."));
+                return _completion;
+            }
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return _completion;
+        }
+        Advance();
+        return _completion;
+    }
+
+    private void Advance() {
+        while (true) {
+            Task<bool> moveTask;
+            try {
+                moveTask = _enumerator.MoveNextAsync().AsTask();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moveTask.IsCompleted) {
+                AsyncCountOperation<T, TLayout> state = this;
+                moveTask.OnCompleted(() => state.CompleteMove(moveTask));
+                return;
+            }
+            bool moved;
+            try {
+                moved = moveTask.GetResult();
+            } catch (System.Exception exception) {
+                BeginDispose(exception);
+                return;
+            }
+            if (!moved) {
+                BeginDispose(null);
+                return;
+            }
+            CountCurrent();
+            if (_isDisposing) { return; }
+        }
+    }
+
+    private void CompleteMove(Task<bool> moveTask) {
+        bool moved;
+        try {
+            moved = moveTask.GetResult();
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return;
+        }
+        if (!moved) {
+            BeginDispose(null);
+            return;
+        }
+        CountCurrent();
+        if (!_isDisposing) { Advance(); }
+    }
+
+    private void CountCurrent() {
+        bool matches;
+        try {
+            matches = _predicate == null ||
+                _predicate(_enumerator.Current);
+        } catch (System.Exception exception) {
+            BeginDispose(exception);
+            return;
+        }
+        if (!matches) { return; }
+        if (_count == 4294967295u) {
+            if (_predicate == null) {
+                BeginDispose(new System.InvalidOperationException(
+                    "Sequence contains more than UInt32.MaxValue elements."));
+            } else {
+                BeginDispose(new System.InvalidOperationException(
+                    "Sequence contains more than UInt32.MaxValue matching elements."));
+            }
+            return;
+        }
+        _count += 1u;
+    }
+
+    private void BeginDispose(System.Exception failure) {
+        if (_isDisposing) { return; }
+        _isDisposing = true;
+        TaskHandle disposeTask;
+        try {
+            disposeTask = _enumerator.DisposeAsync().AsTask();
+        } catch (System.Exception exception) {
+            Complete(exception);
+            return;
+        }
+        if (disposeTask.IsCompleted) {
+            CompleteDispose(disposeTask, failure);
+        } else {
+            AsyncCountOperation<T, TLayout> state = this;
+            disposeTask.OnCompleted(() =>
+                state.CompleteDispose(disposeTask, failure));
+        }
+    }
+
+    private void CompleteDispose(
+        TaskHandle disposeTask,
+        System.Exception failure) {
+        try {
+            disposeTask.GetResult();
+        } catch (System.Exception disposeException) {
+            failure = disposeException;
+        }
+        Complete(failure);
+    }
+
+    private void Complete(System.Exception failure) {
+        if (failure is OperationCanceledException) {
+            _completion.SetCanceled();
+        } else if (failure != null) {
+            _completion.SetFault(failure);
+        } else {
+            _completion.SetResult(_count);
+        }
+        _source = default;
+        _predicate = default;
+        _cancellationToken = default;
+        _enumerator = default;
+    }
+}

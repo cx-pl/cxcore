@@ -1,0 +1,148 @@
+import System.Collections;
+import System.Threading.Tasks;
+
+namespace System.Collections.Query;
+public final class AsyncMapAsyncEnumerator<T, TResult> : IAsyncEnumerator<TResult> {
+    private IAsyncEnumerable<T> _source;
+    private IAsyncEnumerator<T> _sourceEnumerator;
+    private delegate(T) => Task<TResult> _selector;
+    private CancellationToken _cancellationToken;
+    private TaskHandle _disposeTask;
+    private TaskCompletionSource _disposeCompletion;
+    private TResult _current;
+    private bool _sourceOpened;
+    private bool _disposed;
+    private bool _disposeStarted;
+    private Task<bool> _pendingMove;
+
+    public TResult Current { const get => _current; }
+
+    internal constructor(
+        IAsyncEnumerable<T> source,
+        delegate(T) => Task<TResult> selector,
+        CancellationToken cancellationToken) {
+        _source = source;
+        _sourceEnumerator = null;
+        _selector = selector;
+        _cancellationToken = cancellationToken;
+        _disposeTask = null;
+        _disposeCompletion = null;
+        _sourceOpened = false;
+        _disposed = false;
+        _disposeStarted = false;
+        _pendingMove = null;
+    }
+
+    public ValueTask<bool> MoveNextAsync() {
+        if (_disposed) {
+            return new ValueTask<bool>(false);
+        }
+        if (_pendingMove != null && !_pendingMove.IsCompleted) {
+            throw new System.InvalidOperationException(
+                "A MapAsync MoveNextAsync operation is already pending.");
+        }
+        _current = default;
+        if (!_sourceOpened) {
+            _sourceOpened = true;
+            _sourceEnumerator = _source.GetAsyncEnumerator(
+                _cancellationToken);
+            if (_sourceEnumerator == null) {
+                _sourceOpened = false;
+                throw new System.InvalidOperationException(
+                    "The async source returned no enumerator.");
+            }
+        }
+        Task<bool> moving = MoveNextCoreAsync(
+            this, _sourceEnumerator, _selector);
+        _pendingMove = moving;
+        ValueTask<bool> result;
+        result.SetTask(moving);
+        return result;
+    }
+
+    private async Task<bool> MoveNextCoreAsync(
+        AsyncMapAsyncEnumerator<T, TResult> state,
+        IAsyncEnumerator<T> sourceEnumerator,
+        delegate(T) => Task<TResult> selector) {
+        Task<bool> moveTask = sourceEnumerator.MoveNextAsync().AsTask();
+        bool moved = await moveTask;
+        if (!moved || state._disposed) {
+            return false;
+        }
+        var selectorTask = selector(sourceEnumerator.Current);
+        TResult projected = await selectorTask;
+        if (state._disposed) {
+            return false;
+        }
+        state._current = projected;
+        return true;
+    }
+
+    private void DisposeAfterPendingMove() {
+        try {
+            _pendingMove.GetResult();
+        } catch (System.Exception) {
+            // Dispose waits for the move; its caller observes the move failure.
+        }
+        _pendingMove = null;
+        TaskHandle upstreamDispose = BeginSourceDispose();
+        if (upstreamDispose.IsCompleted) {
+            CompletePendingDispose(upstreamDispose);
+        } else {
+            AsyncMapAsyncEnumerator<T, TResult> state = this;
+            upstreamDispose.OnCompleted(() =>
+                state.CompletePendingDispose(upstreamDispose));
+        }
+    }
+
+    private TaskHandle BeginSourceDispose() {
+        if (!_sourceOpened) {
+            return new TaskHandle();
+        }
+        try {
+            ValueTask disposeValueTask = _sourceEnumerator.DisposeAsync();
+            _sourceEnumerator = default;
+            return disposeValueTask.AsTask();
+        } catch (System.Exception exception) {
+            _sourceEnumerator = default;
+            return TaskHandle.Faulted(exception);
+        }
+    }
+
+    private void CompletePendingDispose(TaskHandle upstreamDispose) {
+        try {
+            upstreamDispose.GetResult();
+            _disposeCompletion.SetResult();
+        } catch (OperationCanceledException) {
+            _disposeCompletion.SetCanceled();
+        } catch (System.Exception exception) {
+            _disposeCompletion.SetException(exception);
+        }
+    }
+
+    public ValueTask DisposeAsync() {
+        if (_disposeStarted) {
+            return new ValueTask(_disposeTask);
+        }
+        _disposeStarted = true;
+        _disposed = true;
+        _source = default;
+        _selector = default;
+        _current = default;
+        if (_pendingMove != null && !_pendingMove.IsCompleted) {
+            _disposeCompletion = new TaskCompletionSource();
+            _disposeTask = _disposeCompletion.Task;
+            AsyncMapAsyncEnumerator<T, TResult> state = this;
+            _pendingMove.OnCompleted(() => state.DisposeAfterPendingMove());
+            return new ValueTask(_disposeTask);
+        }
+        if (_sourceOpened) {
+            ValueTask disposeValueTask = _sourceEnumerator.DisposeAsync();
+            _sourceEnumerator = default;
+            _disposeTask = disposeValueTask.AsTask();
+        } else {
+            _disposeTask = new TaskHandle();
+        }
+        return new ValueTask(_disposeTask);
+    }
+}

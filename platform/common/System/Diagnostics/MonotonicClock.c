@@ -12,9 +12,12 @@
 
 CX_STRING_DEF(cx_clock_unavailable, "The monotonic clock is unavailable.");
 static CX_NORETURN void cx_clock_fail(void) {
-    struct cxcore_System_Exception *error = cx_exception_allocate_durable((cx_uint)sizeof(*error));
-    cxcore_System_Exception___constructor(error, &cx_clock_unavailable);
-    cx_exception_throw(error, __FILE__, __LINE__);
+    struct cxcore_System_InvalidOperationException *error =
+        cx_exception_allocate_durable(
+            cxcore_System_InvalidOperationException___typeinfo.Size);
+    cxcore_System_InvalidOperationException___constructor__2(
+        error, &cx_clock_unavailable);
+    cx_exception_throw((struct cxcore_System_Exception *)error, __FILE__, __LINE__);
 }
 
 cx_ulong cxcore_System_Diagnostics_MonotonicClock_GetMicroseconds(void) {

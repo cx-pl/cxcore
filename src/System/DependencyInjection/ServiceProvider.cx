@@ -3,77 +3,6 @@ import System.Reflection;
 import System;
 
 namespace System.DependencyInjection;
-
-internal final class ServiceSequence {
-    private List<object> _values;
-
-    public constructor(List<object> values) {
-        _values = values;
-    }
-
-    public uint GetCount() const {
-        return _values.Count;
-    }
-
-    public object Get(uint index) const {
-        return _values.Get(index);
-    }
-}
-
-internal final class ResolutionContext {
-    public List<uint> Slots;
-    public List<TypeInfo> Keys;
-    public uint SingletonDepth;
-    public string CyclePath;
-
-    public constructor() {
-        Slots = new List<uint>();
-        Keys = new List<TypeInfo>();
-        SingletonDepth = 0u;
-        CyclePath = null;
-    }
-}
-
-internal final class ConstructorSelection {
-    public uint FunctionIndex;
-    public bool HasFunction;
-
-    public constructor(uint functionIndex, bool hasFunction) {
-        FunctionIndex = functionIndex;
-        HasFunction = hasFunction;
-    }
-}
-
-internal final class ActivationPlan {
-    public uint RegistrationSlot;
-    public ServiceLifetime Lifetime;
-    private TypeInfoHolder _implementationType;
-    public TypeInfo ImplementationType { const get { return _implementationType.GetValue(); } }
-    public uint FunctionIndex;
-    public bool HasFunction;
-    public Array<TypeInfoHolder> ParameterTypes;
-
-    public constructor(
-        uint registrationSlot,
-        ServiceLifetime lifetime,
-        TypeInfo implementationType,
-        ConstructorSelection selection) {
-        RegistrationSlot = registrationSlot;
-        Lifetime = lifetime;
-        _implementationType = new TypeInfoHolder(implementationType);
-        FunctionIndex = selection.FunctionIndex;
-        HasFunction = selection.HasFunction;
-        uint parameterCount = HasFunction
-            ? implementationType.GetFunctionParameterCount(FunctionIndex)
-            : 0u;
-        ParameterTypes = new Array<TypeInfoHolder>(parameterCount);
-        for (uint index = 0u; index < parameterCount; index += 1u) {
-            ParameterTypes.Set(index, new TypeInfoHolder(
-                implementationType.GetFunctionParameterType(FunctionIndex, index)));
-        }
-    }
-}
-
 public final class ServiceProvider : IServiceProvider, IServiceScopeFactory, IDisposable {
     private List<ServiceDescriptor> _descriptors;
     private ptr _providerRoot;
@@ -832,7 +761,3 @@ public final class ServiceProvider : IServiceProvider, IServiceScopeFactory, IDi
         }
     }
 }
-
-
-
-
